@@ -1,3 +1,25 @@
+var AAAMap = 0;
+var AAMap = 0;
+var AMap = 0;
+var BBBMap = 0;
+var BBMap = 0;
+var BMap = 0;
+var CMap = 0;
+var CCMap = 0;
+var CCCMap = 0;
+var DMap = 0;
+
+var Sec1Map = 0;
+var Sec2Map = 0;
+var Sec3Map = 0;
+var Sec5Map = 0;
+var Sec6Map = 0;
+var Sec7Map = 0;
+var Sec8Map = 0;
+var Sec9Map = 0;
+var Sec11Map = 0;
+
+
 function initialize() {
 
     var myOptions = {
@@ -90,6 +112,9 @@ function initialize() {
     var MENAMap = {};
     var APACMap = {};
 
+
+
+
     var NAMRTotal = 0;
     var SAMRTotal = 0;
     var EUROTotal = 0;
@@ -128,6 +153,70 @@ function initialize() {
                     APACTotal += exp;
                     break;
             }
+
+            switch (data["Rating"]) {
+                case "AAA":
+                    AAAMap += exp < 0 ? exp * -1 : exp;
+                    break;
+                case "AA":
+                    AAMap += exp < 0 ? exp * -1 : exp;
+                    break;
+                case "A":
+                    AMap += exp < 0 ? exp * -1 : exp;
+                    break;
+                case "BBB":
+                    BBBMap += exp < 0 ? exp * -1 : exp;
+                    break;
+                case "BB":
+                    BBMap += exp < 0 ? exp * -1 : exp;
+                    break;
+                case "B":
+                    BMap += exp < 0 ? exp * -1 : exp;
+                    break;
+                case "CCC":
+                    CCCMap += exp < 0 ? exp * -1 : exp;
+                    break;
+                case "CC":
+                    CCMap += exp < 0 ? exp * -1 : exp;
+                    break;
+                case "C":
+                    CMap += exp < 0 ? exp * -1 : exp;
+                    break;
+                case "D":
+                    DMap += exp < 0 ? exp * -1 : exp;
+                    break;
+            }
+
+
+            switch(data["Sector_ID"]) {
+                case "SEC_1":
+                    Sec1Map += exp < 0 ? exp * -1 : exp;
+                    break;
+                case "SEC_2":
+                    Sec2Map += exp < 0 ? exp * -1 : exp;
+                    break;
+                case "SEC_3":
+                    Sec3Map += exp < 0 ? exp * -1 : exp;
+                    break;
+                case "SEC_5":
+                    Sec5Map += exp < 0 ? exp * -1 : exp;
+                    break;
+                case "SEC_6":
+                    Sec6Map += exp < 0 ? exp * -1 : exp;
+                    break;
+                case "SEC_7":
+                    Sec7Map += exp < 0 ? exp * -1 : exp;
+                    break;
+                case "SEC_8":
+                    Sec8Map += exp < 0 ? exp * -1 : exp;
+                    break;
+                case "SEC_9":
+                    Sec9Map += exp < 0 ? exp * -1 : exp;
+                    break;
+                case "SEC_11":
+                    Sec11Map += exp < 0 ? exp * -1 : exp;
+                    break;
+            }
         })
         .defer(d3.csv, "https://raw.githubusercontent.com/deepthiyathiender/Dendograms/master/mega_table_Equities.csv", function (data) {
             var exp = parseInt(data["Market Value(USD)"].replace(/,/g, ""));
@@ -157,6 +246,69 @@ function initialize() {
                     if (APACMap["Equities"] == undefined) APACMap["Equities"] = 0;
                     APACMap["Equities"] += exp < 0 ? exp * -1 : exp;
                     APACTotal += exp;
+                    break;
+            }
+
+            switch (data["Rating"]) {
+                case "AAA":
+                    AAAMap += exp < 0 ? exp * -1 : exp;
+                    break;
+                case "AA":
+                    AAMap += exp < 0 ? exp * -1 : exp;
+                    break;
+                case "A":
+                    AMap += exp < 0 ? exp * -1 : exp;
+                    break;
+                case "BBB":
+                    BBBMap += exp < 0 ? exp * -1 : exp;
+                    break;
+                case "BB":
+                    BBMap += exp < 0 ? exp * -1 : exp;
+                    break;
+                case "B":
+                    BMap += exp < 0 ? exp * -1 : exp;
+                    break;
+                case "CCC":
+                    CCCMap += exp < 0 ? exp * -1 : exp;
+                    break;
+                case "CC":
+                    CCMap += exp < 0 ? exp * -1 : exp;
+                    break;
+                case "C":
+                    CMap += exp < 0 ? exp * -1 : exp;
+                    break;
+                case "D":
+                    DMap += exp < 0 ? exp * -1 : exp;
+                    break;
+            }
+
+            switch(data["Sector_ID"]) {
+                case "SEC_1":
+                    Sec1Map += exp < 0 ? exp * -1 : exp;
+                    break;
+                case "SEC_2":
+                    Sec2Map += exp < 0 ? exp * -1 : exp;
+                    break;
+                case "SEC_3":
+                    Sec3Map += exp < 0 ? exp * -1 : exp;
+                    break;
+                case "SEC_5":
+                    Sec5Map += exp < 0 ? exp * -1 : exp;
+                    break;
+                case "SEC_6":
+                    Sec6Map += exp < 0 ? exp * -1 : exp;
+                    break;
+                case "SEC_7":
+                    Sec7Map += exp < 0 ? exp * -1 : exp;
+                    break;
+                case "SEC_8":
+                    Sec8Map += exp < 0 ? exp * -1 : exp;
+                    break;
+                case "SEC_9":
+                    Sec9Map += exp < 0 ? exp * -1 : exp;
+                    break;
+                case "SEC_11":
+                    Sec11Map += exp < 0 ? exp * -1 : exp;
                     break;
             }
         })
@@ -190,6 +342,69 @@ function initialize() {
                     APACTotal += exp;
                     break;
             }
+
+            switch (data["Rating"]) {
+                case "AAA":
+                    AAAMap += exp < 0 ? exp * -1 : exp;
+                    break;
+                case "AA":
+                    AAMap += exp < 0 ? exp * -1 : exp;
+                    break;
+                case "A":
+                    AMap += exp < 0 ? exp * -1 : exp;
+                    break;
+                case "BBB":
+                    BBBMap += exp < 0 ? exp * -1 : exp;
+                    break;
+                case "BB":
+                    BBMap += exp < 0 ? exp * -1 : exp;
+                    break;
+                case "B":
+                    BMap += exp < 0 ? exp * -1 : exp;
+                    break;
+                case "CCC":
+                    CCCMap += exp < 0 ? exp * -1 : exp;
+                    break;
+                case "CC":
+                    CCMap += exp < 0 ? exp * -1 : exp;
+                    break;
+                case "C":
+                    CMap += exp < 0 ? exp * -1 : exp;
+                    break;
+                case "D":
+                    DMap += exp < 0 ? exp * -1 : exp;
+                    break;
+            }
+
+            switch(data["Sector_ID"]) {
+                case "SEC_1":
+                    Sec1Map += exp < 0 ? exp * -1 : exp;
+                    break;
+                case "SEC_2":
+                    Sec2Map += exp < 0 ? exp * -1 : exp;
+                    break;
+                case "SEC_3":
+                    Sec3Map += exp < 0 ? exp * -1 : exp;
+                    break;
+                case "SEC_5":
+                    Sec5Map += exp < 0 ? exp * -1 : exp;
+                    break;
+                case "SEC_6":
+                    Sec6Map += exp < 0 ? exp * -1 : exp;
+                    break;
+                case "SEC_7":
+                    Sec7Map += exp < 0 ? exp * -1 : exp;
+                    break;
+                case "SEC_8":
+                    Sec8Map += exp < 0 ? exp * -1 : exp;
+                    break;
+                case "SEC_9":
+                    Sec9Map += exp < 0 ? exp * -1 : exp;
+                    break;
+                case "SEC_11":
+                    Sec11Map += exp < 0 ? exp * -1 : exp;
+                    break;
+            }
         })
         .defer(d3.csv, "https://raw.githubusercontent.com/deepthiyathiender/Dendograms/master/mega_table_FxSwap.csv", function (data) {
             var exp = parseInt(data["Market Value(USD)"].replace(/,/g, ""));
@@ -219,6 +434,69 @@ function initialize() {
                     if (APACMap["FxSwap"] == undefined) APACMap["FxSwap"] = 0;
                     APACMap["FxSwap"] += exp < 0 ? exp * -1 : exp;
                     APACTotal += exp;
+                    break;
+            }
+
+            switch (data["Rating"]) {
+                case "AAA":
+                    AAAMap += exp < 0 ? exp * -1 : exp;
+                    break;
+                case "AA":
+                    AAMap += exp < 0 ? exp * -1 : exp;
+                    break;
+                case "A":
+                    AMap += exp < 0 ? exp * -1 : exp;
+                    break;
+                case "BBB":
+                    BBBMap += exp < 0 ? exp * -1 : exp;
+                    break;
+                case "BB":
+                    BBMap += exp < 0 ? exp * -1 : exp;
+                    break;
+                case "B":
+                    BMap += exp < 0 ? exp * -1 : exp;
+                    break;
+                case "CCC":
+                    CCCMap += exp < 0 ? exp * -1 : exp;
+                    break;
+                case "CC":
+                    CCMap += exp < 0 ? exp * -1 : exp;
+                    break;
+                case "C":
+                    CMap += exp < 0 ? exp * -1 : exp;
+                    break;
+                case "D":
+                    DMap += exp < 0 ? exp * -1 : exp;
+                    break;
+            }
+
+            switch(data["Sector_ID"]) {
+                case "SEC_1":
+                    Sec1Map += exp < 0 ? exp * -1 : exp;
+                    break;
+                case "SEC_2":
+                    Sec2Map += exp < 0 ? exp * -1 : exp;
+                    break;
+                case "SEC_3":
+                    Sec3Map += exp < 0 ? exp * -1 : exp;
+                    break;
+                case "SEC_5":
+                    Sec5Map += exp < 0 ? exp * -1 : exp;
+                    break;
+                case "SEC_6":
+                    Sec6Map += exp < 0 ? exp * -1 : exp;
+                    break;
+                case "SEC_7":
+                    Sec7Map += exp < 0 ? exp * -1 : exp;
+                    break;
+                case "SEC_8":
+                    Sec8Map += exp < 0 ? exp * -1 : exp;
+                    break;
+                case "SEC_9":
+                    Sec9Map += exp < 0 ? exp * -1 : exp;
+                    break;
+                case "SEC_11":
+                    Sec11Map += exp < 0 ? exp * -1 : exp;
                     break;
             }
         })
@@ -252,6 +530,69 @@ function initialize() {
                     APACTotal += exp;
                     break;
             }
+
+            switch (data["Rating"]) {
+                case "AAA":
+                    AAAMap += exp < 0 ? exp * -1 : exp;
+                    break;
+                case "AA":
+                    AAMap += exp < 0 ? exp * -1 : exp;
+                    break;
+                case "A":
+                    AMap += exp < 0 ? exp * -1 : exp;
+                    break;
+                case "BBB":
+                    BBBMap += exp < 0 ? exp * -1 : exp;
+                    break;
+                case "BB":
+                    BBMap += exp < 0 ? exp * -1 : exp;
+                    break;
+                case "B":
+                    BMap += exp < 0 ? exp * -1 : exp;
+                    break;
+                case "CCC":
+                    CCCMap += exp < 0 ? exp * -1 : exp;
+                    break;
+                case "CC":
+                    CCMap += exp < 0 ? exp * -1 : exp;
+                    break;
+                case "C":
+                    CMap += exp < 0 ? exp * -1 : exp;
+                    break;
+                case "D":
+                    DMap += exp < 0 ? exp * -1 : exp;
+                    break;
+            }
+
+            switch(data["Sector_ID"]) {
+                case "SEC_1":
+                    Sec1Map += exp < 0 ? exp * -1 : exp;
+                    break;
+                case "SEC_2":
+                    Sec2Map += exp < 0 ? exp * -1 : exp;
+                    break;
+                case "SEC_3":
+                    Sec3Map += exp < 0 ? exp * -1 : exp;
+                    break;
+                case "SEC_5":
+                    Sec5Map += exp < 0 ? exp * -1 : exp;
+                    break;
+                case "SEC_6":
+                    Sec6Map += exp < 0 ? exp * -1 : exp;
+                    break;
+                case "SEC_7":
+                    Sec7Map += exp < 0 ? exp * -1 : exp;
+                    break;
+                case "SEC_8":
+                    Sec8Map += exp < 0 ? exp * -1 : exp;
+                    break;
+                case "SEC_9":
+                    Sec9Map += exp < 0 ? exp * -1 : exp;
+                    break;
+                case "SEC_11":
+                    Sec11Map += exp < 0 ? exp * -1 : exp;
+                    break;
+            }
         })
         .defer(d3.csv, "https://raw.githubusercontent.com/deepthiyathiender/Dendograms/master/mega_table_L&DDeal.csv", function (data) {
             var exp = parseInt(data["Market Value (USD)"].replace(/,/g, ""));
@@ -283,9 +624,71 @@ function initialize() {
                     APACTotal += exp;
                     break;
             }
+
+            switch (data["Rating"]) {
+                case "AAA":
+                    AAAMap += exp < 0 ? exp * -1 : exp;
+                    break;
+                case "AA":
+                    AAMap += exp < 0 ? exp * -1 : exp;
+                    break;
+                case "A":
+                    AMap += exp < 0 ? exp * -1 : exp;
+                    break;
+                case "BBB":
+                    BBBMap += exp < 0 ? exp * -1 : exp;
+                    break;
+                case "BB":
+                    BBMap += exp < 0 ? exp * -1 : exp;
+                    break;
+                case "B":
+                    BMap += exp < 0 ? exp * -1 : exp;
+                    break;
+                case "CCC":
+                    CCCMap += exp < 0 ? exp * -1 : exp;
+                    break;
+                case "CC":
+                    CCMap += exp < 0 ? exp * -1 : exp;
+                    break;
+                case "C":
+                    CMap += exp < 0 ? exp * -1 : exp;
+                    break;
+                case "D":
+                    DMap += exp < 0 ? exp * -1 : exp;
+                    break;
+            }
+
+            switch(data["Sector_ID"]) {
+                case "SEC_1":
+                    Sec1Map += exp < 0 ? exp * -1 : exp;
+                    break;
+                case "SEC_2":
+                    Sec2Map += exp < 0 ? exp * -1 : exp;
+                    break;
+                case "SEC_3":
+                    Sec3Map += exp < 0 ? exp * -1 : exp;
+                    break;
+                case "SEC_5":
+                    Sec5Map += exp < 0 ? exp * -1 : exp;
+                    break;
+                case "SEC_6":
+                    Sec6Map += exp < 0 ? exp * -1 : exp;
+                    break;
+                case "SEC_7":
+                    Sec7Map += exp < 0 ? exp * -1 : exp;
+                    break;
+                case "SEC_8":
+                    Sec8Map += exp < 0 ? exp * -1 : exp;
+                    break;
+                case "SEC_9":
+                    Sec9Map += exp < 0 ? exp * -1 : exp;
+                    break;
+                case "SEC_11":
+                    Sec11Map += exp < 0 ? exp * -1 : exp;
+                    break;
+            }
         })
         .await(function () {
-            debugger;
 
             var citymap = {
                 NAMR: {

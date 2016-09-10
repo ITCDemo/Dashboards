@@ -1,6 +1,27 @@
-function createDataset(){
+function FormatMoney(money){
 
+    formattedMoney = "";
+    switch(money.toString().length){
+        case 4:
+        case 5:
+        case 6:
+            formattedMoney = "$ "+(money/1000).toFixed(1)+ "K";
+            break;
+        case 7:
+        case 8:
+        case 9:
+            formattedMoney = "$ "+(money/1000000).toFixed(1) + "M";
+            break;
 
+        case 10:
+        case 11:
+        case 12:
+            formattedMoney = "$ "+(money/1000000000).toFixed(1) + "B";
+            break;
+        default:
+            formattedMoney = "$ "+money;
+    }
+    return formattedMoney;
 }
 
 
@@ -8,11 +29,9 @@ function createDataset(){
 function DrawPie ()
 {
 
-    var newwdataset = createDataset();
-
     var dataset = {
-        apples: [53245, 28479, 19697, 24037, 40245],
-        oranges: [200, 200, 200, 200]
+        Sectors: [Sec1Map, Sec2Map, Sec3Map, Sec5Map, Sec6Map, Sec7Map, Sec8Map, Sec9Map, Sec11Map],
+        Rating: [AAAMap, AAMap, AMap, BBBMap, BBMap, BMap, CCCMap, CCMap, CMap, DMap]
     };
 
     var width = 470,
@@ -29,12 +48,14 @@ function DrawPie ()
         endAngle: Math.PI * 2
     };
 
-    var color = d3.scale.category20();
+    var color = d3.scale.ordinal()
+        .domain([0,1,2,3,4,5,6,7,8])
+        .range(["#3693D6", "#F9FF72", "#FCE636", "#FFA500", "#FC7200", "#FF3600", "#E20000", "#A40000", "#6D0101", "#000"]);
 
     var pie = d3.layout.pie()
         .sort(null);
 
-    var outerRadius = width / 3.5;
+    var outerRadius = width / 3.7;
     var innerRadius = 70;
 
     var arc = d3.svg.arc()
@@ -45,17 +66,33 @@ function DrawPie ()
         .attr("width", width)
         .attr("height", height)
         .append("g")
-        .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
+        .attr("transform", "translate(" + width / 3 + "," + height / 2 + ")");
 
 // set the start and end angles to 0 so we can transition
 // clockwise to the actual values later
     var path = svg.selectAll("path")
-        .data(pie(dataset.apples))
-        .enter().append("path")
+        .data(pie(dataset.Sectors))
+        .enter()
+        .append("path")
         .attr("fill", function (d, i) {
             return color(i);
         })
+        .attr("stroke", "white")
+        .attr("stroke-width", 2)
         .attr("d", arc(enterClockwise))
+        .on('mouseover', function(d) {
+            $(".pieoverlay")
+                .html(FormatMoney(d.data))
+                .show();
+        })
+        .on('mousemove', function(d) {
+            $(".pieoverlay")
+                .css('left', d3.mouse(this)[0]+800)
+                .css('top', d3.mouse(this)[1]+120)
+        })
+        .on('mouseout', function(d) {
+            $(".pieoverlay").html('').hide();
+        })
         .each(function (d) {
             this._current = {
                 data: d.data,
@@ -63,19 +100,92 @@ function DrawPie ()
                 startAngle: enterClockwise.startAngle,
                 endAngle: enterClockwise.endAngle
             }
-        }); // store the initial values
+        });
 
     path.transition()  // update
         .duration(750)
         .attrTween("d", arcTween);
 
+
     d3.selectAll("input").on("change", change);
 
     var timeout = setTimeout(function () {
-        d3.select("input[value=\"oranges\"]").property("checked", true).each(change);
+        d3.select("input[value=\"Rating\"]").property("checked", true).each(change);
     }, 2000);
 
+
+
+    var legendRectSize = 20;
+    var legendSpacing = 7;
+    var legendHeight = legendRectSize + legendSpacing;
+
+
+    var legend = svg.selectAll('.legend')
+        .data(color.domain())
+        .enter()
+        .append('g')
+        .attr({
+            class: 'legend',
+            transform: function (d, i) {
+                //Just a calculation for x & y position
+                return 'translate(150,' + ((i * legendHeight) - 100) + ')';
+            }
+        });
+    legend.append('rect')
+        .attr({
+            width: legendRectSize,
+            height: legendRectSize,
+            rx: 10,
+            ry: 10
+        })
+        .style({
+            fill: color,
+            stroke: color
+        });
+
+    legend.append('text')
+        .attr({
+            x: 30,
+            y: 15
+        })
+        .text(function (d) {
+            var legendText ="";
+           switch(d){
+               case 0: legendText = "Energy"; break;
+               case 1: legendText = "Materials"; break;
+               case 2: legendText = "Industrials"; break;
+               case 3: legendText = "Consumer Staples"; break;
+               case 4: legendText = "Health Care"; break;
+               case 5: legendText = "Financials"; break;
+               case 6: legendText = "Information Tech"; break;
+               case 7: legendText = "Telecom Services"; break;
+               case 8: legendText = "SOVEREIGN"; break;
+           }
+            return legendText;
+        }).style({
+        fill: '#000',
+        'font-size': '14px'
+    });
+
+
+
+
     function change() {
+
+        d3.selectAll(".legend").remove();
+
+        if($('input[name=dataset]:checked').val() == "Sectors") {
+            color = d3.scale.ordinal()
+                .domain([0,1,2,3,4,5,6,7,8])
+                .range(["#3693D6", "#F9FF72", "#FCE636", "#FFA500", "#FC7200", "#FF3600", "#E20000", "#A40000", "#6D0101"]);
+
+        }
+        else{
+            color = d3.scale.ordinal()
+                .domain([0,1,2,3,4,5,6,7,8,9])
+                .range(["#3693D6", "#F9FF72", "#FCE636", "#FFA500", "#FC7200", "#FF3600", "#E20000", "#A40000", "#6D0101", "#000"]);
+        }
+
         clearTimeout(timeout);
         path = path.data(pie(dataset[this.value])); // update the data
         // set the start and end angles to Math.PI * 2 so we can transition
@@ -92,6 +202,12 @@ function DrawPie ()
                     startAngle: enterAntiClockwise.startAngle,
                     endAngle: enterAntiClockwise.endAngle
                 };
+            })
+            .on('mouseover', function() {
+
+            })
+            .on('mouseout', function(){
+
             }); // store the initial values
 
         path.exit()
@@ -101,6 +217,120 @@ function DrawPie ()
             .remove(); // now remove the exiting arcs
 
         path.transition().duration(750).attrTween("d", arcTween); // redraw the arcs
+
+
+        var legendRectSize = 18;
+        var legendSpacing = 7;
+        var legendHeight = legendRectSize + legendSpacing;
+
+
+
+
+
+        var legend = svg.selectAll('.legend')
+            .data(color.domain())
+            .enter()
+            .append('g')
+            .attr({
+                class: 'legend',
+                transform: function (d, i) {
+                    //Just a calculation for x & y position
+                    return 'translate(150,' + ((i * legendHeight) - 100) + ')';
+                }
+            });
+        legend.append('rect')
+            .attr({
+                width: legendRectSize,
+                height: legendRectSize,
+                rx: 10,
+                ry: 10
+            })
+            .style({
+                fill: color,
+                stroke: color
+            });
+
+        legend.append('text')
+            .attr({
+                x: 30,
+                y: 15
+            })
+            .text(function (d) {
+
+                if($('input[name=dataset]:checked').val() == "Sectors") {
+
+                    var legendText = "";
+                    switch (d) {
+                        case 0:
+                            legendText = "Energy";
+                            break;
+                        case 1:
+                            legendText = "Materials";
+                            break;
+                        case 2:
+                            legendText = "Industrials";
+                            break;
+                        case 3:
+                            legendText = "Consumer Staples";
+                            break;
+                        case 4:
+                            legendText = "Health Care";
+                            break;
+                        case 5:
+                            legendText = "Financials";
+                            break;
+                        case 6:
+                            legendText = "Information Tech";
+                            break;
+                        case 7:
+                            legendText = "Telecom Services";
+                            break;
+                        case 8:
+                            legendText = "SOVEREIGN";
+                            break;
+                    }
+                }
+                else if($('input[name=dataset]:checked').val() == "Rating"){
+                    var legendText = "";
+                    switch (d) {
+                        case 0:
+                            legendText = "AAA";
+                            break;
+                        case 1:
+                            legendText = "AA";
+                            break;
+                        case 2:
+                            legendText = "A";
+                            break;
+                        case 3:
+                            legendText = "BBB";
+                            break;
+                        case 4:
+                            legendText = "BB";
+                            break;
+                        case 5:
+                            legendText = "B";
+                            break;
+                        case 6:
+                            legendText = "CCC";
+                            break;
+                        case 7:
+                            legendText = "CC";
+                            break;
+                        case 8:
+                            legendText = "C";
+                            break;
+                        case 9:
+                            legendText = "D";
+                            break;
+                    }
+                }
+                return legendText;
+            }).style({
+            fill: '#000',
+            'font-size': '14px'
+        });
+
     }
 
 // Store the displayed angles in _current.
