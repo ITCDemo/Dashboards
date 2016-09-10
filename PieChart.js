@@ -74,6 +74,8 @@ function DrawPie ()
 
 // set the start and end angles to 0 so we can transition
 // clockwise to the actual values later
+    HorizontalChart();
+
     var path = svg.selectAll("path")
         .data(pie(dataset.Sectors))
         .enter()

@@ -19,6 +19,8 @@ var Sec8Map = 0;
 var Sec9Map = 0;
 var Sec11Map = 0;
 
+var counterpartyExp = {};
+
 
 function initialize() {
 
@@ -125,6 +127,15 @@ function initialize() {
     queue()
         .defer(d3.csv, "https://raw.githubusercontent.com/deepthiyathiender/Dendograms/master/mega_table_Bond.csv", function (data) {
             var exp = parseInt(data["Market Value (USD)"].replace(/,/g, ""));
+            
+            if (!(data["Counterparty"] in counterpartyExp)) {
+                counterpartyExp[data["Counterparty"]] = exp < 0 ? exp * -1 : exp
+            }
+            else {
+                var existingValue = counterpartyExp[data["Counterparty"]];
+                counterpartyExp[data["Counterparty"]] = exp < 0 ? exp * -1 : exp + existingValue;
+            }
+
 
             switch (data["Entity Code"]) {
                 case "NAMR":
@@ -221,6 +232,14 @@ function initialize() {
         .defer(d3.csv, "https://raw.githubusercontent.com/deepthiyathiender/Dendograms/master/mega_table_Equities.csv", function (data) {
             var exp = parseInt(data["Market Value(USD)"].replace(/,/g, ""));
 
+            if (!(data["Cpty"] in counterpartyExp)) {
+                counterpartyExp[data["Cpty"]] = exp < 0 ? exp * -1 : exp
+            }
+            else {
+                var existingValue = counterpartyExp[data["Cpty"]];
+                counterpartyExp[data["Cpty"]] = exp < 0 ? exp * -1 : exp + existingValue;
+            }
+
             switch (data["Entity Code"]) {
                 case "NAMR":
                     if (NAMRMap["Equities"] == undefined) NAMRMap["Equities"] = 0;
@@ -314,6 +333,16 @@ function initialize() {
         })
         .defer(d3.csv, "https://raw.githubusercontent.com/deepthiyathiender/Dendograms/master/mega_table_FxOTC.csv", function (data) {
             var exp = parseInt(data["Market Value (USD)"].replace(/,/g, ""));
+
+            if (!(data["Counterparty"] in counterpartyExp)) {
+                counterpartyExp[data["Counterparty"]] = exp < 0 ? exp * -1 : exp
+            }
+            else {
+                var existingValue = counterpartyExp[data["Counterparty"]];
+                counterpartyExp[data["Counterparty"]] = exp < 0 ? exp * -1 : exp + existingValue;
+            }
+
+
 
             switch (data["Entity Code"]) {
                 case "NAMR":
@@ -409,6 +438,16 @@ function initialize() {
         .defer(d3.csv, "https://raw.githubusercontent.com/deepthiyathiender/Dendograms/master/mega_table_FxSwap.csv", function (data) {
             var exp = parseInt(data["Market Value(USD)"].replace(/,/g, ""));
 
+
+
+            if (!(data["Counterparty"] in counterpartyExp)) {
+                counterpartyExp[data["Counterparty"]] = exp < 0 ? exp * -1 : exp
+            }
+            else {
+                var existingValue = counterpartyExp[data["Counterparty"]];
+                counterpartyExp[data["Counterparty"]] = exp < 0 ? exp * -1 : exp + existingValue;
+            }
+
             switch (data["Entity Code"]) {
                 case "NAMR":
                     if (NAMRMap["FxSwap"] == undefined) NAMRMap["FxSwap"] = 0;
@@ -502,6 +541,14 @@ function initialize() {
         })
         .defer(d3.csv, "https://raw.githubusercontent.com/deepthiyathiender/Dendograms/master/mega_table_IRSDeal.csv", function (data) {
             var exp = parseInt(data["Market Value (USD)"].replace(/,/g, ""));
+
+            if (!(data["Counterparty Paying"] in counterpartyExp)) {
+                counterpartyExp[data["Counterparty Paying"]] = exp < 0 ? exp * -1 : exp
+            }
+            else {
+                var existingValue = counterpartyExp[data["Counterparty Paying"]];
+                counterpartyExp[data["Counterparty Paying"]] = exp < 0 ? exp * -1 : exp + existingValue;
+            }
 
             switch (data["Entity Code"]) {
                 case "NAMR":
@@ -597,6 +644,15 @@ function initialize() {
         .defer(d3.csv, "https://raw.githubusercontent.com/deepthiyathiender/Dendograms/master/mega_table_L&DDeal.csv", function (data) {
             var exp = parseInt(data["Market Value (USD)"].replace(/,/g, ""));
 
+
+            if (!(data["Counterparty"] in counterpartyExp)) {
+                counterpartyExp[data["Counterparty"]] = exp < 0 ? exp * -1 : exp
+            }
+            else {
+                var existingValue = counterpartyExp[data["Counterparty"]];
+                counterpartyExp[data["Counterparty"]] = exp < 0 ? exp * -1 : exp + existingValue;
+            }
+
             switch (data["Entity Code"]) {
                 case "NAMR":
                     if (NAMRMap["LD"] == undefined) NAMRMap["LD"] = 0;
@@ -689,7 +745,6 @@ function initialize() {
             }
         })
         .await(function () {
-
             var citymap = {
                 NAMR: {
                     center: {
@@ -747,7 +802,7 @@ function initialize() {
                     var pageX = e.Ra.pageX;
                     var pageY = e.Ra.pageY;
 
-                    $(".overlay").html("<strong style='font-size: 18px'>"+this.cityName+"</strong><p>Utilization - $"+citymap[this.cityName].value+"</p>");
+                    $(".overlay").html("<span style='font-size: 18px'>"+this.cityName+"</span><p style='font-size: 14px'>Utilization - "+FormatMoney(citymap[this.cityName].value)+"</p>");
                     $(".overlay").show();
                     $(".overlay").css({"top":pageY, "left": pageX, "position":"absolute"});
                 });

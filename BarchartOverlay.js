@@ -20,13 +20,13 @@ function drawBar(data) {
     var yAxis = d3.svg.axis()
         .scale(y)
         .orient("left")
-        .tickFormat(formatPercent);
+        .tickFormat(function(d) { return FormatMoney(d); });
 
     var tip = d3.tip()
         .attr('class', 'd3-tip')
         .offset([-10, 0])
         .html(function (d) {
-            return "<strong>Utilization:</strong> <span style='color:black'> $ " + d.value + "</span>";
+            return "<strong>Utilization:</strong> <span style='color:black'> " + FormatMoney(d.value) + "</span>";
         });
 
     var svg = d3.select("#pie")
