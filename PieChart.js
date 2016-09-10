@@ -103,7 +103,7 @@ function DrawPie ()
             $(".pieoverlay").html('').hide();
 
             d3.select(this).transition()
-                .duration(1000)
+                .duration(300)
                 .attr("d", arc);
         })
         .each(function (d) {
