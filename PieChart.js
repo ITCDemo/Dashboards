@@ -62,6 +62,10 @@ function DrawPie ()
         .innerRadius(innerRadius)
         .outerRadius(outerRadius);
 
+    var arcOver = d3.svg.arc()
+        .innerRadius(innerRadius+20)
+        .outerRadius(outerRadius+20);
+
     var svg = d3.select(".PieRating").append("svg")
         .attr("width", width)
         .attr("height", height)
@@ -84,6 +88,11 @@ function DrawPie ()
             $(".pieoverlay")
                 .html(FormatMoney(d.data))
                 .show();
+
+
+            d3.select(this).transition()
+                .duration(300)
+                .attr("d", arcOver);
         })
         .on('mousemove', function(d) {
             $(".pieoverlay")
@@ -92,6 +101,10 @@ function DrawPie ()
         })
         .on('mouseout', function(d) {
             $(".pieoverlay").html('').hide();
+
+            d3.select(this).transition()
+                .duration(1000)
+                .attr("d", arc);
         })
         .each(function (d) {
             this._current = {
