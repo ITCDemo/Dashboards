@@ -10,10 +10,11 @@
     <script src="regionMap.js"></script>
     <script src="BarchartOverlay.js"></script>
     <script src="PieChart.js"></script>
+    <script src="HorizontalChart.js"></script>
 
     <style>
         section {
-            background-color: ghostwhite;
+            background-color: white;
             border: solid black 1px;
             margin: 10px;
             position: relative;
@@ -33,7 +34,7 @@
 
         .overlay {
             width: 180px;
-            height: 40px;
+            height: 50px;
             display: none;
             z-index: 99;
             box-sizing: border-box;
@@ -45,9 +46,30 @@
             text-align: center;
             padding: 12px;
             padding-top: 0;
+            padding-bottom: 0;
             background: rgba(0, 0, 0, 0.6);
             color: #fff;
             border-radius: 10px;
+        }
+
+        .pieoverlay {
+            width: 150px;
+            height: 30px;
+            display: none;
+            z-index: 99;
+            box-sizing: border-box;
+            font-size: 16px;
+            line-height: 1;
+            color: rgba(0, 0, 0, 0.8);
+            content: "\25BC";
+            position: absolute;
+            text-align: center;
+            padding: 12px;
+            padding-top: 5px;
+            background: rgba(0, 0, 0, 0.8);
+            color: #fff;
+            border-radius: 10px;
+            font-weight: bold;
         }
 
         #bar-overlay {
@@ -72,8 +94,7 @@
         #close {
             line-height: 12px;
             width: 18px;
-            font-size: 18pt;
-            font-family: Calibri;
+            font-size: 14pt;
             margin-top: 1px;
             margin-right: 2px;
             position: absolute;
@@ -142,30 +163,43 @@
             top: 10px;
         }
 
+        #xaxis .domain {
+            fill:none;
+            stroke:#000;
+        }
+        #xaxis text, #yaxis text {
+            font-size: 12px;
+        }
+
+        #horizontalBar svg{
+            margin-top: -15px
+        }
 
     </style>
 </head>
 
-<body onload="DrawPie()">
+<body onload="DrawPie();">
 <script>
 
 </script>
 <div class="overlay"></div>
+<div class="pieoverlay"></div>
+
 <section style="float: left; height: 300px; width: 730px;">
     <div id="map-canvas"></div>
     <div id="bar-overlay">
         <div id="pie" class="chart-container">
 
         </div>
-        <div id="close" onclick="$('#bar-overlay').css({'opacity': 0, 'z-index': -1, 'height': '0px'}); d3.select('#pie svg').remove();">X</div>
+        <div id="close" onclick="$('#bar-overlay').css({'opacity': 0, 'z-index': -1, 'height': '0px'}); d3.select('#pie svg').remove();">&#10006;</div>
     </div>
 </section>
 <section style="float: left; height: 300px; width: 470px;" class="PieRating">
     <form>
-        <label><input type="radio" name="dataset" value="apples" checked> Sectors</label>
-        <label><input type="radio" name="dataset" value="oranges"> Rating</label>
+        <label><input type="radio" name="dataset" value="Sectors" checked> Sectors</label>
+        <label><input type="radio" name="dataset" value="Rating"> Rating</label>
     </form>
 </section>
-<section style="float: left; height: 260px; width: 500px"></section>
+<section id="horizontalBar" style="float: left; height: 350px; width: 1000px"></section>
 </body>
 </html>
