@@ -22,11 +22,49 @@ var Sec11Map = 0;
 var counterpartyExp = {};
 
 
+var SectoRatingMap = {
+    Sector: {
+        0: "SEC_1",
+        1: "SEC_2",
+        2: "SEC_3",
+        3: "SEC_5",
+        4: "SEC_6",
+        5: "SEC_7",
+        6: "SEC_8",
+        7: "SEC_9",
+        8: "SEC_11"
+    },
+    Rating: {
+        0: "AAA",
+        1: "AA",
+        2: "A",
+        3: "BBB",
+        4: "BB",
+        5: "B",
+        6: "CCC",
+        7: "CC",
+        8: "C",
+        9: "D"
+    },
+    SectorID: {
+        "SEC_1": "Energy",
+        "SEC_2": "Materials",
+        "SEC_3": "Industrials",
+        "SEC_5": "Consumer Staples",
+        "SEC_6": "Health Care",
+        "SEC_7": "Financials",
+        "SEC_8": "Information Tech",
+        "SEC_9": "Telecom Services",
+        "SEC_11": "SOVEREIGN"
+    }
+};
+
+
 function initialize() {
 
     var myOptions = {
         zoom: 2,
-        center: new google.maps.LatLng(10, 0),
+        center: new google.maps.LatLng(10, -10),
         mapTypeId: google.maps.MapTypeId.ROADMAP,
         draggable: false,
         panControl: false,
@@ -114,6 +152,13 @@ function initialize() {
     var MENAMap = {};
     var APACMap = {};
 
+
+    var BondMap = {};
+    var EquititesMap = {};
+    var FxOTCMap = {};
+    var FxSwapMap = {};
+    var IRSDealMap = {};
+    var LDDealMap = {};
 
 
 
@@ -228,6 +273,16 @@ function initialize() {
                     Sec11Map += exp < 0 ? exp * -1 : exp;
                     break;
             }
+
+            if (!(data["Counterparty"] in BondMap)) {
+                BondMap[data["Counterparty"]] = {
+                    value: parseInt(data["Market Value (USD)"].replace(/,/g, ""))
+                };
+            }
+            else {
+                var existingBond = BondMap[data["Counterparty"]].value;
+                BondMap[data["Counterparty"]].value = parseInt(data["Market Value (USD)"].replace(/,/g, "")) + existingBond;
+            }
         })
         .defer(d3.csv, "https://raw.githubusercontent.com/deepthiyathiender/Dendograms/master/mega_table_Equities.csv", function (data) {
             var exp = parseInt(data["Market Value(USD)"].replace(/,/g, ""));
@@ -329,6 +384,16 @@ function initialize() {
                 case "SEC_11":
                     Sec11Map += exp < 0 ? exp * -1 : exp;
                     break;
+            }
+
+            if (!(data["Cpty"] in EquititesMap)) {
+                EquititesMap[data["Cpty"]] = {
+                    value: parseInt(data["Market Value(USD)"].replace(/,/g, ""))
+                };
+            }
+            else {
+                var existingEquities = EquititesMap[data["Cpty"]].value;
+                EquititesMap[data["Cpty"]].value = parseInt(data["Market Value(USD)"].replace(/,/g, "")) + existingEquities;
             }
         })
         .defer(d3.csv, "https://raw.githubusercontent.com/deepthiyathiender/Dendograms/master/mega_table_FxOTC.csv", function (data) {
@@ -434,6 +499,16 @@ function initialize() {
                     Sec11Map += exp < 0 ? exp * -1 : exp;
                     break;
             }
+
+            if (!(data["Counterparty"] in FxOTCMap)) {
+                FxOTCMap[data["Counterparty"]] = {
+                    value: parseInt(data["Market Value (USD)"].replace(/,/g, ""))
+                };
+            }
+            else {
+                var existingFxOTC = FxOTCMap[data["Counterparty"]].value;
+                FxOTCMap[data["Counterparty"]].value = parseInt(data["Market Value (USD)"].replace(/,/g, "")) + existingFxOTC;
+            }
         })
         .defer(d3.csv, "https://raw.githubusercontent.com/deepthiyathiender/Dendograms/master/mega_table_FxSwap.csv", function (data) {
             var exp = parseInt(data["Market Value(USD)"].replace(/,/g, ""));
@@ -538,6 +613,16 @@ function initialize() {
                     Sec11Map += exp < 0 ? exp * -1 : exp;
                     break;
             }
+
+            if (!(data["Counterparty"] in FxSwapMap)) {
+                FxSwapMap[data["Counterparty"]] = {
+                    value: parseInt(data["Market Value(USD)"].replace(/,/g, ""))
+                };
+            }
+            else {
+                var existingFxSwap = FxSwapMap[data["Counterparty"]].value;
+                FxSwapMap[data["Counterparty"]].value = parseInt(data["Market Value(USD)"].replace(/,/g, "")) + existingFxSwap;
+            }
         })
         .defer(d3.csv, "https://raw.githubusercontent.com/deepthiyathiender/Dendograms/master/mega_table_IRSDeal.csv", function (data) {
             var exp = parseInt(data["Market Value (USD)"].replace(/,/g, ""));
@@ -639,6 +724,16 @@ function initialize() {
                 case "SEC_11":
                     Sec11Map += exp < 0 ? exp * -1 : exp;
                     break;
+            }
+
+            if (!(data["Counterparty Paying"] in IRSDealMap)) {
+                IRSDealMap[data["Counterparty Paying"]] = {
+                    value: parseInt(data["Market Value (USD)"].replace(/,/g, ""))
+                };
+            }
+            else {
+                var existingIRS = IRSDealMap[data["Counterparty Paying"]].value;
+                IRSDealMap[data["Counterparty Paying"]].value = parseInt(data["Market Value (USD)"].replace(/,/g, "")) + existingIRS;
             }
         })
         .defer(d3.csv, "https://raw.githubusercontent.com/deepthiyathiender/Dendograms/master/mega_table_L&DDeal.csv", function (data) {
@@ -742,6 +837,16 @@ function initialize() {
                 case "SEC_11":
                     Sec11Map += exp < 0 ? exp * -1 : exp;
                     break;
+            }
+
+            if (!(data["Counterparty"] in LDDealMap)) {
+                LDDealMap[data["Counterparty"]] = {
+                    value: parseInt(data["Market Value (USD)"].replace(/,/g, ""))
+                };
+            }
+            else {
+                var existingLD = LDDealMap[data["Counterparty"]].value;
+                LDDealMap[data["Counterparty"]].value = parseInt(data["Market Value (USD)"].replace(/,/g, "")) + existingLD;
             }
         })
         .await(function () {
