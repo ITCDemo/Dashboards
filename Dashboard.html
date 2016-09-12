@@ -11,13 +11,15 @@
     <script src="BarchartOverlay.js"></script>
     <script src="PieChart.js"></script>
     <script src="HorizontalChart.js"></script>
+    <script src="SmallDendogram.js"></script>
 
     <style>
         section {
             background-color: white;
-            border: solid black 1px;
+            /*border: solid black 1px;*/
             margin: 10px;
             position: relative;
+            margin-top: 3px;
         }
 
         h3 {
@@ -29,7 +31,7 @@
 
         #map-canvas {
             height: 300px;
-            width: 730px;
+            width: 600px;
         }
 
         .overlay {
@@ -87,11 +89,31 @@
             -moz-transition: all 0.5s linear;
             -o-transition: all 0.5s linear;
             height: 0px;
-            width: 730px;
+            width: 600px;
             float: left;
         }
 
-        #close {
+
+        #ratingSector-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: #ffffff;
+            background: rgba(255, 255, 255, 0.9);
+            color: #051928;
+            opacity: 0;
+            z-index: -1;
+            -webkit-transition: all 0.5s linear;
+            -moz-transition: all 0.5s linear;
+            -o-transition: all 0.5s linear;
+            height: 0px;
+            width: 620px;
+            float: left;
+        }
+
+        .close {
             line-height: 12px;
             width: 18px;
             font-size: 14pt;
@@ -175,6 +197,28 @@
             margin-top: -15px
         }
 
+
+        .node {
+            cursor: pointer;
+        }
+
+        .node circle {
+            fill: #fff;
+            stroke: steelblue;
+            stroke-width: 3px;
+        }
+
+        .node text {
+            font: 12px sans-serif;
+        }
+
+        .link {
+            fill: none;
+            stroke: #ccc;
+            stroke-width: 7px;
+            stroke-opacity: 0.5;
+        }
+
     </style>
 </head>
 
@@ -185,21 +229,29 @@
 <div class="overlay"></div>
 <div class="pieoverlay"></div>
 
-<section style="float: left; height: 300px; width: 730px;">
+<section style="float: left; height: 300px; width: 600px;">
     <div id="map-canvas"></div>
     <div id="bar-overlay">
         <div id="pie" class="chart-container">
 
         </div>
-        <div id="close" onclick="$('#bar-overlay').css({'opacity': 0, 'z-index': -1, 'height': '0px'}); d3.select('#pie svg').remove();">&#10006;</div>
+        <div class="close" onclick="$('#bar-overlay').css({'opacity': 0, 'z-index': -1, 'height': '0px'}); d3.select('#pie svg').remove();">&#10006;</div>
     </div>
 </section>
-<section style="float: left; height: 300px; width: 470px;" class="PieRating">
+<section style="float: left; height: 300px; width: 620px;" class="PieRating">
+    <div id="ratingSector-overlay">
+
+        <div id="tree">
+
+        </div>
+        <div class="close" onclick="$('#ratingSector-overlay').css({'opacity': 0, 'z-index': -1, 'height': '0px'}); d3.select('#tree svg').remove();">&#10006;</div>
+
+    </div>
     <form>
         <label><input type="radio" name="dataset" value="Sectors" checked> Sectors</label>
         <label><input type="radio" name="dataset" value="Rating"> Rating</label>
     </form>
 </section>
-<section id="horizontalBar" style="float: left; height: 350px; width: 1000px"></section>
+<section id="horizontalBar" style="float: left; height: 340px; width: 1000px"></section>
 </body>
 </html>

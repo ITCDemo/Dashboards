@@ -29,12 +29,12 @@ function FormatMoney(money){
 function DrawPie ()
 {
 
-    var dataset = {
+var dataset = {
         Sectors: [Sec1Map, Sec2Map, Sec3Map, Sec5Map, Sec6Map, Sec7Map, Sec8Map, Sec9Map, Sec11Map],
         Rating: [AAAMap, AAMap, AMap, BBBMap, BBMap, BMap, CCCMap, CCMap, CMap, DMap]
     };
 
-    var width = 470,
+    var width = 620,
         height = 300,
         radius = Math.min(width, height) / 2.4;
 
@@ -50,12 +50,12 @@ function DrawPie ()
 
     var color = d3.scale.ordinal()
         .domain([0,1,2,3,4,5,6,7,8])
-        .range(["#3693D6", "#F9FF72", "#FCE636", "#FFA500", "#FC7200", "#FF3600", "#E20000", "#A40000", "#6D0101", "#000"]);
+        .range(["#3693D6", "#F9FF72", "#FCE636", "#FFA500", "#FC7200", "#FF3600", "#E20000", "#A40000", "#6D0101"]);
 
     var pie = d3.layout.pie()
         .sort(null);
 
-    var outerRadius = width / 3.7;
+    var outerRadius = width / 5;
     var innerRadius = 70;
 
     var arc = d3.svg.arc()
@@ -70,7 +70,7 @@ function DrawPie ()
         .attr("width", width)
         .attr("height", height)
         .append("g")
-        .attr("transform", "translate(" + width / 3 + "," + height / 2 + ")");
+        .attr("transform", "translate(" + width / 3.8 + "," + height / 2 + ")");
 
 // set the start and end angles to 0 so we can transition
 // clockwise to the actual values later
@@ -143,7 +143,11 @@ function DrawPie ()
             class: 'legend',
             transform: function (d, i) {
                 //Just a calculation for x & y position
-                return 'translate(150,' + ((i * legendHeight) - 100) + ')';
+                if(i>4) {
+                    return 'translate(150,' + ((i%4 * legendHeight) - 100) + ')';
+                }
+
+                return 'translate(300,' + ((i * legendHeight) - 100) + ')';
             }
         });
     legend.append('rect')
@@ -156,6 +160,33 @@ function DrawPie ()
         .style({
             fill: color,
             stroke: color
+        })
+        .on('mouseover', function(d) {
+            d3.select(this).transition()
+                .duration(300)
+                .attr("width", legendRectSize + 5)
+                .attr("height", legendRectSize + 5)
+                .attr("rx", 15)
+                .attr("ry", 15)
+                .style("cursor", "pointer")
+
+        })
+        .on('mouseout', function(d){
+            d3.select(this).transition()
+                .duration(300)
+                .attr("rx", 10)
+                .attr("ry", 10)
+                .attr("width", legendRectSize)
+                .attr("height", legendRectSize)
+        })
+        .on('click', function(d){
+            $("#ratingSector-overlay").css({"opacity": 1, "z-index": "999", "height": "300px"});
+            if($('input[name=dataset]:checked').val() == "Sectors") {
+                DisplayDendo(SectoRatingMap["Sector"][d], "Sectors");
+            }
+            else{
+                DisplayDendo(SectoRatingMap["Rating"][d], "Rating");
+            }
         });
 
     legend.append('text')
@@ -198,7 +229,7 @@ function DrawPie ()
         else{
             color = d3.scale.ordinal()
                 .domain([0,1,2,3,4,5,6,7,8,9])
-                .range(["#3693D6", "#F9FF72", "#FCE636", "#FFA500", "#FC7200", "#FF3600", "#E20000", "#A40000", "#6D0101", "#000"]);
+                .range(["#3693D6", "#F9FF72", "#FCE636", "#FFA500", "#FC7200", "#FF3600", "#E20000", "#A40000", "#6D0101", "#340000"]);
         }
 
         clearTimeout(timeout);
@@ -210,6 +241,8 @@ function DrawPie ()
                 return color(i);
             })
             .attr("d", arc(enterAntiClockwise))
+            .attr("stroke", "white")
+            .attr("stroke-width", 2)
             .each(function (d) {
                 this._current = {
                     data: d.data,
@@ -218,12 +251,28 @@ function DrawPie ()
                     endAngle: enterAntiClockwise.endAngle
                 };
             })
-            .on('mouseover', function() {
+            .on('mouseover', function(d) {
+                $(".pieoverlay")
+                    .html(FormatMoney(d.data))
+                    .show();
 
+
+                d3.select(this).transition()
+                    .duration(300)
+                    .attr("d", arcOver);
             })
-            .on('mouseout', function(){
+            .on('mouseout', function(d){
+                $(".pieoverlay").html('').hide();
 
-            }); // store the initial values
+                d3.select(this).transition()
+                    .duration(300)
+                    .attr("d", arc);
+            })
+            .on('mousemove', function(d) {
+                $(".pieoverlay")
+                    .css('left', d3.mouse(this)[0]+800)
+                    .css('top', d3.mouse(this)[1]+120)
+            });// store the initial values
 
         path.exit()
             .transition()
@@ -238,10 +287,6 @@ function DrawPie ()
         var legendSpacing = 7;
         var legendHeight = legendRectSize + legendSpacing;
 
-
-
-
-
         var legend = svg.selectAll('.legend')
             .data(color.domain())
             .enter()
@@ -250,7 +295,11 @@ function DrawPie ()
                 class: 'legend',
                 transform: function (d, i) {
                     //Just a calculation for x & y position
-                    return 'translate(150,' + ((i * legendHeight) - 100) + ')';
+                    if(i>4) {
+                        return 'translate(150,' + ((i%5 * legendHeight) - 100) + ')';
+                    }
+
+                    return 'translate(300,' + ((i * legendHeight) - 100) + ')';
                 }
             });
         legend.append('rect')
@@ -263,6 +312,33 @@ function DrawPie ()
             .style({
                 fill: color,
                 stroke: color
+            })
+            .on('mouseover', function(d) {
+                d3.select(this).transition()
+                    .duration(300)
+                    .attr("width", legendRectSize + 5)
+                    .attr("height", legendRectSize + 5)
+                    .attr("rx", 15)
+                    .attr("ry", 15)
+                    .style("cursor", "pointer")
+
+            })
+            .on('mouseout', function(d){
+                d3.select(this).transition()
+                    .duration(300)
+                    .attr("rx", 10)
+                    .attr("ry", 10)
+                    .attr("width", legendRectSize)
+                    .attr("height", legendRectSize)
+            })
+            .on('click', function(d){
+                $("#ratingSector-overlay").css({"opacity": 1, "z-index": "999", "height": "300px"});
+                if($('input[name=dataset]:checked').val() == "Sectors") {
+                    DisplayDendo(SectoRatingMap["Sector"][d], "Sectors");
+                }
+                else{
+                    DisplayDendo(SectoRatingMap["Rating"][d], "Rating");
+                }
             });
 
         legend.append('text')

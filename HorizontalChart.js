@@ -22,9 +22,7 @@ function HorizontalChart() {
         if(sorted[i][1] > max) max = sorted[i][1];
         if(sorted[i][1] < min) min = sorted[i][1];
     }
-
-    //var counterparties = ["", "Addittion Elle", "", "Banco do Brasil", "Bank of America", "Bank of Monteral", "Bosch", "Citi Bank", "Copacol", "Danfoss", "Default_Cpty", "Deutsche Bank"];
-
+    
 
     var colors = ['#0000b4', '#0082ca', '#0094ff', '#0d4bcf', '#0066AE', '#074285', '#00187B', '#285964', '#405F83', '#416545'];
 
@@ -120,14 +118,12 @@ function HorizontalChart() {
             return 0;
         });
 
-    debugger;
 
     var transit = d3.selectAll("#bars rect")
         .data(exps)
         .transition()
         .duration(1000)
         .attr("width", function (d) {
-            debugger;
             return xscale(d);
         });
 

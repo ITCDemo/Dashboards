@@ -1,6 +1,6 @@
 function drawBar(data) {
 
-    var margin = {top: 40, right: 20, bottom: 30, left: 200},
+    var margin = {top: 40, right: 20, bottom: 30, left: 130},
         width = 900 - margin.left - margin.right,
         height = 300 - margin.top - margin.bottom;
 
@@ -59,8 +59,9 @@ function drawBar(data) {
         .call(yAxis)
         .append("text")
         .attr("transform", "rotate(-90)")
-        .attr("y", -140)
+        .attr("y", -110)
         .attr("dy", ".71em")
+        .attr("x", -40)
         .style("text-anchor", "end")
         .style("fill", "#fff")
         .text("Utilization");
