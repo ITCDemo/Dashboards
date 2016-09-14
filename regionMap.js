@@ -19,7 +19,19 @@ var Sec8Map = 0;
 var Sec9Map = 0;
 var Sec11Map = 0;
 
+var regionMap = [];
+var countryMapMarkers = [];
+
 var counterpartyExp = {};
+
+var BondMap = {};
+var EquititesMap = {};
+var FxOTCMap = {};
+var FxSwapMap = {};
+var IRSDealMap = {};
+var LDDealMap = {};
+
+var countryMap = {};
 
 
 var SectoRatingMap = {
@@ -62,103 +74,14 @@ var SectoRatingMap = {
 
 function initialize() {
 
-    var myOptions = {
-        zoom: 2,
-        center: new google.maps.LatLng(10, -10),
-        mapTypeId: google.maps.MapTypeId.ROADMAP,
-        draggable: false,
-        panControl: false,
-        scrollwheel: false,
-        navigationControl: false,
-        mapTypeControl: false,
-        scaleControl: false,
-        zoomControl: false,
-        disableDoubleClickZoom: true,
-        streetViewControl: false
-
-    };
-
     // initialize the map
-    var map = new google.maps.Map(document.getElementById('map-canvas'),
-        myOptions);
 
-    // these are the map styles
-    var styles = [
-        {
-            stylers: [
-                {hue: "#D1D1D1"},
-                {saturation: -100}
-            ]
-        },
-        {
-            featureType: "landscape",
-            stylers: [
-                {hue: "#D1D1D1"},
-                {saturation: -100}
-            ]
-        }, {
-            featureType: "road",
-            stylers: [
-                {visibility: "off"}
-            ]
-        }, {
-            featureType: "administrative.land_parcel",
-            stylers: [
-                {visibility: "off"}
-            ]
-        }, {
-            featureType: "administrative.locality",
-            stylers: [
-                {visibility: "off"}
-            ]
-        }, {
-            featureType: "administrative.neighborhood",
-            stylers: [
-                {visibility: "off"}
-            ]
-        }, {
-            featureType: "administrative.province",
-            stylers: [
-                {visibility: "off"}
-            ]
-        }, {
-            featureType: "landscape.man_made",
-            stylers: [
-                {visibility: "off"}
-            ]
-        }, {
-            featureType: "landscape.natural",
-            stylers: [
-                {visibility: "off"}
-            ]
-        }, {
-            featureType: "poi",
-            stylers: [
-                {visibility: "off"}
-            ]
-        }, {
-            featureType: "transit",
-            stylers: [
-                {visibility: "off"}
-            ]
-        }
-    ];
-
-    map.setOptions({styles: styles});
 
     var NAMRMap = {};
     var SAMRMap = {};
     var EUROMap = {};
     var MENAMap = {};
     var APACMap = {};
-
-
-    var BondMap = {};
-    var EquititesMap = {};
-    var FxOTCMap = {};
-    var FxSwapMap = {};
-    var IRSDealMap = {};
-    var LDDealMap = {};
 
 
 
@@ -172,7 +95,7 @@ function initialize() {
     queue()
         .defer(d3.csv, "https://raw.githubusercontent.com/deepthiyathiender/Dendograms/master/mega_table_Bond.csv", function (data) {
             var exp = parseInt(data["Market Value (USD)"].replace(/,/g, ""));
-            
+
             if (!(data["Counterparty"] in counterpartyExp)) {
                 counterpartyExp[data["Counterparty"]] = exp < 0 ? exp * -1 : exp
             }
@@ -244,7 +167,7 @@ function initialize() {
             }
 
 
-            switch(data["Sector_ID"]) {
+            switch (data["Sector_ID"]) {
                 case "SEC_1":
                     Sec1Map += exp < 0 ? exp * -1 : exp;
                     break;
@@ -282,6 +205,22 @@ function initialize() {
             else {
                 var existingBond = BondMap[data["Counterparty"]].value;
                 BondMap[data["Counterparty"]].value = parseInt(data["Market Value (USD)"].replace(/,/g, "")) + existingBond;
+            }
+
+
+            if(!(data["Branch Name"] in countryMap)){
+                countryMap[data["Branch Name"]] = {
+                    "Bond": parseInt(data["Market Value (USD)"].replace(/,/g, ""))
+                }
+            }
+            else{
+                if(countryMap[data["Branch Name"]]["Bond"] == undefined) {
+                    countryMap[data["Branch Name"]]["Bond"] = parseInt(data["Market Value (USD)"].replace(/,/g, ""));
+                }
+                else {
+                    var existingBondCountry = countryMap[data["Branch Name"]]["Bond"];
+                    countryMap[data["Branch Name"]]["Bond"] = parseInt(data["Market Value (USD)"].replace(/,/g, "")) + existingBondCountry;
+                }
             }
         })
         .defer(d3.csv, "https://raw.githubusercontent.com/deepthiyathiender/Dendograms/master/mega_table_Equities.csv", function (data) {
@@ -356,7 +295,7 @@ function initialize() {
                     break;
             }
 
-            switch(data["Sector_ID"]) {
+            switch (data["Sector_ID"]) {
                 case "SEC_1":
                     Sec1Map += exp < 0 ? exp * -1 : exp;
                     break;
@@ -395,6 +334,22 @@ function initialize() {
                 var existingEquities = EquititesMap[data["Cpty"]].value;
                 EquititesMap[data["Cpty"]].value = parseInt(data["Market Value(USD)"].replace(/,/g, "")) + existingEquities;
             }
+
+
+            if(!(data["Branch Name"] in countryMap)){
+                countryMap[data["Branch Name"]] = {
+                    "Equities": parseInt(data["Market Value(USD)"].replace(/,/g, ""))
+                }
+            }
+            else{
+                if(countryMap[data["Branch Name"]]["Equities"] == undefined) {
+                    countryMap[data["Branch Name"]]["Equities"] = parseInt(data["Market Value(USD)"].replace(/,/g, ""))
+                }
+                else {
+                    var existingEquitiesCountry = countryMap[data["Branch Name"]]["Equities"];
+                    countryMap[data["Branch Name"]]["Equities"] = parseInt(data["Market Value(USD)"].replace(/,/g, "")) + existingEquitiesCountry;
+                }
+            }
         })
         .defer(d3.csv, "https://raw.githubusercontent.com/deepthiyathiender/Dendograms/master/mega_table_FxOTC.csv", function (data) {
             var exp = parseInt(data["Market Value (USD)"].replace(/,/g, ""));
@@ -403,10 +358,9 @@ function initialize() {
                 counterpartyExp[data["Counterparty"]] = exp < 0 ? exp * -1 : exp
             }
             else {
-                var existingValue = counterpartyExp[data["Counterparty"]];
-                counterpartyExp[data["Counterparty"]] = exp < 0 ? exp * -1 : exp + existingValue;
+                    var existingValue = counterpartyExp[data["Counterparty"]];
+                    counterpartyExp[data["Counterparty"]] = exp < 0 ? exp * -1 : exp + existingValue;
             }
-
 
 
             switch (data["Entity Code"]) {
@@ -470,7 +424,7 @@ function initialize() {
                     break;
             }
 
-            switch(data["Sector_ID"]) {
+            switch (data["Sector_ID"]) {
                 case "SEC_1":
                     Sec1Map += exp < 0 ? exp * -1 : exp;
                     break;
@@ -509,10 +463,24 @@ function initialize() {
                 var existingFxOTC = FxOTCMap[data["Counterparty"]].value;
                 FxOTCMap[data["Counterparty"]].value = parseInt(data["Market Value (USD)"].replace(/,/g, "")) + existingFxOTC;
             }
+
+            if(!(data["Branch Name"] in countryMap)){
+                countryMap[data["Branch Name"]] = {
+                    "FxOTC": parseInt(data["Market Value (USD)"].replace(/,/g, ""))
+                }
+            }
+            else{
+                if(countryMap[data["Branch Name"]]["FxOTC"] == undefined) {
+                    countryMap[data["Branch Name"]]["FxOTC"] = parseInt(data["Market Value (USD)"].replace(/,/g, ""));
+                }
+                else {
+                    var existingFxOTCCountry = countryMap[data["Branch Name"]]["FxOTC"];
+                    countryMap[data["Branch Name"]]["FxOTC"] = parseInt(data["Market Value (USD)"].replace(/,/g, "")) + existingFxOTCCountry;
+                }
+            }
         })
         .defer(d3.csv, "https://raw.githubusercontent.com/deepthiyathiender/Dendograms/master/mega_table_FxSwap.csv", function (data) {
             var exp = parseInt(data["Market Value(USD)"].replace(/,/g, ""));
-
 
 
             if (!(data["Counterparty"] in counterpartyExp)) {
@@ -584,7 +552,7 @@ function initialize() {
                     break;
             }
 
-            switch(data["Sector_ID"]) {
+            switch (data["Sector_ID"]) {
                 case "SEC_1":
                     Sec1Map += exp < 0 ? exp * -1 : exp;
                     break;
@@ -622,6 +590,22 @@ function initialize() {
             else {
                 var existingFxSwap = FxSwapMap[data["Counterparty"]].value;
                 FxSwapMap[data["Counterparty"]].value = parseInt(data["Market Value(USD)"].replace(/,/g, "")) + existingFxSwap;
+            }
+
+
+            if(!(data["Branch Name"] in countryMap)){
+                countryMap[data["Branch Name"]] = {
+                    "FxSwap": parseInt(data["Market Value(USD)"].replace(/,/g, ""))
+                }
+            }
+            else{
+                if(countryMap[data["Branch Name"]]["FxSwap"] == undefined) {
+                    countryMap[data["Branch Name"]]["FxSwap"] = parseInt(data["Market Value(USD)"].replace(/,/g, ""))
+                }
+                else {
+                    var existingFxSwapCountry = countryMap[data["Branch Name"]]["FxSwap"];
+                    countryMap[data["Branch Name"]]["FxSwap"] = parseInt(data["Market Value(USD)"].replace(/,/g, "")) + existingFxSwapCountry;
+                }
             }
         })
         .defer(d3.csv, "https://raw.githubusercontent.com/deepthiyathiender/Dendograms/master/mega_table_IRSDeal.csv", function (data) {
@@ -696,7 +680,7 @@ function initialize() {
                     break;
             }
 
-            switch(data["Sector_ID"]) {
+            switch (data["Sector_ID"]) {
                 case "SEC_1":
                     Sec1Map += exp < 0 ? exp * -1 : exp;
                     break;
@@ -734,6 +718,21 @@ function initialize() {
             else {
                 var existingIRS = IRSDealMap[data["Counterparty Paying"]].value;
                 IRSDealMap[data["Counterparty Paying"]].value = parseInt(data["Market Value (USD)"].replace(/,/g, "")) + existingIRS;
+            }
+
+            if(!(data["Branch Name"] in countryMap)){
+                countryMap[data["Branch Name"]] = {
+                    "IRS": parseInt(data["Market Value (USD)"].replace(/,/g, ""))
+                }
+            }
+            else{
+                if(countryMap[data["Branch Name"]]["IRS"] == undefined) {
+                    countryMap[data["Branch Name"]]["IRS"] = parseInt(data["Market Value (USD)"].replace(/,/g, ""))
+                }
+                else {
+                    var existingIRSCountry = countryMap[data["Branch Name"]]["IRS"];
+                    countryMap[data["Branch Name"]]["IRS"] = parseInt(data["Market Value (USD)"].replace(/,/g, "")) + existingIRSCountry;
+                }
             }
         })
         .defer(d3.csv, "https://raw.githubusercontent.com/deepthiyathiender/Dendograms/master/mega_table_L&DDeal.csv", function (data) {
@@ -809,7 +808,7 @@ function initialize() {
                     break;
             }
 
-            switch(data["Sector_ID"]) {
+            switch (data["Sector_ID"]) {
                 case "SEC_1":
                     Sec1Map += exp < 0 ? exp * -1 : exp;
                     break;
@@ -848,115 +847,510 @@ function initialize() {
                 var existingLD = LDDealMap[data["Counterparty"]].value;
                 LDDealMap[data["Counterparty"]].value = parseInt(data["Market Value (USD)"].replace(/,/g, "")) + existingLD;
             }
-        })
-        .await(function () {
-            var citymap = {
-                NAMR: {
-                    center: {
-                        lat: 41.17, lng: -100.89
-                    },
-                    value: NAMRTotal<0?NAMRTotal*-1:NAMRTotal
-                },
-                SAMR: {
-                    center: {
-                        lat: -12.65, lng: -60.82
-                    },
-                    value: SAMRTotal<0?SAMRTotal*-1:SAMRTotal
-                },
-                EURO: {
-                    center: {
-                        lat: 48.15, lng: 8.43
-                    },
-                    value: EUROTotal<0?EUROTotal*-1:EUROTotal
-                },
-                APAC: {
-                    center: {
-                        lat: 38.74, lng: 86.13
-                    },
-                    value: APACTotal<0?APACTotal*-1:APACTotal
-                },
-                MENA: {
-                    center: {
-                        lat: 34.22, lng: 42.18
-                    },
-                    value: MENATotal<0?MENATotal*-1:MENATotal
+
+            if(!(data["Branch Name"] in countryMap)){
+                countryMap[data["Branch Name"]] = {
+                    "LD": parseInt(data["Market Value (USD)"].replace(/,/g, ""))
                 }
-            };
-
-            for (var city in citymap) {
-                // Add the circle for this city to the map.
-                var centro = new google.maps.LatLng(citymap[city].center.lat, citymap[city].center.lng);
-
-                var myCity = new google.maps.Circle({
-                    center: centro,
-                    radius: citymap[city].value / 1000 < 1000000 ? 900000 : citymap[city].value / 1000,
-                    strokeColor: '#FF0000',
-                    strokeOpacity: 0.8,
-                    strokeWeight: 3,
-                    fillColor: '#FF0000',
-                    fillOpacity: 0.2,
-                    cityName: city
-                });
-
-
-                myCity.addListener('mouseover', function (e) {
-                    this.setOptions({fillOpacity: 0.5});
-                });
-
-                google.maps.event.addDomListener(myCity, 'mousemove', function(e) {
-                    var pageX = e.Ra.pageX;
-                    var pageY = e.Ra.pageY;
-
-                    $(".overlay").html("<span style='font-size: 18px'>"+this.cityName+"</span><p style='font-size: 14px'>Utilization - "+FormatMoney(citymap[this.cityName].value)+"</p>");
-                    $(".overlay").show();
-                    $(".overlay").css({"top":pageY, "left": pageX, "position":"absolute"});
-                });
-
-                google.maps.event.addListener(myCity, 'mouseout', function () {
-                    this.setOptions({fillOpacity: 0.2});
-                    $(".overlay").hide();
-                });
-                google.maps.event.addListener(myCity, 'click', function () {
-                    $("#bar-overlay").css({"opacity": 1, "z-index": "999", "height": "300px"});
-                    var data = [];
-                    var exp;
-                    switch(this.cityName){
-                        case "NAMR":
-                            for(var item in NAMRMap){
-                                exp = { name : item, value: NAMRMap[item] };
-                                data.push(exp);
-                            }
-                            break;
-                        case "SAMR":
-                            for(var item in SAMRMap){
-                                exp = { name : item, value: SAMRMap[item] };
-                                data.push(exp);
-                            }
-                            break;
-                        case "APAC":
-                            for(var item in APACMap){
-                                exp = { name : item, value: APACMap[item] };
-                                data.push(exp);
-                            }
-                            break;
-                        case "MENA":
-                            for(var item in MENAMap){
-                                exp = { name : item, value: MENAMap[item] };
-                                data.push(exp);
-                            }
-                            break;
-                        case "EURO":
-                            for(var item in EUROMap){
-                                exp = { name : item, value: EUROMap[item] };
-                                data.push(exp);
-                            }
-                            break;
-                    }
-                    drawBar(data);
-                });
-
-                myCity.setMap(map);
+            }
+            else{
+                if(countryMap[data["Branch Name"]]["LD"] == undefined) {
+                    countryMap[data["Branch Name"]]["LD"] = parseInt(data["Market Value (USD)"].replace(/,/g, ""))
+                }
+                else {
+                    var existingLDCountry = countryMap[data["Branch Name"]]["LD"];
+                    countryMap[data["Branch Name"]]["LD"] = parseInt(data["Market Value (USD)"].replace(/,/g, "")) + existingLDCountry;
+                }
             }
         })
+        .await(function () {
 
+            var ArgentinaExp = 0;
+            for(var obj in countryMap["Argentina"])
+            {
+                ArgentinaExp += countryMap["Argentina"][obj];
+            }
+
+            var BrazilExp = 0;
+            for(obj in countryMap["Brazil"])
+            {
+                BrazilExp += countryMap["Brazil"][obj];
+            }
+
+            var CanadaExp = 0;
+            for(obj in countryMap["Canada"])
+            {
+                CanadaExp += countryMap["Canada"][obj];
+            }
+
+            var FranceExp = 0;
+            for(obj in countryMap["France"])
+            {
+                FranceExp += countryMap["France"][obj];
+            }
+
+            var GermanyExp = 0;
+            for(obj in countryMap["Germany"])
+            {
+                GermanyExp += countryMap["Germany"][obj];
+            }
+
+            var IndiaExp = 0;
+            for(obj in countryMap["India"])
+            {
+                IndiaExp += countryMap["India"][obj];
+            }
+
+            var JapanExp = 0;
+            for(obj in countryMap["Japan"])
+            {
+                JapanExp += countryMap["Japan"][obj];
+            }
+
+            var UAEExp = 0;
+            for(obj in countryMap["United Arab Emirates"])
+            {
+                UAEExp += countryMap["United Arab Emirates"][obj];
+            }
+
+            var UKExp = 0;
+            for(obj in countryMap["United Kingdom"])
+            {
+                UKExp += countryMap["United Kingdom"][obj];
+            }
+
+            var USExp = 0;
+            for(obj in countryMap["United States"])
+            {
+                USExp += countryMap["United States"][obj];
+            }
+            DrawPie();
+
+            queue()
+                .defer(d3.json, "world-50m.json")
+                .await(function (error, world) {
+                    debugger;
+                    regionMap = [
+                        {
+                            name: "",
+                            center: [0,0],
+                            value: 0
+                        },
+                        {
+                            name: "NAMR",
+                            center: [-100.89, 41.17],
+                            value: NAMRTotal < 0 ? NAMRTotal * -1 : NAMRTotal
+                        },
+
+                        {
+                            name: "SAMR",
+                            center: [-60.82, -12.65],
+                            value: SAMRTotal < 0 ? SAMRTotal * -1 : SAMRTotal
+                        },
+                        {
+                            name: "EURO",
+                            center: [8.43, 48.15],
+                            value: EUROTotal < 0 ? EUROTotal * -1 : EUROTotal
+                        },
+                        {
+                            name: "APAC",
+                            center: [86.13, 38.74],
+                            value: APACTotal < 0 ? APACTotal * -1 : APACTotal
+                        },
+                        {
+                            name: "MENA",
+                            center: [42.18, 34.22],
+                            value: MENATotal < 0 ? MENATotal * -1 : MENATotal
+                        }
+                    ];
+
+
+
+                    countryMapMarkers = [
+                        {
+                            name: "",
+                            center: [0,0],
+                            value: 0
+                        },
+                        {
+                            name: "Argentina",
+                            center: [-63.61, -38.42],
+                            value: ArgentinaExp,
+                            abr: "ARG"
+                        },
+                        {
+                            name: "Brazil",
+                            center: [-51.92, -14.24],
+                            value: BrazilExp,
+                            abr: "BRZ"
+                        },
+                        {
+                            name: "Canada",
+                            center: [-106.34, 56.14],
+                            value: CanadaExp,
+                            abr: "CAN"
+                        },
+                        {
+                            name: "France",
+                            center: [2.21, 46.23],
+                            value: FranceExp,
+                            abr: "FRA"
+                        },
+                        {
+                            name: "Germany",
+                            center: [10.45, 51.17],
+                            value: GermanyExp,
+                            abr: "GER"
+                        },
+                        {
+                            name: "India",
+                            center: [78.96, 20.60],
+                            value: IndiaExp,
+                            abr: "IND"
+                        },
+                        {
+                            name: "Japan",
+                            center: [138.25, 36.21],
+                            value: JapanExp,
+                            abr: "JPN"
+                        },
+                        {
+                            name: "Emirates",
+                            center: [53.84, 23.43],
+                            value: UAEExp,
+                            abr: "UAE"
+                        },
+                        {
+                            name: "United Kingdom",
+                            center: [-3.43, 55.38],
+                            value: UKExp,
+                            abr: "UK"
+                        },
+                        {
+                            name: "United States",
+                            center: [-95.71, 37.10],
+                            value: USExp,
+                            abr: "USA"
+                        }
+                    ];
+
+
+
+                    var width = 600,
+                        height = 300;
+
+                    var projection = d3.geo.mercator()
+                        .translate([270, 190])
+                        .scale(100);
+
+                    var path = d3.geo.path()
+                        .projection(projection);
+
+                    var svg = d3.select("#map-canvas").append("svg")
+                        .attr("width", width)
+                        .attr("height", height)
+                        .style("background-color", "#ffffff")
+                        .append("g");
+
+
+                    var radius = d3.scale.sqrt()
+                        .domain([min, max])
+                        .range([10, 30]);
+                    
+                    
+                    var countries = topojson.object(world, world.objects.countries).geometries;
+
+                    var country = svg.selectAll(".country").data(countries);
+
+                    country
+                        .enter()
+                        .insert("path")
+                        .attr("class", "country")
+                        .attr("d", path)
+                        .style("stroke", "black")
+                        .style("stroke-width", 0.2);
+
+                    var markers = d3.select("#map-canvas svg")
+                        .selectAll("g")
+                        .append("g");
+
+
+                    markers.selectAll("circle")
+                        .data(regionMap, function(d) { return projection(d.center)[1]; }).enter()
+                        .append("circle")
+                        .attr('class', 'regionMarkers')
+                        .attr('r', function (d) {
+
+                            if(d.name == ""){
+                                return "0px";
+                            }
+                            if(radius(d.value) <0) {
+                                return "10px";
+                            }
+
+                            return radius(d.value);
+                        })
+                        .attr("cx", function (d) {
+                            return projection(d.center)[0];
+                        })
+                        .attr("cy", function (d) {
+                            return projection(d.center)[1];
+                        })
+                        .attr("fill","#26A1AD")
+                        .attr("fill-opacity", 0.3)
+                        .attr("stroke", "#26A1AD")
+                        .attr("stroke-width", 2)
+                        .style("cursor", "pointer")
+                        .on('mouseover', function(d){
+                            var exposureValue = 0;
+
+                            for(var obj in regionMap){
+                                if(regionMap[obj].name == d.name){
+                                    exposureValue = regionMap[obj].value;
+                                    break;
+                                }
+                            }
+
+                            $(".overlay")
+                                .html("<span style='font-size: 18px'>" + d.name + "</span><p style='font-size: 14px'>Exposure - " + FormatMoney(exposureValue) + "</p>")
+                                .show();
+                        })
+                        .on('mousemove', function(d) {
+
+                            $(".overlay")
+                                .css('left', d3.mouse(this)[0])
+                                .css('top', d3.mouse(this)[1]);
+
+                        })
+                        .on('mouseout', function(d) {
+                            $(".overlay").html('').hide();
+                        })
+                        .on("click", function(d) {
+                            $("#bar-overlay").css({"opacity": 1, "z-index": "999", "height": "300px"});
+                                var data = [];
+                                var exp;
+                                switch (d.name) {
+                                    case "NAMR":
+                                        for (var item in NAMRMap) {
+                                            exp = {name: item, value: NAMRMap[item]};
+                                            data.push(exp);
+                                        }
+                                        break;
+                                    case "SAMR":
+                                        for (var item in SAMRMap) {
+                                            exp = {name: item, value: SAMRMap[item]};
+                                            data.push(exp);
+                                        }
+                                        break;
+                                    case "APAC":
+                                        for (var item in APACMap) {
+                                            exp = {name: item, value: APACMap[item]};
+                                            data.push(exp);
+                                        }
+                                        break;
+                                    case "MENA":
+                                        for (var item in MENAMap) {
+                                            exp = {name: item, value: MENAMap[item]};
+                                            data.push(exp);
+                                        }
+                                        break;
+                                    case "EURO":
+                                        for (var item in EUROMap) {
+                                            exp = {name: item, value: EUROMap[item]};
+                                            data.push(exp);
+                                        }
+                                        break;
+                                }
+                                drawBarRegion(data);
+                        });
+
+
+                    markers.selectAll("circle")
+                        .data(countryMapMarkers, function(d) { return projection(d.center)[1]; }).enter()
+                        .append("circle")
+                        .attr('class', 'countryMarkers')
+                        .attr('r', function (d) {
+                            
+                            debugger;
+
+                            if(d.name == ""){
+                                return "0px";
+                            }
+                            if(radius(d.value) <10) {
+                                return "10px";
+                            }
+
+                            return radius(d.value);
+                        })
+                        .attr("cx", function (d) {
+                            return projection(d.center)[0];
+                        })
+                        .attr("cy", function (d) {
+                            return projection(d.center)[1];
+                        })
+                        .attr("fill","#26A1AD")
+                        .attr("fill-opacity", 0.3)
+                        .attr("stroke", "#26A1AD")
+                        .attr("stroke-width", 2)
+                        .style("cursor", "pointer")
+
+                        .on('mouseover', function(d){
+                            var exposureValue = 0;
+
+                            for(var obj in countryMapMarkers){
+                                if(countryMapMarkers[obj].name == d.name){
+                                    exposureValue = countryMapMarkers[obj].value;
+                                    break;
+                                }
+                            }
+
+                            $(".overlay")
+                                .html("<span style='font-size: 18px'>" + d.name + "</span><p style='font-size: 14px'>Exposure - " + FormatMoney(exposureValue) + "</p>")
+                                .show();
+                        })
+                        .on('mousemove', function(d) {
+
+                            $(".overlay")
+                                .css('left', d3.mouse(this)[0])
+                                .css('top', d3.mouse(this)[1]);
+
+                        })
+                        .on('mouseout', function(d) {
+                            $(".overlay").html('').hide();
+                        })
+                        .on("click", function(d) {
+                            $("#bar-overlay").css({"opacity": 1, "z-index": "999", "height": "300px"});
+                            var data = [];
+                            var exp;
+                            switch (d.abr) {
+                                case "USA":
+                                    for (var item in countryMap["United States"]) {
+                                        exp = {name: item, value: countryMap["United States"][item]};
+                                        data.push(exp);
+                                    }
+                                    break;
+                                case "ARG":
+                                    for (var item in countryMap["Argentina"]) {
+                                        exp = {name: item, value: countryMap["Argentina"][item]};
+                                        data.push(exp);
+                                    }
+                                    break;
+                                case "BRZ":
+                                    for (var item in countryMap["Brazil"]) {
+                                        exp = {name: item, value: countryMap["Brazil"][item]};
+                                        data.push(exp);
+                                    }
+                                    break;
+                                case "CAN":
+                                    for (var item in countryMap["Canada"]) {
+                                        exp = {name: item, value: countryMap["Canada"][item]};
+                                        data.push(exp);
+                                    }
+                                    break;
+                                case "FRA":
+                                    for (var item in countryMap["France"]) {
+                                        exp = {name: item, value: countryMap["France"][item]};
+                                        data.push(exp);
+                                    }
+                                    break;
+
+                                case "GER":
+                                    for (var item in countryMap["Germany"]) {
+                                        exp = {name: item, value: countryMap["Germany"][item]};
+                                        data.push(exp);
+                                    }
+                                    break;
+                                case "IND":
+                                    for (var item in countryMap["India"]) {
+                                        exp = {name: item, value: countryMap["India"][item]};
+                                        data.push(exp);
+                                    }
+                                    break;
+                                case "JPN":
+                                    for (var item in countryMap["Japan"]) {
+                                        exp = {name: item, value: countryMap["Japan"][item]};
+                                        data.push(exp);
+                                    }
+                                    break;
+                                case "UAE":
+                                    for (var item in countryMap["United Arab Emirates"]) {
+                                        exp = {name: item, value: countryMap["United Arab Emirates"][item]};
+                                        data.push(exp);
+                                    }
+                                    break;
+                                case "UK":
+                                    for (var item in countryMap["United Kingdom"]) {
+                                        exp = {name: item, value: countryMap["United Kingdom"][item]};
+                                        data.push(exp);
+                                    }
+                                    break;
+                            }
+                            drawBarRegion(data);
+                        })
+
+                    markers
+                        .data(regionMap).enter()
+                        .append("text")
+                        .attr("class", "regionMarkers")
+                        .attr("transform", function(d){ var Newradius = radius(d.value) <0?"10":radius(d.value); return "translate("+(projection(d.center)[0]-40)+","+(projection(d.center)[1]+Newradius+15)+")"})
+                        .text(function(d){return d.name})
+                        .attr("font-size","12px")
+                        .attr("fill-opacity",1)
+                        .attr("fill", "black");
+
+                    markers
+                        .data(countryMapMarkers).enter()
+                        .append("text")
+                        .attr("class", "countryMarkers")
+                        .attr("transform", function(d){ var Newradius = radius(d.value) <0?"10":radius(d.value); return "translate("+(projection(d.center)[0]-40)+","+(projection(d.center)[1]+Newradius+15)+")"})
+                        .text(function(d){return d.abr})
+                        .attr("font-size","12px")
+                        .attr("fill-opacity",1)
+                        .attr("fill", "black");
+
+                    d3.selectAll(".countryMarkers")
+                        .attr("fill-opacity", 0)
+                        .attr("stroke-width", 0)
+                        .style("display", "none");
+
+                })
+
+
+            $('input[type=radio][name=region]').change(function() {
+                if (this.value == 'Region') {
+                    d3.selectAll(".countryMarkers")
+                        .attr("fill-opacity", 0)
+                        .attr("stroke-width", 0)
+                        .style("display", "none");
+
+                    d3.selectAll(".regionMarkers")
+                        .attr("fill-opacity", 0.3)
+                        .attr("stroke-width", 2)
+                        .style("display", "inline");
+
+                    d3.selectAll("text.regionMarkers")
+                        .attr("font-size","12px")
+                        .attr("fill-opacity",1)
+                        .attr("fill", "black");
+                }
+                else{
+                    d3.selectAll(".regionMarkers")
+                        .attr("fill-opacity", 0)
+                        .attr("stroke-width", 0)
+                        .style("display", "none");
+
+                    d3.selectAll(".countryMarkers")
+                        .attr("fill-opacity", 0.3)
+                        .attr("stroke-width", 2)
+                        .style("display", "inline");
+
+                    d3.selectAll("text.countryMarkers")
+                        .attr("font-size","12px")
+                        .attr("fill-opacity",1)
+                        .attr("fill", "black");
+
+                }
+            });
+
+        })
 }

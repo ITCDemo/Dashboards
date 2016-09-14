@@ -188,7 +188,7 @@ function DisplayDendo(data, type) {
             // -------------------- DRAW TREE ----------------------
 
 
-            var margin = {top: 70, right: 20, bottom: 20, left: 90},
+            var margin = {top: 130, right: 20, bottom: 20, left: 90},
                 width = 500 - margin.right - margin.left,
                 height = 200 - margin.top - margin.bottom;
 
@@ -197,7 +197,8 @@ function DisplayDendo(data, type) {
                 root;
 
             var tree = d3.layout.tree()
-                .size([height, width]);
+                .size([height, width])
+                .nodeSize([20,0]);
 
             var diagonal = d3.svg.diagonal()
                 .projection(function (d) {
@@ -210,7 +211,7 @@ function DisplayDendo(data, type) {
                 .append("g")
                 .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
             debugger;
-            
+
             
             treeData = [
                 treeData[0]
@@ -251,7 +252,7 @@ function DisplayDendo(data, type) {
                     .on("click", click);
 
                 nodeEnter.append("circle")
-                    .attr("r", 8)
+                    .attr("r", 6)
                     .style("fill", function (d) {
                         return d._children ? "lightsteelblue" : "#fff";
                     });
@@ -335,6 +336,111 @@ function DisplayDendo(data, type) {
             }
 
             function click(d) {
+
+                if (d.depth == 2) {
+                    d3.select("#barpieUtil svg").remove();
+
+                    var value;
+                    var alloc = d.parent.alloc;
+
+                    switch (d.name) {
+                        case "IRS Deals":
+                            value = IRSDealMap[d.parent.name].value;
+                            break;
+                        case "Bonds":
+                            value = BondMap[d.parent.name].value;
+                            break;
+                        case "Equities":
+                            value = EquititesMap[d.parent.name].value;
+                            break;
+                        case "FX Swaps":
+                            value = FxSwapMap[d.parent.name].value;
+                            break;
+
+                        case "Fx OTC Deals":
+                            value = FxOTCMap[d.parent.name].value;
+                            break;
+                        case "L&D Deals":
+                            value = LDDealMap[d.parent.name].value;
+                            break;
+                    }
+
+                    var dataset;
+
+                    if ((value / alloc * 100).toFixed(2) > 100) {
+                        dataset = [{name: "Utilized", percent: (value / alloc * 100).toFixed(2)}];
+
+                    }
+                    else if ((value / alloc * 100).toFixed(2) < 0) {
+                        dataset = [{name: "Utilized", percent: (value / alloc * 100).toFixed(2) * -1}, {
+                            name: "Not Utilized",
+                            percent: (100 - value / alloc * 100 * -1).toFixed(2)
+                        }];
+                    }
+                    else {
+                        dataset = [{name: "Utilized", percent: (value / alloc * 100).toFixed(2)}, {
+                            name: "Not Utilized",
+                            percent: (100 - value / alloc * 100).toFixed(2)
+                        }];
+                    }
+
+                    if (value < 0) value *= -1;
+
+                    //document.getElementById("header").innerHTML = "<span>" + d.parent.name + "</span><br/><span>" + d.name + "</span><br/><span> Utilization - $" + value;
+                    drawPie(dataset);
+
+                }
+                else if (d.depth == 1) {
+                    d3.select("#barpieUtil svg").remove();
+
+
+                    var Counterparty = creditMap[d.name];
+
+                    var Avlength = Counterparty["product-exp"].length;
+
+                    var totalExpValue = [];
+
+                    for (var exp in Counterparty["product-exp"]) {
+                        var Expvalue;
+                        switch (Counterparty["product-exp"][exp]) {
+                            case "PE_IRS":
+                            case "PE_IRS1":
+                                Expvalue = { name: "IRS Deals", value: IRSDealMap[d.name].value<0?IRSDealMap[d.name].value * -1:IRSDealMap[d.name].value  };
+                                break;
+                            case "PE_BND":
+                            case "PE_BND1":
+                                Expvalue = { name: "Bonds", value: BondMap[d.name].value<0?BondMap[d.name].value * -1:BondMap[d.name].value   };
+                                break;
+                            case "PE_EQU":
+                            case "PE_EQU1":
+                                Expvalue = { name: "Equities", value: EquititesMap[d.name].value<0?EquititesMap[d.name].value * -1:EquititesMap[d.name].value   };
+                                break;
+                            case "PE_FXS":
+                            case "PE_FXS1":
+                                Expvalue = { name: "Fx Swap Deals", value: FxSwapMap[d.name].value<0?FxSwapMap[d.name].value * -1:FxSwapMap[d.name].value };
+                                break;
+
+                            case "PE_FXO":
+                            case "PE_FXO1":
+                                Expvalue = { name: "FxOTC Deals", value: FxOTCMap[d.name].value<0?FxOTCMap[d.name].value * -1:FxOTCMap[d.name].value };
+                                break;
+                            case "PE_LD":
+                            case "PE_LD1":
+                                Expvalue = { name: "L&D Deals", value: LDDealMap[d.name].value<0?LDDealMap[d.name].value * -1:LDDealMap[d.name].value  };
+                                break;
+                        }
+
+                        totalExpValue.push(Expvalue);
+                    }
+
+                    drawBar(totalExpValue)
+
+
+                }
+                else
+                {
+                    d3.select("#barpieUtil svg").remove();
+                }
 
                 if (d.children) {
                     d._children = d.children;

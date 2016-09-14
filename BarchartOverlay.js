@@ -1,4 +1,4 @@
-function drawBar(data) {
+function drawBarRegion(data) {
 
     var margin = {top: 40, right: 20, bottom: 30, left: 130},
         width = 900 - margin.left - margin.right,

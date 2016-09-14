@@ -50,7 +50,7 @@ var dataset = {
 
     var color = d3.scale.ordinal()
         .domain([0,1,2,3,4,5,6,7,8])
-        .range(["#3693D6", "#F9FF72", "#FCE636", "#FFA500", "#FC7200", "#FF3600", "#E20000", "#A40000", "#6D0101"]);
+        .range(["#B9EDEF", "#71D1D5", "#56B6BF", "#26A1AD", "#028C99", "#2B8CB1", "#05739D", "#3078B5", "#095DA2"]);
 
     var pie = d3.layout.pie()
         .sort(null);
@@ -122,7 +122,7 @@ var dataset = {
         .attrTween("d", arcTween);
 
 
-    d3.selectAll("input").on("change", change);
+    d3.selectAll(".dataset").on("change", change);
 
     var timeout = setTimeout(function () {
         d3.select("input[value=\"Rating\"]").property("checked", true).each(change);
@@ -223,13 +223,13 @@ var dataset = {
         if($('input[name=dataset]:checked').val() == "Sectors") {
             color = d3.scale.ordinal()
                 .domain([0,1,2,3,4,5,6,7,8])
-                .range(["#3693D6", "#F9FF72", "#FCE636", "#FFA500", "#FC7200", "#FF3600", "#E20000", "#A40000", "#6D0101"]);
+                .range(["#B9EDEF", "#71D1D5", "#56B6BF", "#26A1AD", "#028C99", "#2B8CB1", "#05739D", "#3078B5", "#095DA2"]);
 
         }
         else{
             color = d3.scale.ordinal()
                 .domain([0,1,2,3,4,5,6,7,8,9])
-                .range(["#3693D6", "#F9FF72", "#FCE636", "#FFA500", "#FC7200", "#FF3600", "#E20000", "#A40000", "#6D0101", "#340000"]);
+                .range(["#B9EDEF", "#71D1D5", "#56B6BF", "#26A1AD", "#028C99", "#2B8CB1", "#05739D", "#3078B5", "#095DA2", "#375DBA"]);
         }
 
         clearTimeout(timeout);

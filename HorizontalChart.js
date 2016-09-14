@@ -1,3 +1,6 @@
+var min = 10000000000;
+var max = 0;
+
 function HorizontalChart() {
 
     var sorted = [];
@@ -14,19 +17,18 @@ function HorizontalChart() {
     var counterparties = [];
     counterparties.push("");
     var exps = [];
-    var min = 10000000000;
-    var max = 0;
+
     for(var i=0;i<10;i++){
         counterparties.push(sorted[i][0]);
         exps.push(sorted[i][1]);
         if(sorted[i][1] > max) max = sorted[i][1];
         if(sorted[i][1] < min) min = sorted[i][1];
     }
-    
 
-    var colors = ['#0000b4', '#0082ca', '#0094ff', '#0d4bcf', '#0066AE', '#074285', '#00187B', '#285964', '#405F83', '#416545'];
 
-    var grid = d3.range(28).map(function (i) {
+    var colors = ["#71D1D5", "#56B6BF", "#26A1AD", "#028C99", "#2B8CB1", "#05739D", "#3078B5", "#095DA2", "#375DBA", "#473DBF", "#0F3BA8"];
+
+    var grid = d3.range(9).map(function (i) {
         return {'x1': 0, 'y1': 30, 'x2': 0, 'y2': 840};
     });
 
@@ -60,15 +62,15 @@ function HorizontalChart() {
         .append('line')
         .attr({
             'x1': function (d, i) {
-                return i * 30;
+                return i * 30 * 3;
             },
             'y1': function (d) {
-                return d.y1;
+                return 330;
             },
             'x2': function (d, i) {
-                return i * 30;
+                return i * 30 * 3;
             },
-            'y2': 330
+            'y2': 335
         })
         .style({'stroke': '#adadad', 'stroke-width': '1px'});
 
