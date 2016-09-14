@@ -1114,6 +1114,8 @@ function initialize() {
                             $(".overlay")
                                 .html("<span style='font-size: 18px'>" + d.name + "</span><p style='font-size: 14px'>Exposure - " + FormatMoney(exposureValue) + "</p>")
                                 .show();
+                            d3.select(this)
+                                .attr("fill-opacity", 0.6);
                         })
                         .on('mousemove', function(d) {
 
@@ -1124,6 +1126,8 @@ function initialize() {
                         })
                         .on('mouseout', function(d) {
                             $(".overlay").html('').hide();
+                            d3.select(this)
+                                .attr("fill-opacity", 0.3);
                         })
                         .on("click", function(d) {
                             $("#bar-overlay").css({"opacity": 1, "z-index": "999", "height": "300px"});
@@ -1207,6 +1211,9 @@ function initialize() {
                             $(".overlay")
                                 .html("<span style='font-size: 18px'>" + d.name + "</span><p style='font-size: 14px'>Exposure - " + FormatMoney(exposureValue) + "</p>")
                                 .show();
+
+                            d3.select(this)
+                                .attr("fill-opacity", 0.6);
                         })
                         .on('mousemove', function(d) {
 
@@ -1217,6 +1224,8 @@ function initialize() {
                         })
                         .on('mouseout', function(d) {
                             $(".overlay").html('').hide();
+                            d3.select(this)
+                                .attr("fill-opacity", 0.3);
                         })
                         .on("click", function(d) {
                             $("#bar-overlay").css({"opacity": 1, "z-index": "999", "height": "300px"});
