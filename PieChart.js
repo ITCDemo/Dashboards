@@ -50,7 +50,7 @@ var dataset = {
 
     var color = d3.scale.ordinal()
         .domain([0,1,2,3,4,5,6,7,8])
-        .range(["#B9EDEF", "#71D1D5", "#56B6BF", "#26A1AD", "#028C99", "#2B8CB1", "#05739D", "#3078B5", "#095DA2"]);
+        .range(["#BEE2E6", "#94C6E7", "#4FBEE3", "#008ED6", "#036E9D", "#0055A5", "#025565", "#28C7DC", "#01304A"]);
 
     var pie = d3.layout.pie()
         .sort(null);
@@ -223,13 +223,13 @@ var dataset = {
         if($('input[name=dataset]:checked').val() == "Sectors") {
             color = d3.scale.ordinal()
                 .domain([0,1,2,3,4,5,6,7,8])
-                .range(["#B9EDEF", "#71D1D5", "#56B6BF", "#26A1AD", "#028C99", "#2B8CB1", "#05739D", "#3078B5", "#095DA2"]);
+                .range(["#BEE2E6", "#94C6E7", "#4FBEE3", "#008ED6", "#036E9D", "#0055A5", "#025565", "#28C7DC", "#01304A"]);
 
         }
         else{
             color = d3.scale.ordinal()
                 .domain([0,1,2,3,4,5,6,7,8,9])
-                .range(["#B9EDEF", "#71D1D5", "#56B6BF", "#26A1AD", "#028C99", "#2B8CB1", "#05739D", "#3078B5", "#095DA2", "#375DBA"]);
+                .range(["#BEE2E6", "#94C6E7", "#4FBEE3", "#008ED6", "#036E9D", "#0055A5", "#025565", "#28C7DC", "#01304A", "#00829C"]);
         }
 
         clearTimeout(timeout);
