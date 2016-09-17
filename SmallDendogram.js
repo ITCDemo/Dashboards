@@ -1,5 +1,4 @@
 function DisplayDendo(data, type) {
-    debugger;
 
     var creditMap = {};
     var ratingMap = {};
@@ -210,7 +209,6 @@ function DisplayDendo(data, type) {
                 .attr("height", 300)
                 .append("g")
                 .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-            debugger;
 
             
             treeData = [

@@ -263,7 +263,7 @@
     </style>
 </head>
 
-<body onload="initialize();">
+<body>
 <script>
 
 </script>
@@ -299,13 +299,6 @@
                 </td>
             </tr>
         </table>
-
-        <!--<div id="tree">-->
-
-        <!--</div>-->
-        <!--<div id="barpieUtil">-->
-
-        <!--</div>-->
         <div class="close" onclick="$('#ratingSector-overlay').css({'opacity': 0, 'z-index': -1, 'height': '0px'}); d3.select('#tree svg').remove(); d3.select('#barpieUtil svg').remove(); ">&#10006;</div>
 
     </div>
@@ -314,6 +307,254 @@
         <label><input type="radio" class="dataset" name="dataset" value="Rating"> Rating</label>
     </form>
 </section>
-<section id="horizontalBar" style="float: left; height: 340px; width: 1000px"></section>
+<section id="horizontalBar" style="float: left; height: 340px; width: 1000px">
+</section>
+<input type="file" id="uploader">
+<p id="stats">
+</p>
+<table id="table">
+
+</table>
+<script>
+    upload_button("uploader", load_dataset);
+
+
+    function load_dataset(csv) {
+        var data = d3.csv.parse(csv);
+        debugger;
+        create_table(data);
+    }
+
+    function create_table(data) {
+
+        var keys = d3.keys(data[0]);
+
+        for (var i = 0; i < data.length; i++) {
+
+            var exp = parseInt(data[i]["Market Value"].replace(/,/g, ""));
+
+            if (!(data[i]["Counterparty"] in counterpartyExp)) {
+                counterpartyExp[data[i]["Counterparty"]] = exp
+            }
+            else {
+                var existingValue = counterpartyExp[data[i]["Counterparty"]];
+                counterpartyExp[data[i]["Counterparty"]] = exp + existingValue;
+            }
+
+            var instrument = data[i]["Instrument"];
+
+
+            switch (data[i]["Region"]) {
+                case "NAMR":
+                    if (NAMRMap[instrument] == undefined) NAMRMap[instrument] = 0;
+                    NAMRMap[instrument] += exp;
+                    NAMRTotal += exp;
+                    break;
+                case "SAMR":
+                    if (SAMRMap[instrument] == undefined) SAMRMap[instrument] = 0;
+                    SAMRMap[instrument] += exp;
+                    SAMRTotal += exp;
+                    break;
+                case "EURO":
+                    if (EUROMap[instrument] == undefined) EUROMap[instrument] = 0;
+                    EUROMap[instrument] += exp;
+                    EUROTotal += exp;
+                    break;
+                case "MENA":
+                    if (MENAMap[instrument] == undefined) MENAMap[instrument] = 0;
+                    MENAMap[instrument] += exp;
+                    MENATotal += exp;
+                    break;
+                case "APAC":
+                    if (APACMap[instrument] == undefined) APACMap[instrument] = 0;
+                    APACMap[instrument] += exp;
+                    APACTotal += exp;
+                    break;
+            }
+
+            switch (data[i]["Rating"]) {
+                case "AAA":
+                    AAAMap += exp;
+                    break;
+                case "AA":
+                    AAMap += exp;
+                    break;
+                case "A":
+                    AMap += exp;
+                    break;
+                case "BBB":
+                    BBBMap += exp;
+                    break;
+                case "BB":
+                    BBMap += exp;
+                    break;
+                case "B":
+                    BMap += exp;
+                    break;
+                case "CCC":
+                    CCCMap += exp;
+                    break;
+                case "CC":
+                    CCMap += exp ;
+                    break;
+                case "C":
+                    CMap += exp;
+                    break;
+                case "D":
+                    DMap += exp;
+                    break;
+            }
+
+            switch (data[i]["Sector_ID"]) {
+                case "SEC_1":
+                    Sec1Map += exp;
+                    break;
+                case "SEC_2":
+                    Sec2Map += exp;
+                    break;
+                case "SEC_3":
+                    Sec3Map += exp;
+                    break;
+                case "SEC_5":
+                    Sec5Map += exp;
+                    break;
+                case "SEC_6":
+                    Sec6Map += exp;
+                    break;
+                case "SEC_7":
+                    Sec7Map += exp;
+                    break;
+                case "SEC_8":
+                    Sec8Map += exp;
+                    break;
+                case "SEC_9":
+                    Sec9Map += exp;
+                    break;
+                case "SEC_11":
+                    Sec11Map += exp;
+                    break;
+            }
+
+            if(data[i]["Instrument"] == "BONDS") {
+
+                if (!(data[i]["Counterparty"] in BondMap)) {
+                    BondMap[data[i]["Counterparty"]] = {
+                        value: parseInt(data[i]["Market Value"].replace(/,/g, ""))
+                    };
+                }
+                else {
+                    var existingBond = BondMap[data[i]["Counterparty"]].value;
+                    BondMap[data[i]["Counterparty"]].value = parseInt(data[i]["Market Value"].replace(/,/g, "")) + existingBond;
+                }
+            }
+
+            if(data[i]["Instrument"] == "EQUITY") {
+
+                if (!(data[i]["Counterparty"] in EquititesMap)) {
+                    EquititesMap[data[i]["Counterparty"]] = {
+                        value: parseInt(data[i]["Market Value"].replace(/,/g, ""))
+                    };
+                }
+                else {
+                    var existingEqu = EquititesMap[data[i]["Counterparty"]].value;
+                    EquititesMap[data[i]["Counterparty"]].value = parseInt(data[i]["Market Value"].replace(/,/g, "")) + existingEqu;
+                }
+            }
+
+            if(data[i]["Instrument"] == "FXS") {
+
+                if (!(data[i]["Counterparty"] in FxSwapMap)) {
+                    FxSwapMap[data[i]["Counterparty"]] = {
+                        value: parseInt(data[i]["Market Value"].replace(/,/g, ""))
+                    };
+                }
+                else {
+                    var existingFxSwap = FxSwapMap[data[i]["Counterparty"]].value;
+                    FxSwapMap[data[i]["Counterparty"]].value = parseInt(data[i]["Market Value"].replace(/,/g, "")) + existingFxSwap;
+                }
+            }
+
+            if(data[i]["Instrument"] == "IRS") {
+
+                if (!(data[i]["Counterparty"] in IRSDealMap)) {
+                    IRSDealMap[data[i]["Counterparty"]] = {
+                        value: parseInt(data[i]["Market Value"].replace(/,/g, ""))
+                    };
+                }
+                else {
+                    var existingIRS = IRSDealMap[data[i]["Counterparty"]].value;
+                    IRSDealMap[data[i]["Counterparty"]].value = parseInt(data[i]["Market Value"].replace(/,/g, "")) + existingIRS;
+                }
+            }
+
+            if(data[i]["Instrument"] == "FXO") {
+
+                if (!(data[i]["Counterparty"] in FxOTCMap)) {
+                    FxOTCMap[data[i]["Counterparty"]] = {
+                        value: parseInt(data[i]["Market Value"].replace(/,/g, ""))
+                    };
+                }
+                else {
+                    var existingFxOTC = FxOTCMap[data[i]["Counterparty"]].value;
+                    FxOTCMap[data[i]["Counterparty"]].value = parseInt(data[i]["Market Value"].replace(/,/g, "")) + existingFxOTC;
+                }
+            }
+
+            if(data[i]["Instrument"] == "LD") {
+
+                if (!(data[i]["Counterparty"] in LDDealMap)) {
+                    LDDealMap[data[i]["Counterparty"]] = {
+                        value: parseInt(data[i]["Market Value"].replace(/,/g, ""))
+                    };
+                }
+                else {
+                    var existingLD = LDDealMap[data[i]["Counterparty"]].value;
+                    LDDealMap[data[i]["Counterparty"]].value = parseInt(data[i]["Market Value"].replace(/,/g, "")) + existingLD;
+                }
+            }
+
+            if(!(data[i]["Country"] in countryMap)){
+
+                if(countryMap[data[i]["Country"]] == undefined){
+                    countryMap[data[i]["Country"]] = {};
+                }
+                countryMap[data[i]["Country"]][instrument] = parseInt(data[i]["Market Value"].replace(/,/g, ""))
+            }
+            else{
+                if(countryMap[data[i]["Country"]] == undefined){
+                    countryMap[data[i]["Country"]] = {};
+                }
+
+                if(countryMap[data[i]["Country"]][instrument] == undefined) {
+                    countryMap[data[i]["Country"]][instrument] = parseInt(data[i]["Market Value"].replace(/,/g, ""));
+                }
+                else {
+                    var existingBondCountry = countryMap[data[i]["Country"]][instrument];
+                    countryMap[data[i]["Country"]][instrument] = parseInt(data[i]["Market Value"].replace(/,/g, "")) + existingBondCountry;
+                }
+            }
+
+        }
+
+        initialize();
+    }
+
+    function upload_button(el, callback) {
+        var uploader = document.getElementById(el);
+        var reader = new FileReader();
+
+        reader.onload = function(e) {
+            var contents = e.target.result;
+            callback(contents);
+        };
+
+        uploader.addEventListener("change", handleFiles, false);
+
+        function handleFiles() {
+            var file = this.files[0];
+            reader.readAsText(file);
+        }
+    }
+</script>
 </body>
 </html>

@@ -86,7 +86,6 @@ function drawBar(data) {
             return i + 50;
         })
         .attr("y", function (d) {
-            debugger;
             return y(d.value);
         })
         .attr("height", function (d){
@@ -162,7 +161,6 @@ function drawPie(dataset) {
             .transition()
             .duration(200)
             .attr("transform", function (d) {
-                debugger;
 
                 var c = arc.centroid(d);
                 return "translate(" + c[0] * 1 + "," + c[1] * 1 + ")";
