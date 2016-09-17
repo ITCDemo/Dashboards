@@ -1,9 +1,8 @@
 <html>
 <head>
-    <script async defer
-            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAKnn5S7uLapTrSHEbXCwuj2xmEwloAbRI&callback=initialize">
-    </script>
     <script src="https://d3js.org/d3.v3.min.js"></script>
+    <script src="https://d3js.org/d3.geo.projection.v0.min.js"></script>
+    <script src="https://d3js.org/topojson.v0.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/queue-async/1.0.7/queue.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
     <script src="https://cdn.rawgit.com/deepthiyathiender/Dendograms/master/d3.tip.v0.6.3.js"></script>
@@ -12,6 +11,7 @@
     <script src="PieChart.js"></script>
     <script src="HorizontalChart.js"></script>
     <script src="SmallDendogram.js"></script>
+    <script src="PieOverlay.js"></script>
 
     <style>
         section {
@@ -52,6 +52,10 @@
             background: rgba(0, 0, 0, 0.6);
             color: #fff;
             border-radius: 10px;
+        }
+
+        .mark:hover {
+            cursor: hand;
         }
 
         .pieoverlay {
@@ -100,9 +104,9 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: #ffffff;
-            background: rgba(255, 255, 255, 0.9);
-            color: #051928;
+            background: #000;
+            background: rgba(0, 0, 0, 0.8);
+            color: #ffffff;
             opacity: 0;
             z-index: -1;
             -webkit-transition: all 0.5s linear;
@@ -132,12 +136,20 @@
             shape-rendering: crispEdges;
         }
 
-        .bar {
-            fill: orange;
+        .bar,
+        .barPie{
+            fill: #05739D;
         }
 
-        .bar:hover {
-            fill: orangered;
+        .bar:hover,
+        .barPie:hover{
+            fill: #095DA2;
+        }
+
+        .tick{
+            fill:white;
+            color: #fff;
+            font-size: 10px;
         }
 
         .x.axis path
@@ -145,6 +157,12 @@
             display: none;
             stroke: #fff;
             shape-rendering: crispEdges;
+        }
+
+        #yaxis g text {
+            fill:black;
+            color: #000;
+            font-size: 14px;
         }
 
         .d3-tip {
@@ -186,11 +204,13 @@
         }
 
         #xaxis .domain {
-            fill:none;
-            stroke:#000;
+            fill: white;
+            stroke:#fff;
         }
+
         #xaxis text, #yaxis text {
             font-size: 12px;
+            fill: white;
         }
 
         #horizontalBar svg{
@@ -204,54 +224,401 @@
 
         .node circle {
             fill: #fff;
-            stroke: steelblue;
-            stroke-width: 3px;
+            stroke: #2B8CB1;
+            stroke-width: 2px;
         }
 
         .node text {
-            font: 12px sans-serif;
+            font: 10px sans-serif;
+            fill: white;
+            color: white;
         }
 
         .link {
             fill: none;
             stroke: #ccc;
-            stroke-width: 7px;
-            stroke-opacity: 0.5;
+            stroke-width: 4px;
+            stroke-opacity: 0.3;
         }
+
+        .country {
+            fill: #E5E3DF;
+            stroke-linejoin: round;
+        }
+
+        #barpieUtil {
+            width: 230px;
+            float: left;
+        }
+
+        .y {
+            font-size: 10px;
+            fill: white;
+        }
+
+        #barpieUtil svg.shadow{
+            margin-left:40px
+        }
+
+        #FakeID{
+            border: 0px;
+            font-size: 12px;
+            vertical-align: middle;
+        }
+        #FakeButton {
+            -moz-box-shadow: 0px 10px 12px -7px #276873;
+            -webkit-box-shadow: 0px 10px 12px -7px #276873;
+            box-shadow: 0px 10px 12px -7px #276873;
+            background-color:#599bb3;
+            border-radius:8px;
+            display:inline-block;
+            cursor:pointer;
+            color:#ffffff;
+            font-size:12px;
+            font-weight:bold;
+            padding:0px 7px;
+            text-decoration:none;
+            text-shadow:0px 1px 0px #3d768a;
+            height: 30px;
+            line-height: 1;
+            text-align: center;
+            vertical-align: middle;
+        }
+        #FakeButton:hover {
+            background-color:#408c99;
+        }
+        #FakeButton:active {
+            position:relative;
+            top:1px;
+        }
+
+        div.fileinputs {
+            position: relative;
+            margin-bottom: 30px;
+        }
+
+        div.fakefile {
+            position: absolute;
+            top: 0px;
+            left: 0px;
+            z-index: 1;
+        }
+
+        input.file {
+            position: relative;
+            text-align: right;
+            -moz-opacity:0 ;
+            filter:alpha(opacity: 0);
+            opacity: 0;
+            z-index: 2;
+        }
+
+
 
     </style>
 </head>
 
-<body onload="DrawPie();">
+<body>
 <script>
-
+    function Sync()
+    {
+        var n1 = document.getElementById('uploader');
+        var n2 = document.getElementById('FakeID');
+        n2.value = n1.value.replace(/^.*[\\\/]/, '');
+    }
 </script>
-<div class="overlay"></div>
 <div class="pieoverlay"></div>
 
+<div class="fileinputs">
+    <input type="file" class="file" id="uploader" onchange="Sync()"/>
+    <div class="fakefile">
+        <input id="FakeID"/>
+        <input type="button" value="Refresh Data" id="FakeButton"/>
+    </div>
+</div>
+
+<p id="stats">
+</p>
 <section style="float: left; height: 300px; width: 600px;">
-    <div id="map-canvas"></div>
+    <div id="map-canvas">
+        <div class="overlay"></div>
+
+    </div>
     <div id="bar-overlay">
         <div id="pie" class="chart-container">
 
         </div>
         <div class="close" onclick="$('#bar-overlay').css({'opacity': 0, 'z-index': -1, 'height': '0px'}); d3.select('#pie svg').remove();">&#10006;</div>
     </div>
+    <form>
+        <label><input type="radio" name="region" value="Region" checked> Region</label>
+        <label><input type="radio" name="region" value="Country"> Country</label>
+    </form>
 </section>
 <section style="float: left; height: 300px; width: 620px;" class="PieRating">
     <div id="ratingSector-overlay">
 
-        <div id="tree">
 
-        </div>
-        <div class="close" onclick="$('#ratingSector-overlay').css({'opacity': 0, 'z-index': -1, 'height': '0px'}); d3.select('#tree svg').remove();">&#10006;</div>
+        <table>
+            <tr>
+                <td id="tree" style="width: 390px">
+
+                </td>
+                <td id="barpieUtil" style="width: 230px">
+
+                </td>
+            </tr>
+        </table>
+        <div class="close" onclick="$('#ratingSector-overlay').css({'opacity': 0, 'z-index': -1, 'height': '0px'}); d3.select('#tree svg').remove(); d3.select('#barpieUtil svg').remove(); ">&#10006;</div>
 
     </div>
     <form>
-        <label><input type="radio" name="dataset" value="Sectors" checked> Sectors</label>
-        <label><input type="radio" name="dataset" value="Rating"> Rating</label>
+        <label><input type="radio" class="dataset" name="dataset" value="Sectors" checked> Sectors</label>
+        <label><input type="radio" class="dataset" name="dataset" value="Rating"> Rating</label>
     </form>
 </section>
-<section id="horizontalBar" style="float: left; height: 340px; width: 1000px"></section>
+<section id="horizontalBar" style="float: left; height: 340px; width: 1000px">
+</section>
+<script>
+    upload_button("uploader", load_dataset);
+
+
+    function load_dataset(csv) {
+        var data = d3.csv.parse(csv);
+        debugger;
+        create_table(data);
+    }
+
+    function create_table(data) {
+
+        var keys = d3.keys(data[0]);
+
+        for (var i = 0; i < data.length; i++) {
+
+            var exp = parseInt(data[i]["Market Value"].replace(/,/g, ""));
+
+            if (!(data[i]["Counterparty"] in counterpartyExp)) {
+                counterpartyExp[data[i]["Counterparty"]] = exp
+            }
+            else {
+                var existingValue = counterpartyExp[data[i]["Counterparty"]];
+                counterpartyExp[data[i]["Counterparty"]] = exp + existingValue;
+            }
+
+            var instrument = data[i]["Instrument"];
+
+
+            switch (data[i]["Region"]) {
+                case "NAMR":
+                    if (NAMRMap[instrument] == undefined) NAMRMap[instrument] = 0;
+                    NAMRMap[instrument] += exp;
+                    NAMRTotal += exp;
+                    break;
+                case "SAMR":
+                    if (SAMRMap[instrument] == undefined) SAMRMap[instrument] = 0;
+                    SAMRMap[instrument] += exp;
+                    SAMRTotal += exp;
+                    break;
+                case "EURO":
+                    if (EUROMap[instrument] == undefined) EUROMap[instrument] = 0;
+                    EUROMap[instrument] += exp;
+                    EUROTotal += exp;
+                    break;
+                case "MENA":
+                    if (MENAMap[instrument] == undefined) MENAMap[instrument] = 0;
+                    MENAMap[instrument] += exp;
+                    MENATotal += exp;
+                    break;
+                case "APAC":
+                    if (APACMap[instrument] == undefined) APACMap[instrument] = 0;
+                    APACMap[instrument] += exp;
+                    APACTotal += exp;
+                    break;
+            }
+
+            switch (data[i]["Rating"]) {
+                case "AAA":
+                    AAAMap += exp;
+                    break;
+                case "AA":
+                    AAMap += exp;
+                    break;
+                case "A":
+                    AMap += exp;
+                    break;
+                case "BBB":
+                    BBBMap += exp;
+                    break;
+                case "BB":
+                    BBMap += exp;
+                    break;
+                case "B":
+                    BMap += exp;
+                    break;
+                case "CCC":
+                    CCCMap += exp;
+                    break;
+                case "CC":
+                    CCMap += exp ;
+                    break;
+                case "C":
+                    CMap += exp;
+                    break;
+                case "D":
+                    DMap += exp;
+                    break;
+            }
+
+            switch (data[i]["Sector_ID"]) {
+                case "SEC_1":
+                    Sec1Map += exp;
+                    break;
+                case "SEC_2":
+                    Sec2Map += exp;
+                    break;
+                case "SEC_3":
+                    Sec3Map += exp;
+                    break;
+                case "SEC_5":
+                    Sec5Map += exp;
+                    break;
+                case "SEC_6":
+                    Sec6Map += exp;
+                    break;
+                case "SEC_7":
+                    Sec7Map += exp;
+                    break;
+                case "SEC_8":
+                    Sec8Map += exp;
+                    break;
+                case "SEC_9":
+                    Sec9Map += exp;
+                    break;
+                case "SEC_11":
+                    Sec11Map += exp;
+                    break;
+            }
+
+            if(data[i]["Instrument"] == "BONDS") {
+
+                if (!(data[i]["Counterparty"] in BondMap)) {
+                    BondMap[data[i]["Counterparty"]] = {
+                        value: parseInt(data[i]["Market Value"].replace(/,/g, ""))
+                    };
+                }
+                else {
+                    var existingBond = BondMap[data[i]["Counterparty"]].value;
+                    BondMap[data[i]["Counterparty"]].value = parseInt(data[i]["Market Value"].replace(/,/g, "")) + existingBond;
+                }
+            }
+
+            if(data[i]["Instrument"] == "EQUITY") {
+
+                if (!(data[i]["Counterparty"] in EquititesMap)) {
+                    EquititesMap[data[i]["Counterparty"]] = {
+                        value: parseInt(data[i]["Market Value"].replace(/,/g, ""))
+                    };
+                }
+                else {
+                    var existingEqu = EquititesMap[data[i]["Counterparty"]].value;
+                    EquititesMap[data[i]["Counterparty"]].value = parseInt(data[i]["Market Value"].replace(/,/g, "")) + existingEqu;
+                }
+            }
+
+            if(data[i]["Instrument"] == "FXS") {
+
+                if (!(data[i]["Counterparty"] in FxSwapMap)) {
+                    FxSwapMap[data[i]["Counterparty"]] = {
+                        value: parseInt(data[i]["Market Value"].replace(/,/g, ""))
+                    };
+                }
+                else {
+                    var existingFxSwap = FxSwapMap[data[i]["Counterparty"]].value;
+                    FxSwapMap[data[i]["Counterparty"]].value = parseInt(data[i]["Market Value"].replace(/,/g, "")) + existingFxSwap;
+                }
+            }
+
+            if(data[i]["Instrument"] == "IRS") {
+
+                if (!(data[i]["Counterparty"] in IRSDealMap)) {
+                    IRSDealMap[data[i]["Counterparty"]] = {
+                        value: parseInt(data[i]["Market Value"].replace(/,/g, ""))
+                    };
+                }
+                else {
+                    var existingIRS = IRSDealMap[data[i]["Counterparty"]].value;
+                    IRSDealMap[data[i]["Counterparty"]].value = parseInt(data[i]["Market Value"].replace(/,/g, "")) + existingIRS;
+                }
+            }
+
+            if(data[i]["Instrument"] == "FXO") {
+
+                if (!(data[i]["Counterparty"] in FxOTCMap)) {
+                    FxOTCMap[data[i]["Counterparty"]] = {
+                        value: parseInt(data[i]["Market Value"].replace(/,/g, ""))
+                    };
+                }
+                else {
+                    var existingFxOTC = FxOTCMap[data[i]["Counterparty"]].value;
+                    FxOTCMap[data[i]["Counterparty"]].value = parseInt(data[i]["Market Value"].replace(/,/g, "")) + existingFxOTC;
+                }
+            }
+
+            if(data[i]["Instrument"] == "LD") {
+
+                if (!(data[i]["Counterparty"] in LDDealMap)) {
+                    LDDealMap[data[i]["Counterparty"]] = {
+                        value: parseInt(data[i]["Market Value"].replace(/,/g, ""))
+                    };
+                }
+                else {
+                    var existingLD = LDDealMap[data[i]["Counterparty"]].value;
+                    LDDealMap[data[i]["Counterparty"]].value = parseInt(data[i]["Market Value"].replace(/,/g, "")) + existingLD;
+                }
+            }
+
+            if(!(data[i]["Country"] in countryMap)){
+
+                if(countryMap[data[i]["Country"]] == undefined){
+                    countryMap[data[i]["Country"]] = {};
+                }
+                countryMap[data[i]["Country"]][instrument] = parseInt(data[i]["Market Value"].replace(/,/g, ""))
+            }
+            else{
+                if(countryMap[data[i]["Country"]] == undefined){
+                    countryMap[data[i]["Country"]] = {};
+                }
+
+                if(countryMap[data[i]["Country"]][instrument] == undefined) {
+                    countryMap[data[i]["Country"]][instrument] = parseInt(data[i]["Market Value"].replace(/,/g, ""));
+                }
+                else {
+                    var existingBondCountry = countryMap[data[i]["Country"]][instrument];
+                    countryMap[data[i]["Country"]][instrument] = parseInt(data[i]["Market Value"].replace(/,/g, "")) + existingBondCountry;
+                }
+            }
+
+        }
+
+        initialize();
+    }
+
+    function upload_button(el, callback) {
+        var uploader = document.getElementById(el);
+        var reader = new FileReader();
+
+        reader.onload = function(e) {
+            var contents = e.target.result;
+            callback(contents);
+        };
+
+        uploader.addEventListener("change", handleFiles, false);
+
+        function handleFiles() {
+            var file = this.files[0];
+            reader.readAsText(file);
+        }
+    }
+</script>
 </body>
 </html>
