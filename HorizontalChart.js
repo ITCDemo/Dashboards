@@ -1,12 +1,12 @@
-var min = 10000000000;
-var max = 0;
+function HorizontalChart(data) {
 
-function HorizontalChart() {
+    var min = 10000000000;
+    var max = 0;
 
     var sorted = [];
-    for (var item in counterpartyExp)
-    if(item.indexOf("Argentinas") == -1 && item != 'Default_Cpty' && item != "") {
-        sorted.push([item, counterpartyExp[item]]);
+    for (var item in data)
+    if(item != 'Default_Cpty' && item != "") {
+        sorted.push([item, data[item]]);
         sorted.sort(
             function (a, b) {
                 return b[1] - a[1]
@@ -38,8 +38,8 @@ function HorizontalChart() {
     });
 
     var xscale = d3.scale.linear()
-        .domain([100000000, max])
-        .range([0, 800]);
+        .domain([min, max])
+        .range([50, 300]);
 
     var yscale = d3.scale.linear()
         .domain([0, counterparties.length])
@@ -51,28 +51,8 @@ function HorizontalChart() {
 
     var canvas = d3.select('#horizontalBar')
         .append('svg')
-        .attr({'width': 1000, 'height': 350});
-
-    var grids = canvas.append('g')
-        .attr('id', 'grid')
-        .attr('transform', 'translate(150,0)')
-        .selectAll('line')
-        .data(grid)
-        .enter()
-        .append('line')
-        .attr({
-            'x1': function (d, i) {
-                return i * 30 * 3;
-            },
-            'y1': function (d) {
-                return 330;
-            },
-            'x2': function (d, i) {
-                return i * 30 * 3;
-            },
-            'y2': 335
-        })
-        .style({'stroke': '#adadad', 'stroke-width': '1px'});
+        .attr({'width': 500, 'height': 350});
+    
 
     var xAxis = d3.svg.axis();
     xAxis
@@ -136,12 +116,12 @@ function HorizontalChart() {
         .append('text')
         .attr({
             'x': function (d) {
-                return xscale(d) - 70;
+                return xscale(d) - 45;
             }, 'y': function (d, i) {
                 return yscale(i) + 32;
             }
         })
         .text(function (d) {
             return FormatMoney(d);
-        }).style({'fill': '#fff', 'font-size': '12px'});
+        }).style({'fill': '#fff', 'font-size': '10px'});
 }

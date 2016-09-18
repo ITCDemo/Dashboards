@@ -12,6 +12,7 @@
     <script src="HorizontalChart.js"></script>
     <script src="SmallDendogram.js"></script>
     <script src="PieOverlay.js"></script>
+    <script src="TreeMap.js"></script>
 
     <style>
         section {
@@ -214,7 +215,8 @@
         }
 
         #horizontalBar svg{
-            margin-top: -15px
+            margin-top: -15px;
+            padding-left:30px
         }
 
 
@@ -313,6 +315,18 @@
             z-index: 2;
         }
 
+        .treemap {
+            border: solid 1px white;
+            line-height: 0.95;
+            overflow: hidden;
+            position: absolute;
+            border-radius: 6px;
+            color: #000;
+        }
+
+        .treemap div {
+            padding: 6px 4%;
+        }
 
 
     </style>
@@ -372,12 +386,11 @@
         <div class="close" onclick="$('#ratingSector-overlay').css({'opacity': 0, 'z-index': -1, 'height': '0px'}); d3.select('#tree svg').remove(); d3.select('#barpieUtil svg').remove(); ">&#10006;</div>
 
     </div>
-    <form>
-        <label><input type="radio" class="dataset" name="dataset" value="Sectors" checked> Sectors</label>
-        <label><input type="radio" class="dataset" name="dataset" value="Rating"> Rating</label>
-    </form>
 </section>
-<section id="horizontalBar" style="float: left; height: 340px; width: 1000px">
+<section id="horizontalBar" style="float: left; height: 340px; width: 580px">
+</section>
+<section id="SectorTree" style="float: left; height: 340px; width: 600px; padding-top: 20px; padding-left: 30px">
+
 </section>
 <script>
     upload_button("uploader", load_dataset);
@@ -385,11 +398,20 @@
 
     function load_dataset(csv) {
         var data = d3.csv.parse(csv);
-        debugger;
         create_table(data);
     }
 
     function create_table(data) {
+
+        $('input[name=region][value=' + 'Region' + ']').prop('checked',true);
+
+        counterpartyExp = {};
+        regionMasterMap = {};
+        regionMap = [];
+        countryMapMarkers = [];
+        ratingMap = {};
+        countryMap = {};
+        sectorMap = {};
 
         var keys = d3.keys(data[0]);
 
@@ -406,97 +428,40 @@
             }
 
             var instrument = data[i]["Instrument"];
+            var region = data[i]["Region"];
 
 
-            switch (data[i]["Region"]) {
-                case "NAMR":
-                    if (NAMRMap[instrument] == undefined) NAMRMap[instrument] = 0;
-                    NAMRMap[instrument] += exp;
-                    NAMRTotal += exp;
-                    break;
-                case "SAMR":
-                    if (SAMRMap[instrument] == undefined) SAMRMap[instrument] = 0;
-                    SAMRMap[instrument] += exp;
-                    SAMRTotal += exp;
-                    break;
-                case "EURO":
-                    if (EUROMap[instrument] == undefined) EUROMap[instrument] = 0;
-                    EUROMap[instrument] += exp;
-                    EUROTotal += exp;
-                    break;
-                case "MENA":
-                    if (MENAMap[instrument] == undefined) MENAMap[instrument] = 0;
-                    MENAMap[instrument] += exp;
-                    MENATotal += exp;
-                    break;
-                case "APAC":
-                    if (APACMap[instrument] == undefined) APACMap[instrument] = 0;
-                    APACMap[instrument] += exp;
-                    APACTotal += exp;
-                    break;
+            if(regionMasterMap[data[i]["Region"]] == undefined) {
+                    regionMasterMap[region] = {
+                        [instrument]: exp
+                    }
+            }
+            else{
+                if(regionMasterMap[data[i]["Region"]][instrument] == undefined) {
+                    regionMasterMap[data[i]["Region"]][instrument] = exp
+                }
+                else{
+                    existingExp = regionMasterMap[data[i]["Region"]][instrument];
+                    regionMasterMap[data[i]["Region"]][instrument] = existingExp + exp
+                }
             }
 
-            switch (data[i]["Rating"]) {
-                case "AAA":
-                    AAAMap += exp;
-                    break;
-                case "AA":
-                    AAMap += exp;
-                    break;
-                case "A":
-                    AMap += exp;
-                    break;
-                case "BBB":
-                    BBBMap += exp;
-                    break;
-                case "BB":
-                    BBMap += exp;
-                    break;
-                case "B":
-                    BMap += exp;
-                    break;
-                case "CCC":
-                    CCCMap += exp;
-                    break;
-                case "CC":
-                    CCMap += exp ;
-                    break;
-                case "C":
-                    CMap += exp;
-                    break;
-                case "D":
-                    DMap += exp;
-                    break;
+
+            if(ratingMap[data[i]["Rating"]] == undefined){
+                ratingMap[data[i]["Rating"]] = exp;
+            }
+            else{
+                existingExp = ratingMap[data[i]["Rating"]];
+                ratingMap[data[i]["Rating"]] = existingExp + exp;
             }
 
-            switch (data[i]["Sector_ID"]) {
-                case "SEC_1":
-                    Sec1Map += exp;
-                    break;
-                case "SEC_2":
-                    Sec2Map += exp;
-                    break;
-                case "SEC_3":
-                    Sec3Map += exp;
-                    break;
-                case "SEC_5":
-                    Sec5Map += exp;
-                    break;
-                case "SEC_6":
-                    Sec6Map += exp;
-                    break;
-                case "SEC_7":
-                    Sec7Map += exp;
-                    break;
-                case "SEC_8":
-                    Sec8Map += exp;
-                    break;
-                case "SEC_9":
-                    Sec9Map += exp;
-                    break;
-                case "SEC_11":
-                    Sec11Map += exp;
-                    break;
+
+            if(sectorMap[data[i]["Sector_ID"]] == undefined){
+                sectorMap[data[i]["Sector_ID"]] = exp;
+            }
+            else{
+                existingExp = sectorMap[data[i]["Sector_ID"]];
+                sectorMap[data[i]["Sector_ID"]] = existingExp + exp;
             }
 
             if(data[i]["Instrument"] == "BONDS") {
@@ -600,6 +565,8 @@
 
         }
 
+        debugger;
+
         initialize();
     }
 
@@ -618,6 +585,103 @@
             var file = this.files[0];
             reader.readAsText(file);
         }
+    }
+</script>
+<script>
+    var regionMasterMap = {};
+
+    var ratingMap = {};
+    var sectorMap = {};
+
+    var regionMap = [];
+    var countryMapMarkers = [];
+
+    var counterpartyExp = {};
+
+    var BondMap = {};
+    var EquititesMap = {};
+    var FxOTCMap = {};
+    var FxSwapMap = {};
+    var IRSDealMap = {};
+    var LDDealMap = {};
+
+    var countryMap = {};
+
+    var masterCounterparty = [];
+
+    var LatLongMap = {};
+    var regionLatLong ={};
+
+
+    var SectoRatingMap = {
+        Sector: {
+            0: "SEC_1",
+            1: "SEC_2",
+            2: "SEC_3",
+            3: "SEC_5",
+            4: "SEC_6",
+            5: "SEC_7",
+            6: "SEC_8",
+            7: "SEC_9",
+            8: "SEC_11"
+        },
+        Rating: {
+            0: "AAA",
+            1: "AA",
+            2: "A",
+            3: "BBB",
+            4: "BB",
+            5: "B",
+            6: "CCC",
+            7: "CC",
+            8: "C",
+            9: "D"
+        },
+        SectorID: {
+            "SEC_1": "Energy",
+            "SEC_2": "Materials",
+            "SEC_3": "Industrials",
+            "SEC_5": "Consumer Staples",
+            "SEC_6": "Health Care",
+            "SEC_7": "Financials",
+            "SEC_8": "Information Tech",
+            "SEC_9": "Telecom Services",
+            "SEC_11": "Sovereign"
+        }
+    };
+
+    queue()
+            .defer(d3.csv, "countriesLatLong.csv", function (data){
+                LatLongMap[data.country] = {
+                    lat: data.lat,
+                    long: data.long,
+                    abr: data.abr
+                }
+            });
+
+    regionLatLong = {
+        "NAMR": [-100.89, 41.17],
+        "SAMR": [-60.82, -12.65],
+        "MENA": [42.18, 34.22],
+        "APAC": [86.13, 38.74],
+        "EURO": [8.43, 48.15]
+    };
+
+    function initialize() {
+
+        d3.select('#map-canvas svg').remove();
+        d3.select('.PieRating svg').remove();
+        d3.select('#horizontalBar svg').remove();
+        d3.select('#SectorTree svg').remove();
+
+
+        var PieDataset;
+        PieDataset = [ratingMap["AAA"], ratingMap["AA"], ratingMap["A"], ratingMap["BBB"], ratingMap["BB"], ratingMap["B"], ratingMap["CCC"], ratingMap["CC"], ratingMap["C"], ratingMap["D"]];
+
+        DrawMap();
+        DrawPie(PieDataset);
+        HorizontalChart(counterpartyExp);
+        BuildTreeMap(sectorMap);
     }
 </script>
 </body>
