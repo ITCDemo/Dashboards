@@ -351,119 +351,122 @@ function DisplayDendo(data, type) {
 
             function click(d) {
 
-                // if (d.depth == 2) {
-                //     d3.select("#barpieUtil svg").remove();
-                //
-                //     var value;
-                //     var alloc = d.parent.alloc;
-                //
-                //     value = instrumentMap[d.name][d.parent.name];
-                //
-                //     var dataset;
-                //
-                //     if ((value / alloc * 100).toFixed(2) > 100) {
-                //         dataset = [{name: "Utilized", percent: (value / alloc * 100).toFixed(2)}];
-                //
-                //     }
-                //     else if ((value / alloc * 100).toFixed(2) < 0) {
-                //         dataset = [{name: "Utilized", percent: (value / alloc * 100).toFixed(2) * -1}, {
-                //             name: "Not Utilized",
-                //             percent: (100 - value / alloc * 100 * -1).toFixed(2)
-                //         }];
-                //     }
-                //     else {
-                //         dataset = [{name: "Utilized", percent: (value / alloc * 100).toFixed(2)}, {
-                //             name: "Not Utilized",
-                //             percent: (100 - value / alloc * 100).toFixed(2)
-                //         }];
-                //     }
-                //
-                //     if (value < 0) value *= -1;
-                //
-                //     drawPie(dataset);
-                //
-                // }
-                // else if (d.depth == 1) {
-                //     d3.select("#barpieUtil svg").remove();
-                //
-                //
-                //     var Counterparty = creditMap[d.name];
-                //
-                //     var Avlength = Counterparty["product-exp"].length;
-                //
-                //     var totalExpValue = [];
-                //
-                //     debugger;
-                //
-                //     for (var exp in Counterparty["product-exp"]) {
-                //         var Expvalue;
-                //         switch (Counterparty["product-exp"][exp]) {
-                //             case "PE_IRS":
-                //             case "PE_IRS1":
-                //                 Expvalue = {
-                //                     name: "IRS",
-                //                     value: instrumentMap["IRS"][d.name] < 0 ? instrumentMap["IRS"][d.name] * -1 : instrumentMap["IRS"][d.name]
-                //                 };
-                //                 break;
-                //             case "PE_BND":
-                //             case "PE_BND1":
-                //                 Expvalue = {
-                //                     name: "BONDS",
-                //                     value: instrumentMap["BONDS"][d.name] < 0 ? instrumentMap["BONDS"][d.name] * -1 : instrumentMap["BONDS"][d.name]
-                //                 };
-                //                 break;
-                //             case "PE_EQU":
-                //             case "PE_EQU1":
-                //                 Expvalue = {
-                //                     name: "EQUITY",
-                //                     value: instrumentMap["EQUITY"][d.name] < 0 ? instrumentMap["EQUITY"][d.name] * -1 : instrumentMap["EQUITY"][d.name]
-                //                 };
-                //                 break;
-                //             case "PE_FXS":
-                //             case "PE_FXS1":
-                //                 Expvalue = {
-                //                     name: "FXS",
-                //                     value: instrumentMap["FXS"][d.name] < 0 ? instrumentMap["FXS"][d.name] * -1 : instrumentMap["FXS"][d.name]
-                //                 };
-                //                 break;
-                //
-                //             case "PE_FXO":
-                //             case "PE_FXO1":
-                //                 Expvalue = {
-                //                     name: "FXO",
-                //                     value: instrumentMap["FXO"][d.name] < 0 ? instrumentMap["FXO"][d.name] * -1 : instrumentMap["FXO"][d.name]
-                //                 };
-                //                 break;
-                //             case "PE_LD":
-                //             case "PE_LD1":
-                //                 Expvalue = {
-                //                     name: "LD",
-                //                     value: instrumentMap["LD"][d.name] < 0 ? instrumentMap["LD"][d.name] * -1 : instrumentMap["LD"][d.name]
-                //                 };
-                //                 break;
-                //         }
-                //
-                //         totalExpValue.push(Expvalue);
-                //     }
-                //
-                //     drawBar(totalExpValue)
-                //
-                //
-                // }
-                // else {
-                //     d3.select("#barpieUtil svg").remove();
-                // }
+                if (type == "Rating") {
 
-                if (d.children) {
-                    d._children = d.children;
-                    d.children = null;
-                } else {
-                    d.children = d._children;
-                    d._children = null;
+                    if (d.depth == 2) {
+                        d3.select("#barpieUtil svg").remove();
+
+                        var value;
+                        var alloc = d.parent.alloc;
+
+                        value = instrumentMap[d.name][d.parent.name];
+
+                        var dataset;
+
+                        if ((value / alloc * 100).toFixed(2) > 100) {
+                            dataset = [{name: "Utilized", percent: (value / alloc * 100).toFixed(2)}];
+
+                        }
+                        else if ((value / alloc * 100).toFixed(2) < 0) {
+                            dataset = [{name: "Utilized", percent: (value / alloc * 100).toFixed(2) * -1}, {
+                                name: "Not Utilized",
+                                percent: (100 - value / alloc * 100 * -1).toFixed(2)
+                            }];
+                        }
+                        else {
+                            dataset = [{name: "Utilized", percent: (value / alloc * 100).toFixed(2)}, {
+                                name: "Not Utilized",
+                                percent: (100 - value / alloc * 100).toFixed(2)
+                            }];
+                        }
+
+                        if (value < 0) value *= -1;
+
+                        drawPie(dataset);
+
+                    }
+                    else if (d.depth == 1) {
+                        d3.select("#barpieUtil svg").remove();
+
+
+                        var Counterparty = creditMap[d.name];
+
+                        var Avlength = Counterparty["product-exp"].length;
+
+                        var totalExpValue = [];
+
+                        debugger;
+
+                        for (var exp in Counterparty["product-exp"]) {
+                            var Expvalue;
+                            switch (Counterparty["product-exp"][exp]) {
+                                case "PE_IRS":
+                                case "PE_IRS1":
+                                    Expvalue = {
+                                        name: "IRS",
+                                        value: instrumentMap["IRS"][d.name] < 0 ? instrumentMap["IRS"][d.name] * -1 : instrumentMap["IRS"][d.name]
+                                    };
+                                    break;
+                                case "PE_BND":
+                                case "PE_BND1":
+                                    Expvalue = {
+                                        name: "BONDS",
+                                        value: instrumentMap["BONDS"][d.name] < 0 ? instrumentMap["BONDS"][d.name] * -1 : instrumentMap["BONDS"][d.name]
+                                    };
+                                    break;
+                                case "PE_EQU":
+                                case "PE_EQU1":
+                                    Expvalue = {
+                                        name: "EQUITY",
+                                        value: instrumentMap["EQUITY"][d.name] < 0 ? instrumentMap["EQUITY"][d.name] * -1 : instrumentMap["EQUITY"][d.name]
+                                    };
+                                    break;
+                                case "PE_FXS":
+                                case "PE_FXS1":
+                                    Expvalue = {
+                                        name: "FXS",
+                                        value: instrumentMap["FXS"][d.name] < 0 ? instrumentMap["FXS"][d.name] * -1 : instrumentMap["FXS"][d.name]
+                                    };
+                                    break;
+
+                                case "PE_FXO":
+                                case "PE_FXO1":
+                                    Expvalue = {
+                                        name: "FXO",
+                                        value: instrumentMap["FXO"][d.name] < 0 ? instrumentMap["FXO"][d.name] * -1 : instrumentMap["FXO"][d.name]
+                                    };
+                                    break;
+                                case "PE_LD":
+                                case "PE_LD1":
+                                    Expvalue = {
+                                        name: "LD",
+                                        value: instrumentMap["LD"][d.name] < 0 ? instrumentMap["LD"][d.name] * -1 : instrumentMap["LD"][d.name]
+                                    };
+                                    break;
+                            }
+
+                            totalExpValue.push(Expvalue);
+                        }
+
+                        drawBar(totalExpValue)
+
+
+                    }
+                    else {
+                        d3.select("#barpieUtil svg").remove();
+                    }
+
+                    if (d.children) {
+                        d._children = d.children;
+                        d.children = null;
+                    } else {
+                        d.children = d._children;
+                        d._children = null;
+                    }
+
+                    d.highlight = true;
+                    update(d);
                 }
-
-                d.highlight = true;
-                update(d);
             }
 
             function collapse(d) {
