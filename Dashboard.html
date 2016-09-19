@@ -99,7 +99,8 @@
         }
 
 
-        #ratingSector-overlay {
+        #ratingSector-overlay
+        {
             position: absolute;
             top: 0;
             left: 0;
@@ -118,6 +119,26 @@
             float: left;
         }
 
+        #Sector-overlay
+        {
+            position: absolute;
+            top: 20px;
+            left: 30px;
+            right: 0;
+            bottom: 0;
+            background: #000;
+            background: rgba(0, 0, 0, 0.8);
+            color: #ffffff;
+            opacity: 0;
+            z-index: -1;
+            -webkit-transition: all 0.5s linear;
+            -moz-transition: all 0.5s linear;
+            -o-transition: all 0.5s linear;
+            height: 0px;
+            width: 540px;
+            float: left;
+        }
+
         .close {
             line-height: 12px;
             width: 18px;
@@ -128,6 +149,7 @@
             top: 10px;
             right: 0;
             cursor: pointer;
+            color: #fff;
         }
 
         .axis path,
@@ -248,7 +270,9 @@
             stroke-linejoin: round;
         }
 
-        #barpieUtil {
+        #barpieUtil,
+        #secbarpieutil
+        {
             width: 230px;
             float: left;
         }
@@ -259,6 +283,10 @@
         }
 
         #barpieUtil svg.shadow{
+            margin-left:40px
+        }
+
+        #secbarpieutil svg.shadow{
             margin-left:40px
         }
 
@@ -392,8 +420,6 @@
 </section>
 <section style="float: left; height: 300px; width: 620px;" class="PieRating">
     <div id="ratingSector-overlay">
-
-
         <table>
             <tr>
                 <td id="tree" style="width: 390px">
@@ -404,14 +430,27 @@
                 </td>
             </tr>
         </table>
-        <div class="close" onclick="$('#ratingSector-overlay').css({'opacity': 0, 'z-index': -1, 'height': '0px'}); d3.select('#tree svg').remove(); d3.select('#barpieUtil svg').remove(); ">&#10006;</div>
+        <div class="close" onclick="$('#ratingSector-overlay').css({'opacity': 0, 'z-index': 99, 'height': '0px'}); d3.select('#tree svg').remove(); d3.select('#barpieUtil svg').remove(); ">&#10006;</div>
 
     </div>
 </section>
 <section id="horizontalBar" style="float: left; height: 340px; width: 580px">
 </section>
 <section id="SectorTree" style="float: left; height: 340px; width: 600px; padding-top: 20px; padding-left: 30px">
+    <div id="Sector-overlay">
+        <table>
+            <tr>
+                <td id="Sectree" style="width: 540px">
 
+                </td>
+                <td id="SecbarpieUtil" style="width: 230px">
+
+                </td>
+            </tr>
+        </table>
+        <div class="close" onclick="$('#Sector-overlay').css({'opacity': 0, 'z-index': -1, 'height': '0px'}); d3.select('#Sectree svg').remove(); d3.select('#SecbarpieUtil svg').remove(); ">&#10006;</div>
+
+    </div>
 </section>
 <script>
     upload_button("uploader", load_dataset);
@@ -558,6 +597,10 @@
     var regionLatLong ={};
     var instrumentMap = {};
 
+    var secMap = {};
+
+
+
 
     var SectoRatingMap = {
         Sector: {
@@ -584,6 +627,17 @@
             9: "D"
         },
         SectorID: {
+           "Energy": "SEC_1",
+           "Materials": "SEC_2",
+           "Industrials": "SEC_3",
+           "Consumer Staples": "SEC_5",
+           "Health Care": "SEC_6",
+           "Financials": "SEC_7",
+           "Information Tech": "SEC_8",
+           "Telecom Services": "SEC_9",
+           "Sovereign": "SEC_11"
+        },
+        SectorName: {
             "SEC_1": "Energy",
             "SEC_2": "Materials",
             "SEC_3": "Industrials",
@@ -594,6 +648,7 @@
             "SEC_9": "Telecom Services",
             "SEC_11": "Sovereign"
         }
+
     };
 
     queue()

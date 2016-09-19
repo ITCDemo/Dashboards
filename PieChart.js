@@ -164,7 +164,7 @@ function DrawPie (dataset)
         })
         .on('click', function(d){
             $("#ratingSector-overlay").css({"opacity": 1, "z-index": "999", "height": "300px"});
-                DisplayDendo(SectoRatingMap["Rating"][d]);
+                DisplayDendo(SectoRatingMap["Rating"][d], "Rating");
         });
 
     legend.append('text')

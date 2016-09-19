@@ -1,8 +1,10 @@
-function DisplayDendo(data) {
+function DisplayDendo(data, type) {
 
     var creditMap = {};
     var ratingMap = {};
+    var secMap ={};
     var cptyMapRating = {};
+    var cptyMapSec = {};
     var treeData = [];
 
     queue()
@@ -12,6 +14,7 @@ function DisplayDendo(data) {
                     name: data["Coverage-Counterparty"],
                     rating: data.Rating,
                     alloc: data.Allocation,
+                    sector: data.Sector,
                     "product-exp": []
                 };
 
@@ -35,71 +38,152 @@ function DisplayDendo(data) {
                     cptyMapRating[creditMap[data["Coverage-Counterparty"]].name] = "";
                 }
             }
+            if (!(data["Sector"] in secMap)) {
+
+                if(data["Sector"] == "SEC_2"){
+                    debugger;
+                }
+
+                secMap[data["Sector"]] = [];
+
+                secMap[data["Sector"]].push(creditMap[data["Coverage-Counterparty"]]);
+                cptyMapSec[creditMap[data["Coverage-Counterparty"]].name] = "";
+            }
+            else {
+                if (!([data["Coverage-Counterparty"]][0] in cptyMapSec)) {
+                    secMap[data["Sector"]].push(creditMap[data["Coverage-Counterparty"]]);
+                    cptyMapSec[creditMap[data["Coverage-Counterparty"]].name] = "";
+                }
+            }
         })
-        .await(function(){
-            debugger;
-                    var cptys = [];
+        .await(function () {
+            var cptys = [];
+            var exps = [];
+            var newExp = "";
 
-                    for (cpty in ratingMap[data]) {
-                        var exps = [];
-
-                        for (exp in ratingMap[data][cpty]["product-exp"]) {
+            if (type == "Rating") {
 
 
-                            var newExp;
-                            switch (ratingMap[data][cpty]["product-exp"][exp]) {
-                                case "PE_IRS":
-                                case "PE_IRS1":
-                                    newExp = "IRS";
-                                    break;
-                                case "PE_BND":
-                                case "PE_BND1":
-                                    newExp = "BONDS";
-                                    break;
-                                case "PE_EQU":
-                                case "PE_EQU1":
-                                    newExp = "EQUITY";
-                                    break;
-                                case "PE_FXS":
-                                case "PE_FXS1":
-                                    newExp = "FXS";
-                                    break;
-                                case "PE_FXO":
-                                case "PE_FXO1":
-                                    newExp = "FXO";
-                                    break;
-                                case "PE_LD":
-                                case "PE_LD1":
-                                    newExp = "LD";
-                                    break;
-                            }
+                for (cpty in ratingMap[data]) {
+                    exps = [];
+
+                    for (exp in ratingMap[data][cpty]["product-exp"]) {
 
 
-                            exps.push({
-                                "name": newExp,
-                                "parent": ratingMap[data][cpty].name
-                            })
+                        newExp = "";
+                        switch (ratingMap[data][cpty]["product-exp"][exp]) {
+                            case "PE_IRS":
+                            case "PE_IRS1":
+                                newExp = "IRS";
+                                break;
+                            case "PE_BND":
+                            case "PE_BND1":
+                                newExp = "BONDS";
+                                break;
+                            case "PE_EQU":
+                            case "PE_EQU1":
+                                newExp = "EQUITY";
+                                break;
+                            case "PE_FXS":
+                            case "PE_FXS1":
+                                newExp = "FXS";
+                                break;
+                            case "PE_FXO":
+                            case "PE_FXO1":
+                                newExp = "FXO";
+                                break;
+                            case "PE_LD":
+                            case "PE_LD1":
+                                newExp = "LD";
+                                break;
                         }
 
 
-                        cptys.push({
-                            "name": ratingMap[data][cpty].name,
-                            "parent": data,
-                            "alloc": parseInt(ratingMap[data][cpty].alloc.replace(/,/g, "").replace(/ /g, "")),
-                            "children": exps
+                        exps.push({
+                            "name": newExp,
+                            "parent": ratingMap[data][cpty].name
                         })
                     }
 
-                    treeData = [
-                        {
-                            "name": data,
-                            "parent": "null",
-                            "children": cptys
+
+                    cptys.push({
+                        "name": ratingMap[data][cpty].name,
+                        "parent": data,
+                        "alloc": parseInt(ratingMap[data][cpty].alloc.replace(/,/g, "").replace(/ /g, "")),
+                        "children": exps
+                    })
+                }
+
+                treeData = [
+                    {
+                        "name": data,
+                        "parent": "null",
+                        "children": cptys
+                    }
+                ];
+            }
+            else if (type == "Sector") {
+                debugger;
+                for (cpty in secMap[data]) {
+                    exps = [];
+
+                    for (exp in secMap[data][cpty]["product-exp"]) {
+
+
+                        newExp = "";
+                        switch (secMap[data][cpty]["product-exp"][exp]) {
+                            case "PE_IRS":
+                            case "PE_IRS1":
+                                newExp = "IRS";
+                                break;
+                            case "PE_BND":
+                            case "PE_BND1":
+                                newExp = "BONDS";
+                                break;
+                            case "PE_EQU":
+                            case "PE_EQU1":
+                                newExp = "EQUITY";
+                                break;
+                            case "PE_FXS":
+                            case "PE_FXS1":
+                                newExp = "FXS";
+                                break;
+                            case "PE_FXO":
+                            case "PE_FXO1":
+                                newExp = "FXO";
+                                break;
+                            case "PE_LD":
+                            case "PE_LD1":
+                                newExp = "LD";
+                                break;
                         }
-                    ];
+
+
+                        exps.push({
+                            "name": newExp,
+                            "parent": secMap[data][cpty].name
+                        })
+                    }
+
+
+                    cptys.push({
+                        "name": secMap[data][cpty].name,
+                        "parent": data,
+                        "alloc": parseInt(secMap[data][cpty].alloc.replace(/,/g, "").replace(/ /g, "")),
+                        "children": exps
+                    })
+                }
+
+                treeData = [
+                    {
+                        "name": SectoRatingMap["SectorName"][data],
+                        "parent": "null",
+                        "children": cptys
+                    }
+                ];
+            }
 
             debugger;
-
 
 
             // -------------------- DRAW TREE ----------------------
@@ -115,20 +199,34 @@ function DisplayDendo(data) {
 
             var tree = d3.layout.tree()
                 .size([height, width])
-                .nodeSize([20,0]);
+                .nodeSize([20, 0]);
 
             var diagonal = d3.svg.diagonal()
                 .projection(function (d) {
                     return [d.y, d.x];
                 });
 
-            var svg = d3.select("#tree").append("svg")
-                .attr("width", width)
-                .attr("height", 300)
-                .append("g")
-                .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+            var svg;
 
-            
+            if (type == "Rating") {
+
+                svg = d3.select("#tree").append("svg")
+                    .attr("width", width)
+                    .attr("height", 300)
+                    .append("g")
+                    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+            }
+            else {
+                svg = d3.select("#Sectree").append("svg")
+                    .attr("width", "540px")
+                    .attr("height", 300)
+                    .append("g")
+                    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+            }
+
+            debugger;
+
+
             treeData = [
                 treeData[0]
             ];
@@ -253,91 +351,108 @@ function DisplayDendo(data) {
 
             function click(d) {
 
-                if (d.depth == 2) {
-                    d3.select("#barpieUtil svg").remove();
-
-                    var value;
-                    var alloc = d.parent.alloc;
-
-                    value = instrumentMap[d.name][d.parent.name];
-
-                    var dataset;
-
-                    if ((value / alloc * 100).toFixed(2) > 100) {
-                        dataset = [{name: "Utilized", percent: (value / alloc * 100).toFixed(2)}];
-
-                    }
-                    else if ((value / alloc * 100).toFixed(2) < 0) {
-                        dataset = [{name: "Utilized", percent: (value / alloc * 100).toFixed(2) * -1}, {
-                            name: "Not Utilized",
-                            percent: (100 - value / alloc * 100 * -1).toFixed(2)
-                        }];
-                    }
-                    else {
-                        dataset = [{name: "Utilized", percent: (value / alloc * 100).toFixed(2)}, {
-                            name: "Not Utilized",
-                            percent: (100 - value / alloc * 100).toFixed(2)
-                        }];
-                    }
-
-                    if (value < 0) value *= -1;
-
-                    drawPie(dataset);
-
-                }
-                else if (d.depth == 1) {
-                    d3.select("#barpieUtil svg").remove();
-
-
-                    var Counterparty = creditMap[d.name];
-
-                    var Avlength = Counterparty["product-exp"].length;
-
-                    var totalExpValue = [];
-
-                    debugger;
-
-                    for (var exp in Counterparty["product-exp"]) {
-                        var Expvalue;
-                        switch (Counterparty["product-exp"][exp]) {
-                            case "PE_IRS":
-                            case "PE_IRS1":
-                                Expvalue = { name: "IRS", value: instrumentMap["IRS"][d.name]<0?instrumentMap["IRS"][d.name] * -1:instrumentMap["IRS"][d.name]  };
-                                break;
-                            case "PE_BND":
-                            case "PE_BND1":
-                                Expvalue = { name: "BONDS", value: instrumentMap["BONDS"][d.name]<0?instrumentMap["BONDS"][d.name] * -1:instrumentMap["BONDS"][d.name]   };
-                                break;
-                            case "PE_EQU":
-                            case "PE_EQU1":
-                                Expvalue = { name: "EQUITY", value: instrumentMap["EQUITY"][d.name]<0?instrumentMap["EQUITY"][d.name] * -1:instrumentMap["EQUITY"][d.name]   };
-                                break;
-                            case "PE_FXS":
-                            case "PE_FXS1":
-                                Expvalue = { name: "FXS", value: instrumentMap["FXS"][d.name]<0?instrumentMap["FXS"][d.name] * -1:instrumentMap["FXS"][d.name] };
-                                break;
-
-                            case "PE_FXO":
-                            case "PE_FXO1":
-                                Expvalue = { name: "FXO", value: instrumentMap["FXO"][d.name]<0?instrumentMap["FXO"][d.name] * -1:instrumentMap["FXO"][d.name] };
-                                break;
-                            case "PE_LD":
-                            case "PE_LD1":
-                                Expvalue = { name: "LD", value: instrumentMap["LD"][d.name]<0?instrumentMap["LD"][d.name] * -1:instrumentMap["LD"][d.name]  };
-                                break;
-                        }
-
-                        totalExpValue.push(Expvalue);
-                    }
-
-                    drawBar(totalExpValue)
-
-
-                }
-                else
-                {
-                    d3.select("#barpieUtil svg").remove();
-                }
+                // if (d.depth == 2) {
+                //     d3.select("#barpieUtil svg").remove();
+                //
+                //     var value;
+                //     var alloc = d.parent.alloc;
+                //
+                //     value = instrumentMap[d.name][d.parent.name];
+                //
+                //     var dataset;
+                //
+                //     if ((value / alloc * 100).toFixed(2) > 100) {
+                //         dataset = [{name: "Utilized", percent: (value / alloc * 100).toFixed(2)}];
+                //
+                //     }
+                //     else if ((value / alloc * 100).toFixed(2) < 0) {
+                //         dataset = [{name: "Utilized", percent: (value / alloc * 100).toFixed(2) * -1}, {
+                //             name: "Not Utilized",
+                //             percent: (100 - value / alloc * 100 * -1).toFixed(2)
+                //         }];
+                //     }
+                //     else {
+                //         dataset = [{name: "Utilized", percent: (value / alloc * 100).toFixed(2)}, {
+                //             name: "Not Utilized",
+                //             percent: (100 - value / alloc * 100).toFixed(2)
+                //         }];
+                //     }
+                //
+                //     if (value < 0) value *= -1;
+                //
+                //     drawPie(dataset);
+                //
+                // }
+                // else if (d.depth == 1) {
+                //     d3.select("#barpieUtil svg").remove();
+                //
+                //
+                //     var Counterparty = creditMap[d.name];
+                //
+                //     var Avlength = Counterparty["product-exp"].length;
+                //
+                //     var totalExpValue = [];
+                //
+                //     debugger;
+                //
+                //     for (var exp in Counterparty["product-exp"]) {
+                //         var Expvalue;
+                //         switch (Counterparty["product-exp"][exp]) {
+                //             case "PE_IRS":
+                //             case "PE_IRS1":
+                //                 Expvalue = {
+                //                     name: "IRS",
+                //                     value: instrumentMap["IRS"][d.name] < 0 ? instrumentMap["IRS"][d.name] * -1 : instrumentMap["IRS"][d.name]
+                //                 };
+                //                 break;
+                //             case "PE_BND":
+                //             case "PE_BND1":
+                //                 Expvalue = {
+                //                     name: "BONDS",
+                //                     value: instrumentMap["BONDS"][d.name] < 0 ? instrumentMap["BONDS"][d.name] * -1 : instrumentMap["BONDS"][d.name]
+                //                 };
+                //                 break;
+                //             case "PE_EQU":
+                //             case "PE_EQU1":
+                //                 Expvalue = {
+                //                     name: "EQUITY",
+                //                     value: instrumentMap["EQUITY"][d.name] < 0 ? instrumentMap["EQUITY"][d.name] * -1 : instrumentMap["EQUITY"][d.name]
+                //                 };
+                //                 break;
+                //             case "PE_FXS":
+                //             case "PE_FXS1":
+                //                 Expvalue = {
+                //                     name: "FXS",
+                //                     value: instrumentMap["FXS"][d.name] < 0 ? instrumentMap["FXS"][d.name] * -1 : instrumentMap["FXS"][d.name]
+                //                 };
+                //                 break;
+                //
+                //             case "PE_FXO":
+                //             case "PE_FXO1":
+                //                 Expvalue = {
+                //                     name: "FXO",
+                //                     value: instrumentMap["FXO"][d.name] < 0 ? instrumentMap["FXO"][d.name] * -1 : instrumentMap["FXO"][d.name]
+                //                 };
+                //                 break;
+                //             case "PE_LD":
+                //             case "PE_LD1":
+                //                 Expvalue = {
+                //                     name: "LD",
+                //                     value: instrumentMap["LD"][d.name] < 0 ? instrumentMap["LD"][d.name] * -1 : instrumentMap["LD"][d.name]
+                //                 };
+                //                 break;
+                //         }
+                //
+                //         totalExpValue.push(Expvalue);
+                //     }
+                //
+                //     drawBar(totalExpValue)
+                //
+                //
+                // }
+                // else {
+                //     d3.select("#barpieUtil svg").remove();
+                // }
 
                 if (d.children) {
                     d._children = d.children;
