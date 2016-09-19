@@ -48,8 +48,8 @@ function DrawMap(){
                         height = 300;
 
                     var projection = d3.geo.mercator()
-                        .translate([270, 190])
-                        .scale(100);
+                        .translate([255, 190])
+                        .scale(85);
 
                     var path = d3.geo.path()
                         .projection(projection);
@@ -57,7 +57,7 @@ function DrawMap(){
                     var svg = d3.select("#map-canvas").append("svg")
                         .attr("width", width)
                         .attr("height", height)
-                        .style("background-color", "#ffffff")
+                        .style("background-color", "#000")
                         .append("g");
 
 

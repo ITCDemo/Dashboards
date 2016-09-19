@@ -26,7 +26,7 @@ function drawBarRegion(data) {
         .attr('class', 'd3-tip')
         .offset([-10, 0])
         .html(function (d) {
-            return "<strong>Utilization:</strong> <span style='color:black'> " + FormatMoney(d.value) + "</span>";
+            return "<strong>Exposure:</strong> <span style='color:black'> " + FormatMoney(d.value) + "</span>";
         });
 
     var svg = d3.select("#pie")
@@ -64,7 +64,7 @@ function drawBarRegion(data) {
         .attr("x", -40)
         .style("text-anchor", "end")
         .style("fill", "#fff")
-        .text("Utilization");
+        .text("Exposure");
 
 
     svg.selectAll(".bar")

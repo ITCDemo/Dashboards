@@ -55,16 +55,22 @@ function BuildTreeMap(data) {
         .attr("class", "treemap")
         .call(position)
         .style("background-color", function (d) {
-            return d.name == 'tree' ? '#fff' : color(d.size);
+            return d.name == 'tree' ? '#000' : color(d.size);
         })
         .append('div')
+        .on('click', function(d){
+            // $("#ratingSector-overlay").css({"opacity": 1, "z-index": "999", "height": "300px"});
+            // DisplayDendo(SectoRatingMap["Rating"][d]);
+        })
         .style("font-size", function (d) {
             // compute font size based on sqrt(area)
             return Math.max(8, 0.15 * Math.sqrt(d.area)) + 'px';
         })
-        .text(function (d) {
-            return d.children ? null : d.name + " "+ FormatMoney(d.size);
-        });
+        .html(function (d) {
+            return d.children ? null : d.name + "<br/>"+ FormatMoney(d.size);
+        })
+        .style("color", "#000")
+        ;
 
     function position() {
         this.style("left", function (d) {

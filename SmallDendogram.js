@@ -1,10 +1,8 @@
-function DisplayDendo(data, type) {
+function DisplayDendo(data) {
 
     var creditMap = {};
     var ratingMap = {};
     var cptyMapRating = {};
-    var secMap = {};
-    var cptyMapSector = {};
     var treeData = [];
 
     queue()
@@ -37,26 +35,9 @@ function DisplayDendo(data, type) {
                     cptyMapRating[creditMap[data["Coverage-Counterparty"]].name] = "";
                 }
             }
-
-            if (!(data["Sector"] in secMap)) {
-
-                secMap[data["Sector"]] = [];
-
-                secMap[data["Sector"]].push(creditMap[data["Coverage-Counterparty"]]);
-                cptyMapSector[creditMap[data["Coverage-Counterparty"]].name] = "";
-
-            }
-            else {
-                if (!([data["Coverage-Counterparty"]][0] in cptyMapSector)) {
-                    secMap[data["Sector"]].push(creditMap[data["Coverage-Counterparty"]]);
-                    cptyMapSector[creditMap[data["Coverage-Counterparty"]].name] = "";
-                }
-            }
         })
         .await(function(){
-            switch(type) {
-                case "Rating":
-
+            debugger;
                     var cptys = [];
 
                     for (cpty in ratingMap[data]) {
@@ -69,27 +50,27 @@ function DisplayDendo(data, type) {
                             switch (ratingMap[data][cpty]["product-exp"][exp]) {
                                 case "PE_IRS":
                                 case "PE_IRS1":
-                                    newExp = "IRS Deals";
+                                    newExp = "IRS";
                                     break;
                                 case "PE_BND":
                                 case "PE_BND1":
-                                    newExp = "Bonds";
+                                    newExp = "BONDS";
                                     break;
                                 case "PE_EQU":
                                 case "PE_EQU1":
-                                    newExp = "Equities";
+                                    newExp = "EQUITY";
                                     break;
                                 case "PE_FXS":
                                 case "PE_FXS1":
-                                    newExp = "FX Swaps";
+                                    newExp = "FXS";
                                     break;
                                 case "PE_FXO":
                                 case "PE_FXO1":
-                                    newExp = "Fx OTC Deals";
+                                    newExp = "FXO";
                                     break;
                                 case "PE_LD":
                                 case "PE_LD1":
-                                    newExp = "L&D Deals";
+                                    newExp = "LD";
                                     break;
                             }
 
@@ -117,71 +98,8 @@ function DisplayDendo(data, type) {
                         }
                     ];
 
-                    break;
+            debugger;
 
-                case "Sectors":
-
-                    var cptysSec = [];
-
-                    for (cpty in secMap[data]) {
-                        var expsSec = [];
-
-                        for (exp in secMap[data][cpty]["product-exp"]) {
-
-
-                            var newExpSec;
-                            switch (secMap[data][cpty]["product-exp"][exp]) {
-                                case "PE_IRS":
-                                case "PE_IRS1":
-                                    newExpSec = "IRS Deals";
-                                    break;
-                                case "PE_BND":
-                                case "PE_BND1":
-                                    newExpSec = "Bonds";
-                                    break;
-                                case "PE_EQU":
-                                case "PE_EQU1":
-                                    newExpSec = "Equities";
-                                    break;
-                                case "PE_FXS":
-                                case "PE_FXS1":
-                                    newExpSec = "FX Swaps";
-                                    break;
-                                case "PE_FXO":
-                                case "PE_FXO1":
-                                    newExpSec = "Fx OTC Deals";
-                                    break;
-                                case "PE_LD":
-                                case "PE_LD1":
-                                    newExpSec = "L&D Deals";
-                                    break;
-                            }
-
-
-                            expsSec.push({
-                                "name": newExpSec,
-                                "parent": secMap[data][cpty].name
-                            })
-                        }
-
-
-                        cptysSec.push({
-                            "name": secMap[data][cpty].name,
-                            "parent": data,
-                            "alloc": parseInt(secMap[data][cpty].alloc.replace(/,/g, "").replace(/ /g, "")),
-                            "children": expsSec
-                        })
-                    }
-
-                    treeData = [
-                        {
-                            "name": SectoRatingMap.SectorID[data],
-                            "parent": "null",
-                            "children": cptysSec
-                        }
-                    ];
-                    break;
-            }
 
 
             // -------------------- DRAW TREE ----------------------
@@ -341,27 +259,7 @@ function DisplayDendo(data, type) {
                     var value;
                     var alloc = d.parent.alloc;
 
-                    switch (d.name) {
-                        case "IRS Deals":
-                            value = IRSDealMap[d.parent.name].value;
-                            break;
-                        case "Bonds":
-                            value = BondMap[d.parent.name].value;
-                            break;
-                        case "Equities":
-                            value = EquititesMap[d.parent.name].value;
-                            break;
-                        case "FX Swaps":
-                            value = FxSwapMap[d.parent.name].value;
-                            break;
-
-                        case "Fx OTC Deals":
-                            value = FxOTCMap[d.parent.name].value;
-                            break;
-                        case "L&D Deals":
-                            value = LDDealMap[d.parent.name].value;
-                            break;
-                    }
+                    value = instrumentMap[d.name][d.parent.name];
 
                     var dataset;
 
@@ -384,7 +282,6 @@ function DisplayDendo(data, type) {
 
                     if (value < 0) value *= -1;
 
-                    //document.getElementById("header").innerHTML = "<span>" + d.parent.name + "</span><br/><span>" + d.name + "</span><br/><span> Utilization - $" + value;
                     drawPie(dataset);
 
                 }
@@ -398,33 +295,35 @@ function DisplayDendo(data, type) {
 
                     var totalExpValue = [];
 
+                    debugger;
+
                     for (var exp in Counterparty["product-exp"]) {
                         var Expvalue;
                         switch (Counterparty["product-exp"][exp]) {
                             case "PE_IRS":
                             case "PE_IRS1":
-                                Expvalue = { name: "IRS Deals", value: IRSDealMap[d.name].value<0?IRSDealMap[d.name].value * -1:IRSDealMap[d.name].value  };
+                                Expvalue = { name: "IRS", value: instrumentMap["IRS"][d.name]<0?instrumentMap["IRS"][d.name] * -1:instrumentMap["IRS"][d.name]  };
                                 break;
                             case "PE_BND":
                             case "PE_BND1":
-                                Expvalue = { name: "Bonds", value: BondMap[d.name].value<0?BondMap[d.name].value * -1:BondMap[d.name].value   };
+                                Expvalue = { name: "BONDS", value: instrumentMap["BONDS"][d.name]<0?instrumentMap["BONDS"][d.name] * -1:instrumentMap["BONDS"][d.name]   };
                                 break;
                             case "PE_EQU":
                             case "PE_EQU1":
-                                Expvalue = { name: "Equities", value: EquititesMap[d.name].value<0?EquititesMap[d.name].value * -1:EquititesMap[d.name].value   };
+                                Expvalue = { name: "EQUITY", value: instrumentMap["EQUITY"][d.name]<0?instrumentMap["EQUITY"][d.name] * -1:instrumentMap["EQUITY"][d.name]   };
                                 break;
                             case "PE_FXS":
                             case "PE_FXS1":
-                                Expvalue = { name: "Fx Swap Deals", value: FxSwapMap[d.name].value<0?FxSwapMap[d.name].value * -1:FxSwapMap[d.name].value };
+                                Expvalue = { name: "FXS", value: instrumentMap["FXS"][d.name]<0?instrumentMap["FXS"][d.name] * -1:instrumentMap["FXS"][d.name] };
                                 break;
 
                             case "PE_FXO":
                             case "PE_FXO1":
-                                Expvalue = { name: "FxOTC Deals", value: FxOTCMap[d.name].value<0?FxOTCMap[d.name].value * -1:FxOTCMap[d.name].value };
+                                Expvalue = { name: "FXO", value: instrumentMap["FXO"][d.name]<0?instrumentMap["FXO"][d.name] * -1:instrumentMap["FXO"][d.name] };
                                 break;
                             case "PE_LD":
                             case "PE_LD1":
-                                Expvalue = { name: "L&D Deals", value: LDDealMap[d.name].value<0?LDDealMap[d.name].value * -1:LDDealMap[d.name].value  };
+                                Expvalue = { name: "LD", value: instrumentMap["LD"][d.name]<0?instrumentMap["LD"][d.name] * -1:instrumentMap["LD"][d.name]  };
                                 break;
                         }
 

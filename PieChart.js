@@ -74,7 +74,7 @@ function DrawPie (dataset)
         .attr("fill", function (d, i) {
             return color(i);
         })
-        .attr("stroke", "white")
+        .attr("stroke", "#000")
         .attr("stroke-width", 2)
         .attr("d", arc(enterClockwise))
         .on('mouseover', function(d) {
@@ -164,12 +164,7 @@ function DrawPie (dataset)
         })
         .on('click', function(d){
             $("#ratingSector-overlay").css({"opacity": 1, "z-index": "999", "height": "300px"});
-            if($('input[name=dataset]:checked').val() == "Sectors") {
-                DisplayDendo(SectoRatingMap["Sector"][d], "Sectors");
-            }
-            else{
-                DisplayDendo(SectoRatingMap["Rating"][d], "Rating");
-            }
+                DisplayDendo(SectoRatingMap["Rating"][d]);
         });
 
     legend.append('text')
@@ -214,7 +209,7 @@ function DrawPie (dataset)
 
             return legendText;
         }).style({
-        fill: '#000',
+        fill: '#fff',
         'font-size': '14px'
     });
 

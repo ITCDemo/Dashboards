@@ -73,12 +73,14 @@ function HorizontalChart(data) {
     var y_xis = canvas.append('g')
         .attr("transform", "translate(150,0)")
         .attr('id', 'yaxis')
-        .call(yAxis);
 
-    var x_xis = canvas.append('g')
-        .attr("transform", "translate(150,330)")
-        .attr('id', 'xaxis')
-        .call(xAxis);
+        .call(yAxis)
+        .style({'fill': '#fff', 'font-size': '10px'});
+
+    // var x_xis = canvas.append('g')
+    //     .attr("transform", "translate(150,330)")
+    //     .attr('id', 'xaxis')
+    //     .call(xAxis);
 
     var chart = canvas.append('g')
         .attr("transform", "translate(150,0)")

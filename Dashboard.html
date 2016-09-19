@@ -16,7 +16,7 @@
 
     <style>
         section {
-            background-color: white;
+            background-color: #000;
             /*border: solid black 1px;*/
             margin: 10px;
             position: relative;
@@ -161,8 +161,8 @@
         }
 
         #yaxis g text {
-            fill:black;
-            color: #000;
+            fill:#fff;
+            color: #fff;
             font-size: 14px;
         }
 
@@ -266,6 +266,8 @@
             border: 0px;
             font-size: 12px;
             vertical-align: middle;
+            background-color: #000;
+            color: #fff;
         }
         #FakeButton {
             -moz-box-shadow: 0px 10px 12px -7px #276873;
@@ -316,7 +318,7 @@
         }
 
         .treemap {
-            border: solid 1px white;
+            border: solid 1px #000;
             line-height: 0.95;
             overflow: hidden;
             position: absolute;
@@ -328,9 +330,25 @@
             padding: 6px 4%;
         }
 
+        .treemap:hover {
+            -moz-box-shadow:    0 0 30px white;
+            -webkit-box-shadow: 0 0 30px white;
+            box-shadow:         0 0 30px white;
+            cursor: pointer;
+            z-index: 99;
+        }
+
         svg {
             background-color: #000;
         }
+
+        form {
+            color: #fff;
+            position: fixed;
+            top: 15px;
+            left: 350px
+        }
+
 
     </style>
 </head>
@@ -353,6 +371,10 @@
         <input type="button" value="Refresh Data" id="FakeButton"/>
     </div>
 </div>
+<form>
+    <label><input type="radio" name="region" value="Region" checked> Region</label>
+    <label><input type="radio" name="region" value="Country"> Country</label>
+</form>
 
 <p id="stats">
 </p>
@@ -367,10 +389,6 @@
         </div>
         <div class="close" onclick="$('#bar-overlay').css({'opacity': 0, 'z-index': -1, 'height': '0px'}); d3.select('#pie svg').remove();">&#10006;</div>
     </div>
-    <form>
-        <label><input type="radio" name="region" value="Region" checked> Region</label>
-        <label><input type="radio" name="region" value="Country"> Country</label>
-    </form>
 </section>
 <section style="float: left; height: 300px; width: 620px;" class="PieRating">
     <div id="ratingSector-overlay">
@@ -467,83 +485,16 @@
                 sectorMap[data[i]["Sector_ID"]] = existingExp + exp;
             }
 
-            if(data[i]["Instrument"] == "BONDS") {
 
-                if (!(data[i]["Counterparty"] in BondMap)) {
-                    BondMap[data[i]["Counterparty"]] = {
-                        value: parseInt(data[i]["Market Value"].replace(/,/g, ""))
-                    };
-                }
-                else {
-                    var existingBond = BondMap[data[i]["Counterparty"]].value;
-                    BondMap[data[i]["Counterparty"]].value = parseInt(data[i]["Market Value"].replace(/,/g, "")) + existingBond;
-                }
+            if(instrumentMap[data[i]["Instrument"]] == undefined) {
+                instrumentMap[data[i]["Instrument"]] = {};
+                instrumentMap[data[i]["Instrument"]][[data[i]["Counterparty"]]] = exp
+            }
+            else{
+                existingExp = instrumentMap[data[i]["Instrument"]][data[i]["Counterparty"]] == undefined ? 0: instrumentMap[data[i]["Instrument"]][data[i]["Counterparty"]];
+                instrumentMap[data[i]["Instrument"]][data[i]["Counterparty"]] = existingExp + exp;
             }
 
-            if(data[i]["Instrument"] == "EQUITY") {
-
-                if (!(data[i]["Counterparty"] in EquititesMap)) {
-                    EquititesMap[data[i]["Counterparty"]] = {
-                        value: parseInt(data[i]["Market Value"].replace(/,/g, ""))
-                    };
-                }
-                else {
-                    var existingEqu = EquititesMap[data[i]["Counterparty"]].value;
-                    EquititesMap[data[i]["Counterparty"]].value = parseInt(data[i]["Market Value"].replace(/,/g, "")) + existingEqu;
-                }
-            }
-
-            if(data[i]["Instrument"] == "FXS") {
-
-                if (!(data[i]["Counterparty"] in FxSwapMap)) {
-                    FxSwapMap[data[i]["Counterparty"]] = {
-                        value: parseInt(data[i]["Market Value"].replace(/,/g, ""))
-                    };
-                }
-                else {
-                    var existingFxSwap = FxSwapMap[data[i]["Counterparty"]].value;
-                    FxSwapMap[data[i]["Counterparty"]].value = parseInt(data[i]["Market Value"].replace(/,/g, "")) + existingFxSwap;
-                }
-            }
-
-            if(data[i]["Instrument"] == "IRS") {
-
-                if (!(data[i]["Counterparty"] in IRSDealMap)) {
-                    IRSDealMap[data[i]["Counterparty"]] = {
-                        value: parseInt(data[i]["Market Value"].replace(/,/g, ""))
-                    };
-                }
-                else {
-                    var existingIRS = IRSDealMap[data[i]["Counterparty"]].value;
-                    IRSDealMap[data[i]["Counterparty"]].value = parseInt(data[i]["Market Value"].replace(/,/g, "")) + existingIRS;
-                }
-            }
-
-            if(data[i]["Instrument"] == "FXO") {
-
-                if (!(data[i]["Counterparty"] in FxOTCMap)) {
-                    FxOTCMap[data[i]["Counterparty"]] = {
-                        value: parseInt(data[i]["Market Value"].replace(/,/g, ""))
-                    };
-                }
-                else {
-                    var existingFxOTC = FxOTCMap[data[i]["Counterparty"]].value;
-                    FxOTCMap[data[i]["Counterparty"]].value = parseInt(data[i]["Market Value"].replace(/,/g, "")) + existingFxOTC;
-                }
-            }
-
-            if(data[i]["Instrument"] == "LD") {
-
-                if (!(data[i]["Counterparty"] in LDDealMap)) {
-                    LDDealMap[data[i]["Counterparty"]] = {
-                        value: parseInt(data[i]["Market Value"].replace(/,/g, ""))
-                    };
-                }
-                else {
-                    var existingLD = LDDealMap[data[i]["Counterparty"]].value;
-                    LDDealMap[data[i]["Counterparty"]].value = parseInt(data[i]["Market Value"].replace(/,/g, "")) + existingLD;
-                }
-            }
 
             if(!(data[i]["Country"] in countryMap)){
 
@@ -567,8 +518,6 @@
             }
 
         }
-
-        debugger;
 
         initialize();
     }
@@ -601,19 +550,13 @@
 
     var counterpartyExp = {};
 
-    var BondMap = {};
-    var EquititesMap = {};
-    var FxOTCMap = {};
-    var FxSwapMap = {};
-    var IRSDealMap = {};
-    var LDDealMap = {};
-
     var countryMap = {};
 
     var masterCounterparty = [];
 
     var LatLongMap = {};
     var regionLatLong ={};
+    var instrumentMap = {};
 
 
     var SectoRatingMap = {
