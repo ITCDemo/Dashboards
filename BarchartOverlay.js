@@ -1,7 +1,7 @@
 function drawBarRegion(data) {
 
     var margin = {top: 40, right: 20, bottom: 30, left: 130},
-        width = 900 - margin.left - margin.right,
+        width = 600 - margin.left - margin.right,
         height = 300 - margin.top - margin.bottom;
 
     var formatPercent = d3.format("$");
