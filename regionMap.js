@@ -236,7 +236,7 @@ function DrawMap(){
                         .text(function(d){return d.name})
                         .attr("font-size","12px")
                         .attr("fill-opacity",1)
-                        .attr("fill", "black");
+                        .attr("fill", "#fff");
 
                     markers
                         .data(countryMapMarkers).enter()
@@ -246,7 +246,7 @@ function DrawMap(){
                         .text(function(d){return d.abr})
                         .attr("font-size","12px")
                         .attr("fill-opacity",1)
-                        .attr("fill", "black");
+                        .attr("fill", "#fff");
 
                     d3.selectAll(".countryMarkers")
                         .attr("fill-opacity", 0)
@@ -271,7 +271,7 @@ function DrawMap(){
                     d3.selectAll("text.regionMarkers")
                         .attr("font-size","12px")
                         .attr("fill-opacity",1)
-                        .attr("fill", "black");
+                        .attr("fill", "#fff");
                 }
                 else{
                     d3.selectAll(".regionMarkers")
@@ -287,7 +287,7 @@ function DrawMap(){
                     d3.selectAll("text.countryMarkers")
                         .attr("font-size","12px")
                         .attr("fill-opacity",1)
-                        .attr("fill", "black");
+                        .attr("fill", "#fff");
 
                 }
             });
