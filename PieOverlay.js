@@ -1,4 +1,4 @@
-function drawBar(data) {
+function drawBar(data, type) {
 
     var margin = {top: 40, right: 20, bottom: 40, left: 40},
         width = 200 - margin.left - margin.right,
@@ -29,12 +29,24 @@ function drawBar(data) {
             return "<strong>Exposure:</strong> <span style='color:#000'>" + FormatMoney(d.value) + "</span>";
         });
 
-    var svg = d3.select("#barpieUtil")
-        .append("svg")
-        .attr("width", width + margin.left + margin.right)
-        .attr("height", height + margin.top + margin.bottom)
-        .append("g")
-        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+    var svg;
+
+    if(type == "Rating") {
+        svg = d3.select("#barpieUtil")
+            .append("svg")
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom)
+            .append("g")
+            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+    }
+    else{
+        svg = d3.select("#SecbarpieUtil")
+            .append("svg")
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom)
+            .append("g")
+            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+    }
 
     svg.call(tip);
 
@@ -99,7 +111,7 @@ function drawBar(data) {
     }
 }
 
-function drawPie(dataset) {
+function drawPie(dataset, type) {
 
     var pie = d3.layout.pie()
         .value(function (d) {
@@ -122,16 +134,33 @@ function drawPie(dataset) {
         .outerRadius(outerRadius)
         .innerRadius(innerRadius);
 
-    var svg = d3.select("#barpieUtil")
-        .append("svg")
-        .attr({
-            width: 190,
-            height: 200,
-            class: 'shadow'
-        }).append('g')
-        .attr({
-            transform: 'translate(' + 140 / 2 + ',' + 120 / 2 + ')'
-        });
+    var svg;
+
+    if(type == "Rating") {
+        svg = d3.select("#barpieUtil")
+            .append("svg")
+            .attr({
+                width: 190,
+                height: 200,
+                class: 'shadow'
+            }).append('g')
+            .attr({
+                transform: 'translate(' + 140 / 2 + ',' + 120 / 2 + ')'
+            });
+    }
+    else{
+        svg = d3.select("#SecbarpieUtil")
+            .append("svg")
+            .attr({
+                width: 190,
+                height: 200,
+                class: 'shadow',
+                fill: 'none'
+            }).append('g')
+            .attr({
+                transform: 'translate(' + 140 / 2 + ',' + 140 / 2 + ')'
+            });
+    }
     var path = svg.selectAll('path')
         .data(pie(dataset))
         .enter()

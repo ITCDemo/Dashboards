@@ -127,7 +127,7 @@
             right: 0;
             bottom: 0;
             background: #000;
-            background: rgba(0, 0, 0, 0.8);
+            background: rgba(0, 0, 0, 1);
             color: #ffffff;
             opacity: 0;
             z-index: -1;
@@ -275,6 +275,10 @@
         {
             width: 230px;
             float: left;
+        }
+
+        td#sectree{
+            width: 230px;
         }
 
         .y {
@@ -431,7 +435,6 @@
             </tr>
         </table>
         <div class="close" onclick="$('#ratingSector-overlay').css({'opacity': 0, 'z-index': 99, 'height': '0px'}); d3.select('#tree svg').remove(); d3.select('#barpieUtil svg').remove(); ">&#10006;</div>
-
     </div>
 </section>
 <section id="horizontalBar" style="float: left; height: 340px; width: 580px">
@@ -440,7 +443,7 @@
     <div id="Sector-overlay">
         <table>
             <tr>
-                <td id="Sectree" style="width: 540px">
+                <td id="Sectree" style="width: 380px">
 
                 </td>
                 <td id="SecbarpieUtil" style="width: 230px">
@@ -449,7 +452,6 @@
             </tr>
         </table>
         <div class="close" onclick="$('#Sector-overlay').css({'opacity': 0, 'z-index': -1, 'height': '0px'}); d3.select('#Sectree svg').remove(); d3.select('#SecbarpieUtil svg').remove(); ">&#10006;</div>
-
     </div>
 </section>
 <script>
