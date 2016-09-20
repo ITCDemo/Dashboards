@@ -1,4 +1,4 @@
-function drawBar(data, type) {
+function drawBar(data, where) {
 
     var margin = {top: 40, right: 20, bottom: 40, left: 40},
         width = 200 - margin.left - margin.right,
@@ -30,8 +30,10 @@ function drawBar(data, type) {
         });
 
     var svg;
+    debugger;
 
-    if(type == "Rating") {
+    if(where == "Rating") {
+        debugger;
         svg = d3.select("#barpieUtil")
             .append("svg")
             .attr("width", width + margin.left + margin.right)
