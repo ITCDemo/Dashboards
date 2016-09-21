@@ -1,13 +1,34 @@
 function BuildTreeMap(data) {
 
+    var dataset = {};
+    var sectorMap = {};
+    var existingExp;
+
+    for(var i in data)
+        if (sectorMap[data[i]["Sector_ID"]] == undefined) {
+            sectorMap[data[i]["Sector_ID"]] = parseInt(data[i]["Market Value"].replace(/,/g, ""));
+        }
+        else {
+            existingExp = sectorMap[data[i]["Sector_ID"]];
+            sectorMap[data[i]["Sector_ID"]] = existingExp + parseInt(data[i]["Market Value"].replace(/,/g, ""));
+        }
+
+    for(var key in SectoRatingMap["SectorName"]){
+        if(sectorMap[key] != undefined){
+            dataset[key] = sectorMap[key];
+        }
+    }
+
+
+
     var min = 10000000000;
     var max = 0;
 
     var children = [];
-    for(var item in data){
+    for(var item in dataset){
         children.push({
             name: SectoRatingMap["SectorName"][item],
-            size: data[item]
+            size: dataset[item]
         });
 
             children.sort(
@@ -16,11 +37,10 @@ function BuildTreeMap(data) {
                 }
             );
 
-        if(data[item] > max) max = data[item];
-        if(data[item] < min) min = data[item];
+        if(dataset[item] > max) max = dataset[item];
+        if(dataset[item] < min) min = dataset[item];
     }
 
-    debugger;
     var tree = {
         name: "tree",
         children: children.slice(0,8)
@@ -53,9 +73,17 @@ function BuildTreeMap(data) {
         .data(treemap.nodes)
         .enter().append("div")
         .on('click', function(d, i){
-            debugger;
             $("#Sector-overlay").css({"opacity": 1, "z-index": "999", "height": "300px"});
-            DisplayDendo(SectoRatingMap["SectorID"][d.name], "Sector");
+
+            var filteredSet = [];
+            for(var j in data){
+                if(SectoRatingMap["SectorID"][d.name] == data[j]["Sector_ID"]){
+                    filteredSet.push(data[j]);
+                }
+            }
+            debugger;
+
+            DisplayDendo(filteredSet, "Sector");
         })
         .attr("class", "treemap")
         .call(position)

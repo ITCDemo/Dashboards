@@ -25,10 +25,30 @@ function FormatMoney(money){
 }
 
 
-
-function DrawPie (dataset)
-
+function DrawPie (data)
 {
+    var dataset = [];
+    var ratingMap = {};
+    var existingExp;
+
+    for(var i in data)
+    if (ratingMap[data[i]["Rating"]] == undefined) {
+        ratingMap[data[i]["Rating"]] = parseInt(data[i]["Market Value"].replace(/,/g, ""));
+    }
+    else {
+        existingExp = ratingMap[data[i]["Rating"]];
+        ratingMap[data[i]["Rating"]] = existingExp + parseInt(data[i]["Market Value"].replace(/,/g, ""));
+    }
+
+    for(var key in SectoRatingMap["Rating"]){
+        if(ratingMap[SectoRatingMap["Rating"][key]] != undefined){
+            var obj = {};
+            obj[SectoRatingMap["Rating"][key]] = ratingMap[SectoRatingMap["Rating"][key]];
+
+            dataset.push(obj);
+        }
+    }
+
     var width = 620,
         height = 300,
         radius = Math.min(width, height) / 2.4;
@@ -48,7 +68,8 @@ function DrawPie (dataset)
         .range(["#BEE2E6", "#94C6E7", "#4FBEE3", "#008ED6", "#036E9D", "#0055A5", "#025565", "#28C7DC", "#01304A", "#00829C"]);
 
     var pie = d3.layout.pie()
-        .sort(null);
+        .sort(null)
+        .value(function(d){ return d[Object.keys(d)]; });
 
     var outerRadius = width / 5;
     var innerRadius = 70;
@@ -78,8 +99,9 @@ function DrawPie (dataset)
         .attr("stroke-width", 2)
         .attr("d", arc(enterClockwise))
         .on('mouseover', function(d) {
+
             $(".pieoverlay")
-                .html(FormatMoney(d.data))
+                .html("<span>"+Object.keys(d.data)+"</span> "+FormatMoney(d.value))
                 .show();
 
 
@@ -98,6 +120,17 @@ function DrawPie (dataset)
             d3.select(this).transition()
                 .duration(300)
                 .attr("d", arc);
+        })
+        .on('click', function(d){
+            $("#ratingSector-overlay").css({"opacity": 1, "z-index": "999", "height": "300px"});
+            var filteredSet = [];
+            
+            for(var j in data){
+                if(Object.keys(d.data) == data[j]["Rating"]){
+                    filteredSet.push(data[j]);
+                }
+            }
+            DisplayDendo(filteredSet, "Rating");
         })
         .each(function (d) {
             this._current = {
@@ -144,28 +177,6 @@ function DrawPie (dataset)
             fill: color,
             stroke: color
         })
-        .on('mouseover', function(d) {
-            d3.select(this).transition()
-                .duration(300)
-                .attr("width", legendRectSize + 5)
-                .attr("height", legendRectSize + 5)
-                .attr("rx", 15)
-                .attr("ry", 15)
-                .style("cursor", "pointer")
-
-        })
-        .on('mouseout', function(d){
-            d3.select(this).transition()
-                .duration(300)
-                .attr("rx", 10)
-                .attr("ry", 10)
-                .attr("width", legendRectSize)
-                .attr("height", legendRectSize)
-        })
-        .on('click', function(d){
-            $("#ratingSector-overlay").css({"opacity": 1, "z-index": "999", "height": "300px"});
-                DisplayDendo(SectoRatingMap["Rating"][d], "Rating");
-        });
 
     legend.append('text')
         .attr({

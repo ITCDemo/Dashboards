@@ -5,37 +5,32 @@ function HorizontalChart(data) {
 
     var sorted = [];
     for (var item in data)
-    if(item != 'Default_Cpty' && item != "") {
-        sorted.push([item, data[item]]);
-        sorted.sort(
-            function (a, b) {
-                return b[1] - a[1]
-            }
-        );
-    }
+        if (item != 'Default_Cpty' && item != "") {
+            sorted.push([item, data[item]]);
+            sorted.sort(
+                function (a, b) {
+                    return b[1] - a[1]
+                }
+            );
+        }
 
     var counterparties = [];
     counterparties.push("");
     var exps = [];
 
-    for(var i=0;i<10;i++){
+    var limit = 10;
+    if (sorted.length < 10) limit = sorted.length;
+
+    for (var i = 0; i < limit; i++) {
         counterparties.push(sorted[i][0]);
         exps.push(sorted[i][1]);
-        if(sorted[i][1] > max) max = sorted[i][1];
-        if(sorted[i][1] < min) min = sorted[i][1];
+        if (sorted[i][1] > max) max = sorted[i][1];
+        if (sorted[i][1] < min) min = sorted[i][1];
     }
 
 
     var colors = ["#71D1D5", "#56B6BF", "#26A1AD", "#028C99", "#2B8CB1", "#05739D", "#3078B5", "#095DA2", "#375DBA", "#08297B", "#0F3BA8"];
 
-    var grid = d3.range(9).map(function (i) {
-        return {'x1': 0, 'y1': 30, 'x2': 0, 'y2': 840};
-    });
-
-    var tickVals = grid.map(function(d,i){
-        if(i>0){ return i*10; }
-        else if(i===0){ return "100";}
-    });
 
     var xscale = d3.scale.linear()
         .domain([min, max])
@@ -43,7 +38,7 @@ function HorizontalChart(data) {
 
     var yscale = d3.scale.linear()
         .domain([0, counterparties.length])
-        .range([30, 330 ]);
+        .range([30, 330]);
 
     var colorScale = d3.scale.quantize()
         .domain([0, counterparties.length])
@@ -52,7 +47,7 @@ function HorizontalChart(data) {
     var canvas = d3.select('#horizontalBar')
         .append('svg')
         .attr({'width': 500, 'height': 350});
-    
+
 
     var xAxis = d3.svg.axis();
     xAxis
@@ -68,14 +63,23 @@ function HorizontalChart(data) {
         .tickFormat(function (d, i) {
             return counterparties[i];
         })
-        .tickValues(d3.range(11));
+        .tickValues(d3.range(limit + 1));
 
-    var y_xis = canvas.append('g')
-        .attr("transform", "translate(150,0)")
-        .attr('id', 'yaxis')
-
-        .call(yAxis)
-        .style({'fill': '#fff', 'font-size': '10px'});
+    var y_xis;
+    if (limit == 10) {
+        y_xis = canvas.append('g')
+            .attr("transform", "translate(150,0)")
+            .attr('id', 'yaxis')
+            .call(yAxis)
+            .style({'fill': '#fff', 'font-size': '10px'});
+    }
+    else {
+        y_xis = canvas.append('g')
+            .attr("transform", "translate(150," + -4 * limit + ")")
+            .attr('id', 'yaxis')
+            .call(yAxis)
+            .style({'fill': '#fff', 'font-size': '10px'});
+    }
 
     // var x_xis = canvas.append('g')
     //     .attr("transform", "translate(150,330)")

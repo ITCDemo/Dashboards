@@ -139,6 +139,9 @@ function DrawMap(){
                                 .attr("fill-opacity", 0.3);
                         })
                         .on("click", function(d) {
+
+                            create_table(masterMap[d.name]);
+
                             $("#bar-overlay").css({"opacity": 1, "z-index": "999", "height": "300px"});
                                 var data = [];
                                 var exp;
@@ -215,6 +218,9 @@ function DrawMap(){
                                 .attr("fill-opacity", 0.3);
                         })
                         .on("click", function(d) {
+
+                            create_table(masterMap[d.name]);
+
                             $("#bar-overlay").css({"opacity": 1, "z-index": "999", "height": "300px"});
                             var data = [];
                             var exp;

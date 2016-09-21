@@ -98,9 +98,7 @@
             float: left;
         }
 
-
-        #ratingSector-overlay
-        {
+        #ratingSector-overlay {
             position: absolute;
             top: 0;
             left: 0;
@@ -119,8 +117,7 @@
             float: left;
         }
 
-        #Sector-overlay
-        {
+        #Sector-overlay {
             position: absolute;
             top: 20px;
             left: 30px;
@@ -160,17 +157,17 @@
         }
 
         .bar,
-        .barPie{
+        .barPie {
             fill: #05739D;
         }
 
         .bar:hover,
-        .barPie:hover{
+        .barPie:hover {
             fill: #095DA2;
         }
 
-        .tick{
-            fill:white;
+        .tick {
+            fill: white;
             color: #fff;
             font-size: 10px;
         }
@@ -183,7 +180,7 @@
         }
 
         #yaxis g text {
-            fill:#fff;
+            fill: #fff;
             color: #fff;
             font-size: 14px;
         }
@@ -228,7 +225,7 @@
 
         #xaxis .domain {
             fill: white;
-            stroke:#fff;
+            stroke: #fff;
         }
 
         #xaxis text, #yaxis text {
@@ -236,11 +233,10 @@
             fill: white;
         }
 
-        #horizontalBar svg{
+        #horizontalBar svg {
             margin-top: -15px;
-            padding-left:30px
+            padding-left: 30px
         }
-
 
         .node {
             cursor: pointer;
@@ -271,13 +267,12 @@
         }
 
         #barpieUtil,
-        #secbarpieutil
-        {
+        #secbarpieutil {
             width: 230px;
             float: left;
         }
 
-        td#sectree{
+        td#sectree {
             width: 230px;
         }
 
@@ -286,46 +281,49 @@
             fill: white;
         }
 
-        #barpieUtil svg.shadow{
-            margin-left:40px
+        #barpieUtil svg.shadow {
+            margin-left: 40px
         }
 
-        #secbarpieutil svg.shadow{
-            margin-left:40px
+        #secbarpieutil svg.shadow {
+            margin-left: 40px
         }
 
-        #FakeID{
+        #FakeID {
             border: 0px;
             font-size: 12px;
             vertical-align: middle;
             background-color: #000;
             color: #fff;
         }
+
         #FakeButton {
             -moz-box-shadow: 0px 10px 12px -7px #276873;
             -webkit-box-shadow: 0px 10px 12px -7px #276873;
             box-shadow: 0px 10px 12px -7px #276873;
-            background-color:#599bb3;
-            border-radius:8px;
-            display:inline-block;
-            cursor:pointer;
-            color:#ffffff;
-            font-size:12px;
-            font-weight:bold;
-            padding:0px 7px;
-            text-decoration:none;
-            text-shadow:0px 1px 0px #3d768a;
+            background-color: #599bb3;
+            border-radius: 8px;
+            display: inline-block;
+            cursor: pointer;
+            color: #ffffff;
+            font-size: 12px;
+            font-weight: bold;
+            padding: 0px 7px;
+            text-decoration: none;
+            text-shadow: 0px 1px 0px #3d768a;
             height: 30px;
             line-height: 1;
             text-align: center;
             vertical-align: middle;
         }
+
         #FakeButton:hover {
-            background-color:#408c99;
+            background-color: #408c99;
         }
+
         #FakeButton:active {
-            position:relative;
-            top:1px;
+            position: relative;
+            top: 1px;
         }
 
         div.fileinputs {
@@ -343,8 +341,8 @@
         input.file {
             position: relative;
             text-align: right;
-            -moz-opacity:0 ;
-            filter:alpha(opacity: 0);
+            -moz-opacity: 0;
+            filter: alpha(opacity:0);
             opacity: 0;
             z-index: 2;
         }
@@ -363,9 +361,9 @@
         }
 
         .treemap:hover {
-            -moz-box-shadow:    0 0 30px white;
+            -moz-box-shadow: 0 0 30px white;
             -webkit-box-shadow: 0 0 30px white;
-            box-shadow:         0 0 30px white;
+            box-shadow: 0 0 30px white;
             cursor: pointer;
             z-index: 99;
         }
@@ -387,8 +385,7 @@
 
 <body style="background-color: #000">
 <script>
-    function Sync()
-    {
+    function Sync() {
         var n1 = document.getElementById('uploader');
         var n2 = document.getElementById('FakeID');
         n2.value = n1.value.replace(/^.*[\\\/]/, '');
@@ -419,7 +416,9 @@
         <div id="pie" class="chart-container">
 
         </div>
-        <div class="close" onclick="$('#bar-overlay').css({'opacity': 0, 'z-index': -1, 'height': '0px'}); d3.select('#pie svg').remove();">&#10006;</div>
+        <div class="close"
+             onclick="$('#bar-overlay').css({'opacity': 0, 'z-index': -1, 'height': '0px'}); d3.select('#pie svg').remove(); create_table(dataCopy);">
+            &#10006;</div>
     </div>
 </section>
 <section style="float: left; height: 300px; width: 620px;" class="PieRating">
@@ -434,7 +433,9 @@
                 </td>
             </tr>
         </table>
-        <div class="close" onclick="$('#ratingSector-overlay').css({'opacity': 0, 'z-index': 99, 'height': '0px'}); d3.select('#tree svg').remove(); d3.select('#barpieUtil svg').remove(); ">&#10006;</div>
+        <div class="close"
+             onclick="$('#ratingSector-overlay').css({'opacity': 0, 'z-index': 99, 'height': '0px'}); d3.select('#tree svg').remove(); d3.select('#barpieUtil svg').remove(); ">
+            &#10006;</div>
     </div>
 </section>
 <section id="horizontalBar" style="float: left; height: 340px; width: 580px">
@@ -451,7 +452,9 @@
                 </td>
             </tr>
         </table>
-        <div class="close" onclick="$('#Sector-overlay').css({'opacity': 0, 'z-index': -1, 'height': '0px'}); d3.select('#Sectree svg').remove(); d3.select('#SecbarpieUtil svg').remove(); ">&#10006;</div>
+        <div class="close"
+             onclick="$('#Sector-overlay').css({'opacity': 0, 'z-index': -1, 'height': '0px'}); d3.select('#Sectree svg').remove(); d3.select('#SecbarpieUtil svg').remove(); ">
+            &#10006;</div>
     </div>
 </section>
 <script>
@@ -460,12 +463,29 @@
 
     function load_dataset(csv) {
         var data = d3.csv.parse(csv);
+        dataCopy = data;
+
+        for (var i = 0; i < data.length; i++) {
+
+            if (masterMap[data[i]["Country"]] == undefined) masterMap[data[i]["Country"]] = [];
+            if (masterMap[data[i]["Region"]] == undefined) masterMap[data[i]["Region"]] = [];
+            if (masterMap[data[i]["Rating"]] == undefined) masterMap[data[i]["Rating"]] = [];
+            if (masterMap[data[i]["Sector_ID"]] == undefined) masterMap[data[i]["Sector"]] = [];
+
+
+
+            masterMap[data[i]["Country"]].push(data[i]);
+            masterMap[data[i]["Region"]].push(data[i]);
+            masterMap[data[i]["Rating"]].push(data[i]);
+            masterMap[data[i]["Sector"]].push(data[i]);
+
+        }
         create_table(data);
     }
 
     function create_table(data) {
 
-        $('input[name=region][value=' + 'Region' + ']').prop('checked',true);
+        $('input[name=region][value=' + 'Region' + ']').prop('checked', true);
 
         counterpartyExp = {};
         regionMasterMap = {};
@@ -493,63 +513,44 @@
             var region = data[i]["Region"];
 
 
-            if(regionMasterMap[data[i]["Region"]] == undefined) {
-                    regionMasterMap[region] = {
-                        [instrument]: exp
-                    }
+            if (regionMasterMap[data[i]["Region"]] == undefined) {
+                regionMasterMap[region] = {
+                    [instrument]: exp
+                }
             }
-            else{
-                if(regionMasterMap[data[i]["Region"]][instrument] == undefined) {
+            else {
+                if (regionMasterMap[data[i]["Region"]][instrument] == undefined) {
                     regionMasterMap[data[i]["Region"]][instrument] = exp
                 }
-                else{
+                else {
                     existingExp = regionMasterMap[data[i]["Region"]][instrument];
                     regionMasterMap[data[i]["Region"]][instrument] = existingExp + exp
                 }
             }
 
-
-            if(ratingMap[data[i]["Rating"]] == undefined){
-                ratingMap[data[i]["Rating"]] = exp;
-            }
-            else{
-                existingExp = ratingMap[data[i]["Rating"]];
-                ratingMap[data[i]["Rating"]] = existingExp + exp;
-            }
-
-
-            if(sectorMap[data[i]["Sector_ID"]] == undefined){
-                sectorMap[data[i]["Sector_ID"]] = exp;
-            }
-            else{
-                existingExp = sectorMap[data[i]["Sector_ID"]];
-                sectorMap[data[i]["Sector_ID"]] = existingExp + exp;
-            }
-
-
-            if(instrumentMap[data[i]["Instrument"]] == undefined) {
+            if (instrumentMap[data[i]["Instrument"]] == undefined) {
                 instrumentMap[data[i]["Instrument"]] = {};
                 instrumentMap[data[i]["Instrument"]][[data[i]["Counterparty"]]] = exp
             }
-            else{
-                existingExp = instrumentMap[data[i]["Instrument"]][data[i]["Counterparty"]] == undefined ? 0: instrumentMap[data[i]["Instrument"]][data[i]["Counterparty"]];
+            else {
+                existingExp = instrumentMap[data[i]["Instrument"]][data[i]["Counterparty"]] == undefined ? 0 : instrumentMap[data[i]["Instrument"]][data[i]["Counterparty"]];
                 instrumentMap[data[i]["Instrument"]][data[i]["Counterparty"]] = existingExp + exp;
             }
 
 
-            if(!(data[i]["Country"] in countryMap)){
+            if (!(data[i]["Country"] in countryMap)) {
 
-                if(countryMap[data[i]["Country"]] == undefined){
+                if (countryMap[data[i]["Country"]] == undefined) {
                     countryMap[data[i]["Country"]] = {};
                 }
                 countryMap[data[i]["Country"]][instrument] = parseInt(data[i]["Market Value"].replace(/,/g, ""))
             }
-            else{
-                if(countryMap[data[i]["Country"]] == undefined){
+            else {
+                if (countryMap[data[i]["Country"]] == undefined) {
                     countryMap[data[i]["Country"]] = {};
                 }
 
-                if(countryMap[data[i]["Country"]][instrument] == undefined) {
+                if (countryMap[data[i]["Country"]][instrument] == undefined) {
                     countryMap[data[i]["Country"]][instrument] = parseInt(data[i]["Market Value"].replace(/,/g, ""));
                 }
                 else {
@@ -559,15 +560,14 @@
             }
 
         }
-
-        initialize();
+        initialize(data);
     }
 
     function upload_button(el, callback) {
         var uploader = document.getElementById(el);
         var reader = new FileReader();
 
-        reader.onload = function(e) {
+        reader.onload = function (e) {
             var contents = e.target.result;
             callback(contents);
         };
@@ -583,7 +583,6 @@
 <script>
     var regionMasterMap = {};
 
-    var ratingMap = {};
     var sectorMap = {};
 
     var regionMap = [];
@@ -596,12 +595,12 @@
     var masterCounterparty = [];
 
     var LatLongMap = {};
-    var regionLatLong ={};
+    var regionLatLong = {};
     var instrumentMap = {};
 
-    var secMap = {};
+    var masterMap = {};
 
-
+    var dataCopy;
 
 
     var SectoRatingMap = {
@@ -629,15 +628,15 @@
             9: "D"
         },
         SectorID: {
-           "Energy": "SEC_1",
-           "Materials": "SEC_2",
-           "Industrials": "SEC_3",
-           "Consumer Staples": "SEC_5",
-           "Health Care": "SEC_6",
-           "Financials": "SEC_7",
-           "Information Tech": "SEC_8",
-           "Telecom Services": "SEC_9",
-           "Sovereign": "SEC_11"
+            "Energy": "SEC_1",
+            "Materials": "SEC_2",
+            "Industrials": "SEC_3",
+            "Consumer Staples": "SEC_5",
+            "Health Care": "SEC_6",
+            "Financials": "SEC_7",
+            "Information Tech": "SEC_8",
+            "Telecom Services": "SEC_9",
+            "Sovereign": "SEC_11"
         },
         SectorName: {
             "SEC_1": "Energy",
@@ -654,7 +653,7 @@
     };
 
     queue()
-            .defer(d3.csv, "countriesLatLong.csv", function (data){
+            .defer(d3.csv, "countriesLatLong.csv", function (data) {
                 LatLongMap[data.country] = {
                     lat: data.lat,
                     long: data.long,
@@ -670,7 +669,7 @@
         "EURO": [8.43, 48.15]
     };
 
-    function initialize() {
+    function initialize(data) {
 
         d3.select('#map-canvas svg').remove();
         d3.select('.PieRating svg').remove();
@@ -678,13 +677,12 @@
         d3.select('#SectorTree svg').remove();
 
 
-        var PieDataset;
-        PieDataset = [ratingMap["AAA"], ratingMap["AA"], ratingMap["A"], ratingMap["BBB"], ratingMap["BB"], ratingMap["B"], ratingMap["CCC"], ratingMap["CC"], ratingMap["C"], ratingMap["D"]];
+        //PieDataset = [ratingMap["AAA"], ratingMap["AA"], ratingMap["A"], ratingMap["BBB"], ratingMap["BB"], ratingMap["B"], ratingMap["CCC"], ratingMap["CC"], ratingMap["C"], ratingMap["D"]];
 
         DrawMap();
-        DrawPie(PieDataset);
+        DrawPie(data);
         HorizontalChart(counterpartyExp);
-        BuildTreeMap(sectorMap);
+        BuildTreeMap(data);
     }
 </script>
 </body>
