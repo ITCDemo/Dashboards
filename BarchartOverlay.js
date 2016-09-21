@@ -1,4 +1,4 @@
-function drawBarRegion(data) {
+function drawBarRegion(data, name) {
 
     var margin = {top: 40, right: 20, bottom: 30, left: 130},
         width = 600 - margin.left - margin.right,
@@ -95,6 +95,17 @@ function drawBarRegion(data) {
         .attr("height", function (d){
             return y(0) - y(d.value);
         });
+
+
+    svg.append("text")
+        .data(data)
+        .attr("x", "100px")
+        .attr("y", "-20px")
+        .attr("text-anchor", "middle")
+        .style("font-size", "16px")
+        .style("font-weight", "bold")
+        .style("fill", "#fff")
+        .text(name);
 
 
     function type(d) {

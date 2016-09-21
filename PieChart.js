@@ -124,7 +124,7 @@ function DrawPie (data)
         .on('click', function(d){
             $("#ratingSector-overlay").css({"opacity": 1, "z-index": "999", "height": "300px"});
             var filteredSet = [];
-            
+
             for(var j in data){
                 if(Object.keys(d.data) == data[j]["Rating"]){
                     filteredSet.push(data[j]);

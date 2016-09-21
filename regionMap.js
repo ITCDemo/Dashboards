@@ -150,7 +150,9 @@ function DrawMap(){
                                     exp = {name: item, value: regionMasterMap[d.name][item]};
                                     data.push(exp);
                                 }
-                                drawBarRegion(data);
+
+                            debugger;
+                                drawBarRegion(data, d.name);
                         });
 
 
@@ -230,7 +232,7 @@ function DrawMap(){
                                 data.push(exp);
                             }
 
-                            drawBarRegion(data);
+                            drawBarRegion(data, d.name);
                         });
 
 
