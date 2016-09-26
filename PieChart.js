@@ -1,30 +1,3 @@
-function FormatMoney(money){
-
-    formattedMoney = "";
-    switch(money.toString().length){
-        case 4:
-        case 5:
-        case 6:
-            formattedMoney = "$ "+(money/1000).toFixed(1)+ "K";
-            break;
-        case 7:
-        case 8:
-        case 9:
-            formattedMoney = "$ "+(money/1000000).toFixed(1) + "M";
-            break;
-
-        case 10:
-        case 11:
-        case 12:
-            formattedMoney = "$ "+(money/1000000000).toFixed(1) + "B";
-            break;
-        default:
-            formattedMoney = "$ "+money;
-    }
-    return formattedMoney;
-}
-
-
 function DrawPie (data)
 {
 
@@ -102,7 +75,7 @@ function DrawPie (data)
         .attr("stroke-width", 2)
         .attr("d", arc(enterClockwise))
         .on('mouseover', function(d) {
-            
+
             $(".pieoverlay")
                 .html("<span>"+Object.keys(d.data)+"</span> "+FormatMoney(d.value))
                 .show();

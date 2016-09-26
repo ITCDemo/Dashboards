@@ -103,6 +103,10 @@ function DrawMap(data){
                                 return "10px";
                             }
 
+                            if(radius(d.value) > 40){
+                                return "40px";
+                            }
+
                             return radius(d.value);
                         })
                         .attr("cx", function (d) {
@@ -168,6 +172,10 @@ function DrawMap(data){
                             }
                             if(radius(d.value) <10) {
                                 return "10px";
+                            }
+
+                            if(radius(d.value) > 30){
+                                return "30px";
                             }
 
                             return radius(d.value);
@@ -236,7 +244,7 @@ function DrawMap(data){
                         .data(regionMap).enter()
                         .append("text")
                         .attr("class", "regionMarkers")
-                        .attr("transform", function(d){ var Newradius = radius(d.value) <0?"10":radius(d.value); return "translate("+(projection(d.center)[0]-40)+","+(projection(d.center)[1]+Newradius+15)+")"})
+                        .attr("transform", function(d){ var Newradius = radius(d.value) <0?"10":(radius(d.value) > 40?"40":radius(d.value)); return "translate("+(projection(d.center)[0]-40)+","+(projection(d.center)[1]+Newradius+15)+")"})
                         .text(function(d){return d.name})
                         .attr("font-size","12px")
                         .attr("fill-opacity",1)
@@ -246,7 +254,7 @@ function DrawMap(data){
                         .data(countryMapMarkers).enter()
                         .append("text")
                         .attr("class", "countryMarkers")
-                        .attr("transform", function(d){ var Newradius = radius(d.value) <0?"10":radius(d.value); return "translate("+(projection(d.center)[0]-20)+","+(projection(d.center)[1]+Newradius)+")"})
+                        .attr("transform", function(d){ var Newradius = radius(d.value) <0?"10":(radius(d.value) > 30?"30":radius(d.value)); return "translate("+(projection(d.center)[0]-20)+","+(projection(d.center)[1]+Newradius)+")"})
                         .text(function(d){return d.abr})
                         .attr("font-size","12px")
                         .attr("fill-opacity",1)

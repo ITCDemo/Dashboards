@@ -381,11 +381,17 @@
 
         .stats {
             border: solid 2px;
-            height: 30px;
+            height: 25px;
             width: 150px;
             float: left;
             margin-left: 20px;
             position: absolute;
+            color: #fff;
+            text-align: center;
+            vertical-align: middle;
+            padding-top: 8px;
+            font-size: 16px;
+            font-weight: bold;
         }
 
     </style>
@@ -414,8 +420,8 @@
 </form>
 
 <!--<div class="stats" style="top: 10px; left: 500px; border-color: green;" id="Exposure"></div>-->
-<!--<div class="stats" style="top: 10px; left: 700px; border-color: red;" id="Utilization"></div>-->
-<!--<div class="stats" style="top: 10px; left: 900px; border-color: orange;" id="UtilPercent"></div>-->
+<div class="stats" style="top: 10px; left: 700px; border-color: #599BB3;" id="Utilization"> $0 </div>
+<div class="stats" style="top: 10px; left: 900px; border-color: orange;" id="UtilPercent"> 0% </div>
 
 <input type="button" value="Clear Filters" style="top: 10px; left: 1150px; position: absolute" class="StyledButton"
        onclick="clearFilters()"/>
@@ -577,12 +583,11 @@
         d3.select('#SectorTree svg').remove();
 
 
-        //PieDataset = [ratingMap["AAA"], ratingMap["AA"], ratingMap["A"], ratingMap["BBB"], ratingMap["BB"], ratingMap["B"], ratingMap["CCC"], ratingMap["CC"], ratingMap["C"], ratingMap["D"]];
-
         DrawMap(data);
         DrawPie(data);
         HorizontalChart(counterpartyExp);
         BuildTreeMap(data);
+        displayStats(data);
     }
 
     function upload_button(el, callback) {
@@ -699,6 +704,70 @@
 
         drawBarRegion(Barset, name);
     }
+
+    function displayStats(data){
+        var CPMap = {};
+        var totalExp = 0;
+        var totalAlloc = 0;
+        for(var i=0; i<data.length; i++) {
+            if(!(data[i]["Counterparty"] in CPMap)){
+                CPMap[data[i]["Counterparty"]] = "";
+                totalAlloc = totalAlloc + parseInt(data[i]["Allocation"]);
+            }
+
+            totalExp = totalExp + parseInt(data[i]["Market Value"].replace(/,/g, ""));
+        }
+
+        debugger;
+
+        $("#Utilization").html(FormatMoney(totalExp));
+        $("#UtilPercent").html((totalExp/totalAlloc*100).toFixed(2)+"%")
+
+        if((totalExp/totalAlloc*100).toFixed(2) < 60){
+            $("#UtilPercent").css("border-color", "green");
+            return;
+        }
+        else if((totalExp/totalAlloc*100).toFixed(2) < 80){
+            $("#UtilPercent").css("border-color", "orange");
+            return;
+        }
+        else{
+            $("#UtilPercent").css("border-color", "red");
+            return;
+        }
+    }
+
+    function FormatMoney(money){
+
+        formattedMoney = "";
+        switch(money.toString().length){
+            case 4:
+            case 5:
+            case 6:
+                formattedMoney = "$ "+(money/1000).toFixed(1)+ "K";
+                break;
+            case 7:
+            case 8:
+            case 9:
+                formattedMoney = "$ "+(money/1000000).toFixed(1) + "M";
+                break;
+
+            case 10:
+            case 11:
+            case 12:
+                formattedMoney = "$ "+(money/1000000000).toFixed(1) + "B";
+                break;
+            case 13:
+            case 14:
+            case 15:
+                formattedMoney = "$ "+(money/1000000000000).toFixed(1) + "T";
+                break;
+            default:
+                formattedMoney = "$ "+money;
+        }
+        return formattedMoney;
+    }
+
 
 </script>
 <script>
