@@ -1,5 +1,8 @@
 function HorizontalChart(data) {
 
+    d3.select('#horizontalBar svg').remove();
+
+
     var min = 10000000000;
     var max = 0;
 

@@ -1,4 +1,8 @@
-function DrawMap(){
+function DrawMap(data){
+
+    d3.select('#pie svg').remove();
+
+    copyForMap = data;
             queue()
                 .defer(d3.json, "world-50m.json")
                 .await(function (error, world) {
@@ -12,8 +16,9 @@ function DrawMap(){
 
                     for(var reg in regionMasterMap){
                         var exp = 0;
-                        for(var obj in regionMasterMap[reg]){
-                            exp+=regionMasterMap[reg][obj];
+                        for(var obj in copyForMap){
+                            if(copyForMap[obj]["Region"] == reg)
+                            exp+=parseInt(copyForMap[obj]["Market Value"].replace(/,/g, ""));
                         }
                         regionMap.push({
                             name: reg,
@@ -21,6 +26,7 @@ function DrawMap(){
                             value: exp
                         })
                     }
+
 
                     countryMapMarkers.push({
                         name: "",
@@ -30,8 +36,10 @@ function DrawMap(){
 
                     for(var obj1 in countryMap){
                         var totalExp = 0;
-                        for (var exp1 in countryMap[obj1]) {
-                            totalExp += countryMap[obj1][exp1];
+                        for (var exp1 in copyForMap) {
+                            if(copyForMap[exp1]["Country"] == obj1) {
+                                totalExp += parseInt(copyForMap[exp1]["Market Value"].replace(/,/g, ""));
+                            }
                         }
 
                         countryMapMarkers.push({
@@ -139,20 +147,11 @@ function DrawMap(){
                                 .attr("fill-opacity", 0.3);
                         })
                         .on("click", function(d) {
-
-                            create_table(masterMap[d.name]);
-
+                            $('#bar-overlay svg').remove();
+                            regionFilter = d.name;
+                            var filteredSet = calculateFilters();
                             $("#bar-overlay").css({"opacity": 1, "z-index": "999", "height": "300px"});
-                                var data = [];
-                                var exp;
-
-                                for(var item in regionMasterMap[d.name]){
-                                    exp = {name: item, value: regionMasterMap[d.name][item]};
-                                    data.push(exp);
-                                }
-
-                            debugger;
-                                drawBarRegion(data, d.name);
+                            BarOverlayData(filteredSet, d.name);
                         });
 
 
@@ -220,19 +219,12 @@ function DrawMap(){
                                 .attr("fill-opacity", 0.3);
                         })
                         .on("click", function(d) {
+                            $('#bar-overlay svg').remove();
+                            countryFilter = d.name;
 
-                            create_table(masterMap[d.name]);
-
+                            var filteredSet = calculateFilters();
                             $("#bar-overlay").css({"opacity": 1, "z-index": "999", "height": "300px"});
-                            var data = [];
-                            var exp;
-
-                            for(var cou in countryMap[d.name]){
-                                exp = {name: cou, value: countryMap[d.name][cou]};
-                                data.push(exp);
-                            }
-
-                            drawBarRegion(data, d.name);
+                            BarOverlayData(filteredSet, d.name);
                         });
 
 
@@ -261,7 +253,7 @@ function DrawMap(){
                         .attr("stroke-width", 0)
                         .style("display", "none");
 
-                })
+                });
 
 
             $('input[type=radio][name=region]').change(function() {

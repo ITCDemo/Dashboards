@@ -39,7 +39,6 @@ function drawBarRegion(data, name) {
     svg.call(tip);
 
 
-
     x.domain(data.map(function (d) {
         return d.name;
     }));
@@ -95,8 +94,7 @@ function drawBarRegion(data, name) {
         .attr("height", function (d){
             return y(0) - y(d.value);
         });
-
-
+    
     svg.append("text")
         .data(data)
         .attr("x", "100px")

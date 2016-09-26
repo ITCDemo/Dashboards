@@ -27,6 +27,9 @@ function FormatMoney(money){
 
 function DrawPie (data)
 {
+
+    d3.select('.PieRating svg').remove();
+
     var dataset = [];
     var ratingMap = {};
     var existingExp;
@@ -99,7 +102,7 @@ function DrawPie (data)
         .attr("stroke-width", 2)
         .attr("d", arc(enterClockwise))
         .on('mouseover', function(d) {
-
+            
             $(".pieoverlay")
                 .html("<span>"+Object.keys(d.data)+"</span> "+FormatMoney(d.value))
                 .show();
@@ -108,6 +111,9 @@ function DrawPie (data)
             d3.select(this).transition()
                 .duration(300)
                 .attr("d", arcOver);
+
+            d3.select(this)
+                .style("cursor","pointer");
         })
         .on('mousemove', function(d) {
             $(".pieoverlay")
@@ -122,15 +128,15 @@ function DrawPie (data)
                 .attr("d", arc);
         })
         .on('click', function(d){
-            $("#ratingSector-overlay").css({"opacity": 1, "z-index": "999", "height": "300px"});
-            var filteredSet = [];
 
-            for(var j in data){
-                if(Object.keys(d.data) == data[j]["Rating"]){
-                    filteredSet.push(data[j]);
-                }
-            }
+
+            ratingFilter = Object.keys(d.data);
+            var filteredSet = calculateFilters();
+
+            $("#ratingSector-overlay").css({"opacity": 1, "z-index": "999", "height": "300px"});
             DisplayDendo(filteredSet, "Rating");
+            BarOverlayData(filteredSet, regionFilter == -1?countryFilter: regionFilter);
+            DisplayDendo(filteredSet, "Sector");
         })
         .each(function (d) {
             this._current = {

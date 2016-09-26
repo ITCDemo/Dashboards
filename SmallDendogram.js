@@ -1,7 +1,5 @@
 function DisplayDendo(data, type) {
-
-    debugger;
-
+    
     if(type == "Rating") var rating = data[0]["Rating"];
     if(type == "Sector") var sector = data[0]["Sector_ID"];
 
@@ -107,14 +105,14 @@ function DisplayDendo(data, type) {
             }
             cptys.push({
                 "name": cpty,
-                "parent": sector,
+                "parent": SectoRatingMap["SectorName"][sector],
                 "children": exps
             })
         }
 
         treeData = [
             {
-                "name": sector,
+                "name": SectoRatingMap["SectorName"][sector],
                 "parent": "null",
                 "children": cptys
             }
@@ -317,18 +315,19 @@ function DisplayDendo(data, type) {
                 drawPie(dataset, "Rating");
             }
             else if (d.depth == 1) {
-                d3.select("#barpieUtil svg").remove();
                 var Counterparty = d.name;
 
                 var totalExpValue = [];
 
 
-                for (var exp in d._children) {
+                children = d._children == null?d.children:d._children;
+                for (var exp in children) {
                     totalExpValue.push({
-                        name: d._children[exp].name,
-                        value: d._children[exp].value
+                        name: children[exp].name,
+                        value: children[exp].value
                     });
                 }
+                d3.select("#barpieUtil svg").remove();
                 drawBar(totalExpValue, "Rating")
             }
             else {
@@ -375,18 +374,19 @@ function DisplayDendo(data, type) {
                 drawPie(dataset, "Sector");
             }
             else if (d.depth == 1) {
-                d3.select("#SecbarpieUtil svg").remove();
                 Counterparty = d.name;
 
                 totalExpValue = [];
 
+                var children = d._children == null?d.children:d._children;
 
-                for (exp in d._children) {
+                for (exp in children) {
                     totalExpValue.push({
-                        name: d._children[exp].name,
-                        value: d._children[exp].value
+                        name: children[exp].name,
+                        value: children[exp].value
                     });
                 }
+                d3.select("#SecbarpieUtil svg").remove();
                 drawBar(totalExpValue, "Sector")
             }
             else {

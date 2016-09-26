@@ -1,5 +1,7 @@
 function BuildTreeMap(data) {
 
+    d3.select('#SectorTree svg').remove();
+
     var dataset = {};
     var sectorMap = {};
     var existingExp;
@@ -18,7 +20,6 @@ function BuildTreeMap(data) {
             dataset[key] = sectorMap[key];
         }
     }
-
 
 
     var min = 10000000000;
@@ -73,17 +74,15 @@ function BuildTreeMap(data) {
         .data(treemap.nodes)
         .enter().append("div")
         .on('click', function(d, i){
+
+            sectorFilter = SectoRatingMap["SectorID"][d.name];
+            var filteredSet = calculateFilters();
+
             $("#Sector-overlay").css({"opacity": 1, "z-index": "999", "height": "300px"});
-
-            var filteredSet = [];
-            for(var j in data){
-                if(SectoRatingMap["SectorID"][d.name] == data[j]["Sector_ID"]){
-                    filteredSet.push(data[j]);
-                }
-            }
-            debugger;
-
             DisplayDendo(filteredSet, "Sector");
+            BarOverlayData(filteredSet, regionFilter == -1?countryFilter: regionFilter);
+            DisplayDendo(filteredSet, "Rating");
+
         })
         .attr("class", "treemap")
         .call(position)
