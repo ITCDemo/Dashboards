@@ -369,6 +369,7 @@
 
 
     // function to calculate data based on which filters are active
+    // up - filtering, adding filters
     function calculateFilters() {
 
         $('#bar-overlay svg').remove();
@@ -409,6 +410,13 @@
 
         DrawCharts(filteredDataset);
 
+        return filteredDataset;
+    }
+
+
+    // Function called when filters are being closed
+    // down - filtering, removing filters
+    function reverseFilter(filteredDataset) {
 
         //display overlays if they were open before the data was filtered
         if (regionFilter != -1) {
@@ -425,16 +433,14 @@
         if (sectorFilter != -1) {
             DisplayDendo(filteredDataset, "Sector");
         }
-
-        return filteredDataset;
     }
 
     /*
-    d3 bar charts need the data to be in a certain format
-    This function takes the data set, and converts into
-    the format needed by d3 bar charts
-    and finally calls the function to draw the bar chart on the region overlay
-    */
+     d3 bar charts need the data to be in a certain format
+     This function takes the data set, and converts into
+     the format needed by d3 bar charts
+     and finally calls the function to draw the bar chart on the region overlay
+     */
     function BarOverlayData(filteredSet, name) {
         var instrData = {};
         var exp;

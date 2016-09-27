@@ -1,5 +1,5 @@
 function DisplayDendo(data, type) {
-    
+
     if(type == "Rating") var rating = data[0]["Rating"];
     if(type == "Sector") var sector = data[0]["Sector_ID"];
 
