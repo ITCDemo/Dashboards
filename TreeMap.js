@@ -48,7 +48,7 @@ function BuildTreeMap(data) {
     };
     
     var innerWidth = 580;
-    var innerHeight = 340;
+    var innerHeight = 300;
 
 
     var colors = ["#BEE2E6", "#94C6E7", "#4FBEE3", "#008ED6", "#036E9D", "#0055A5", "#025565", "#28C7DC", "#01304A", "#00829C"];

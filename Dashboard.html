@@ -57,14 +57,14 @@
 </form>
 
 <!--<div class="stats" style="top: 10px; left: 500px; border-color: green;" id="Exposure"></div>-->
-<div class="stats" style="top: 10px; left: 700px; border-color: #599BB3;" id="Utilization"> $0</div>
-<div class="stats" style="top: 10px; left: 900px; border-color: orange;" id="UtilPercent"> 0%</div>
+<div class="stats" style="top: 10px; left: 600px; border-color: #599BB3;" id="Utilization"> $0</div>
+<div class="stats" style="top: 10px; left: 800px; border-color: orange;" id="UtilPercent"> 0%</div>
 
-<input type="button" value="Clear Filters" style="top: 10px; left:   1150px; position: absolute" class="StyledButton"
+<input type="button" value="Clear Filters" style="top: 15px; left: 1030px; position: absolute" class="StyledButton"
        onclick="clearFilters()"/>
 
 
-<section style="float: left; height: 300px; width: 600px;">
+<section style="height: 300px; width: 600px; position: fixed;">
     <div id="map-canvas">
         <div class="overlay"></div>
     </div>
@@ -77,7 +77,7 @@
             &#10006;</div>
     </div>
 </section>
-<section style="float: left; height: 300px; width: 620px;" class="PieRating">
+<section style="height: 300px; width: 620px; position: fixed; left: 550px" class="PieRating">
     <div id="ratingSector-overlay">
         <table>
             <tr>
@@ -94,9 +94,9 @@
             &#10006;</div>
     </div>
 </section>
-<section id="horizontalBar" style="float: left; height: 340px; width: 580px">
+<section id="horizontalBar" style="height: 340px; width: 580px; position: fixed; top: 350px">
 </section>
-<section id="SectorTree" style="float: left; height: 340px; width: 600px; padding-top: 20px; padding-left: 30px">
+<section id="SectorTree" style="height: 340px; width: 600px; padding-top: 50px; padding-left: 30px; position: fixed; top: 350px; left: 550px">
     <div id="Sector-overlay">
         <table>
             <tr>
