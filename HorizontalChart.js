@@ -3,7 +3,7 @@ function HorizontalChart(data) {
     d3.select('#horizontalBar svg').remove();
 
 
-    var min = 10000000000;
+    var min = 10000000000000;
     var max = 0;
 
     var sorted = [];
@@ -27,14 +27,12 @@ function HorizontalChart(data) {
 
 
     for (var i = 0; i < limit; i++) {
-        debugger;
         counterparties.push(sorted[i][0]);
         exps.push(sorted[i][1]);
         if (sorted[i][1] > max) max = sorted[i][1];
         if (sorted[i][1] < min) min = sorted[i][1];
     }
 
-    debugger;
     if(sorted.length < 10){
         var loopVar = 10 - sorted.length;
         for(var i=0; i<loopVar; i++){
