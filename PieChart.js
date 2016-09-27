@@ -76,7 +76,7 @@ function DrawPie (data)
         .attr("d", arc(enterClockwise))
         .on('mouseover', function(d) {
 
-            $(".pieoverlay")
+            $(".pietip")
                 .html("<span>"+Object.keys(d.data)+"</span> "+FormatMoney(d.value))
                 .show();
 
@@ -89,12 +89,12 @@ function DrawPie (data)
                 .style("cursor","pointer");
         })
         .on('mousemove', function(d) {
-            $(".pieoverlay")
+            $(".pietip")
                 .css('left', d3.mouse(this)[0]+800)
                 .css('top', d3.mouse(this)[1]+120)
         })
         .on('mouseout', function(d) {
-            $(".pieoverlay").html('').hide();
+            $(".pietip").html('').hide();
 
             d3.select(this).transition()
                 .duration(300)

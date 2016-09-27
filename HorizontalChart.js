@@ -22,15 +22,25 @@ function HorizontalChart(data) {
     var exps = [];
 
     var limit = 10;
-    if (sorted.length < 10) limit = sorted.length;
+    if(sorted.length < limit)
+        limit = sorted.length;
+
 
     for (var i = 0; i < limit; i++) {
+        debugger;
         counterparties.push(sorted[i][0]);
         exps.push(sorted[i][1]);
         if (sorted[i][1] > max) max = sorted[i][1];
         if (sorted[i][1] < min) min = sorted[i][1];
     }
 
+    debugger;
+    if(sorted.length < 10){
+        var loopVar = 10 - sorted.length;
+        for(var i=0; i<loopVar; i++){
+            counterparties.push("");
+        }
+    }
 
     var colors = ["#71D1D5", "#56B6BF", "#26A1AD", "#028C99", "#2B8CB1", "#05739D", "#3078B5", "#095DA2", "#375DBA", "#08297B", "#0F3BA8"];
 
@@ -62,32 +72,19 @@ function HorizontalChart(data) {
     yAxis
         .orient('left')
         .scale(yscale)
-        .tickSize(2)
+        .tickSize(0)
         .tickFormat(function (d, i) {
             return counterparties[i];
         })
         .tickValues(d3.range(limit + 1));
 
     var y_xis;
-    if (limit == 10) {
+
         y_xis = canvas.append('g')
             .attr("transform", "translate(150,0)")
             .attr('id', 'yaxis')
             .call(yAxis)
             .style({'fill': '#fff', 'font-size': '10px'});
-    }
-    else {
-        y_xis = canvas.append('g')
-            .attr("transform", "translate(150," + -4 * limit + ")")
-            .attr('id', 'yaxis')
-            .call(yAxis)
-            .style({'fill': '#fff', 'font-size': '10px'});
-    }
-
-    // var x_xis = canvas.append('g')
-    //     .attr("transform", "translate(150,330)")
-    //     .attr('id', 'xaxis')
-    //     .call(xAxis);
 
     var chart = canvas.append('g')
         .attr("transform", "translate(150,0)")

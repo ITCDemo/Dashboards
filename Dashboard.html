@@ -17,7 +17,6 @@
     <style>
         section {
             background-color: #000;
-            /*border: solid black 1px;*/
             margin: 10px;
             position: relative;
             margin-top: 3px;
@@ -59,7 +58,7 @@
             cursor: hand;
         }
 
-        .pieoverlay {
+        .pietip {
             width: 150px;
             height: 30px;
             display: none;
@@ -340,6 +339,7 @@
 
         input.file {
             position: relative;
+            top: 5px;
             text-align: right;
             -moz-opacity: 0;
             filter: alpha(opacity:0);
@@ -361,9 +361,9 @@
         }
 
         .treemap:hover {
-            -moz-box-shadow: 0 0 30px white;
-            -webkit-box-shadow: 0 0 30px white;
-            box-shadow: 0 0 30px white;
+            -moz-box-shadow: 0 0 10px white;
+            -webkit-box-shadow: 0 0 10px white;
+            box-shadow: 0 0 10px white;
             cursor: pointer;
             z-index: 99;
         }
@@ -405,13 +405,13 @@
         n2.value = n1.value.replace(/^.*[\\\/]/, '');
     }
 </script>
-<div class="pieoverlay"></div>
+<div class="pietip"></div>
 
 <div class="fileinputs">
-    <input type="file" class="file" id="uploader" onchange="Sync()"/>
+    <input type="file" class="file" id="uploader" onchange="Sync()" style="height: 30px; cursor: pointer;"/>
     <div class="fakefile">
         <input id="FakeID"/>
-        <input type="button" value="Refresh Data" id="FakeButton" class="StyledButton"/>
+        <input type="button" value="Refresh Data" id="FakeButton" class="StyledButton" />
     </div>
 </div>
 <form>
@@ -423,7 +423,7 @@
 <div class="stats" style="top: 10px; left: 700px; border-color: #599BB3;" id="Utilization"> $0 </div>
 <div class="stats" style="top: 10px; left: 900px; border-color: orange;" id="UtilPercent"> 0% </div>
 
-<input type="button" value="Clear Filters" style="top: 10px; left: 1150px; position: absolute" class="StyledButton"
+<input type="button" value="Clear Filters" style="top: 10px; left:   1150px; position: absolute" class="StyledButton"
        onclick="clearFilters()"/>
 
 
@@ -482,21 +482,6 @@
     function load_dataset(csv) {
         var data = d3.csv.parse(csv);
         dataCopy = data;
-
-        for (var i = 0; i < data.length; i++) {
-
-            if (masterMap[data[i]["Country"]] == undefined) masterMap[data[i]["Country"]] = [];
-            if (masterMap[data[i]["Region"]] == undefined) masterMap[data[i]["Region"]] = [];
-            if (masterMap[data[i]["Rating"]] == undefined) masterMap[data[i]["Rating"]] = [];
-            if (masterMap[data[i]["Sector_ID"]] == undefined) masterMap[data[i]["Sector_ID"]] = [];
-
-
-            masterMap[data[i]["Country"]].push(data[i]);
-            masterMap[data[i]["Region"]].push(data[i]);
-            masterMap[data[i]["Rating"]].push(data[i]);
-            masterMap[data[i]["Sector_ID"]].push(data[i]);
-
-        }
         create_table(data);
     }
 
@@ -718,8 +703,6 @@
             totalExp = totalExp + parseInt(data[i]["Market Value"].replace(/,/g, ""));
         }
 
-        debugger;
-
         $("#Utilization").html(FormatMoney(totalExp));
         $("#UtilPercent").html((totalExp/totalAlloc*100).toFixed(2)+"%")
 
@@ -788,11 +771,7 @@
     var regionLatLong = {};
     var instrumentMap = {};
 
-    var masterMap = {};
-
     var dataCopy;
-
-    var closeFlag = 0;
 
     var regionFilter = -1;
     var countryFilter = -1;
