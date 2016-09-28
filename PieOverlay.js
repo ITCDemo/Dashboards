@@ -141,11 +141,11 @@ function drawPie(dataset, type) {
             .append("svg")
             .attr({
                 width: 190,
-                height: 200,
+                height: 220,
                 class: 'shadow'
             }).append('g')
             .attr({
-                transform: 'translate(' + 140 / 2 + ',' + 120 / 2 + ')'
+                transform: 'translate(' + 140 / 2 + ',' + 200 / 2 + ')'
             });
     }
     else{
@@ -158,7 +158,7 @@ function drawPie(dataset, type) {
                 fill: 'none'
             }).append('g')
             .attr({
-                transform: 'translate(' + 140 / 2 + ',' + 140 / 2 + ')'
+                transform: 'translate(' + 140 / 2 + ',' + 200 / 2 + ')'
             });
     }
     var path = svg.selectAll('path')

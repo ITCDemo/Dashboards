@@ -102,6 +102,8 @@ function DrawPie (data)
         .on('click', function(d){
 
 
+            $(".pietip").html('').hide();
+
             ratingFilter = Object.keys(d.data);
             var filteredSet = calculateFilters();
 
@@ -154,7 +156,7 @@ function DrawPie (data)
         .style({
             fill: color,
             stroke: color
-        })
+        });
 
     legend.append('text')
         .attr({

@@ -1,5 +1,10 @@
 function DisplayDendo(data, type) {
 
+    $("#barpieUtil p").remove();
+    $("#secbarpieutil p").remove();
+
+
+
     if(type == "Rating") var rating = data[0]["Rating"];
     if(type == "Sector") var sector = data[0]["Sector_ID"];
 
@@ -127,6 +132,10 @@ function DisplayDendo(data, type) {
         width = 500 - margin.right - margin.left,
         height = 200 - margin.top - margin.bottom;
 
+    var zoom = d3.behavior.zoom()
+        .scaleExtent([1, 10])
+        .on("zoom", zoomed);
+
     var i = 0,
         duration = 750,
         root;
@@ -148,12 +157,16 @@ function DisplayDendo(data, type) {
             .attr("width", width)
             .attr("height", 300)
             .append("g")
+            .call(zoom)
+            .append("g")
             .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
     }
     else {
         svg = d3.select("#Sectree").append("svg")
             .attr("width", "350px")
             .attr("height", 300)
+            .append("g")
+            .call(zoom)
             .append("g")
             .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
     }
@@ -312,6 +325,8 @@ function DisplayDendo(data, type) {
 
                 if (value < 0) value *= -1;
 
+                $("#barpieUtil p").remove();
+                $("#barpieUtil").append("<p style='color:white; position: absolute; left: 450px; top: 10px; text-align: center'>"+d.parent.name+"</p>");
                 drawPie(dataset, "Rating");
             }
             else if (d.depth == 1) {
@@ -328,9 +343,13 @@ function DisplayDendo(data, type) {
                     });
                 }
                 d3.select("#barpieUtil svg").remove();
+
+                $("#barpieUtil p").remove();
+                $("#barpieUtil").append("<p style='color:white; position: absolute; left: 450px; top: 10px; text-align: center'>"+d.name+"</p>");
                 drawBar(totalExpValue, "Rating")
             }
             else {
+                $("#barpieUtil p").remove();
                 d3.select("#barpieUtil svg").remove();
             }
 
@@ -371,6 +390,8 @@ function DisplayDendo(data, type) {
 
                 if (value < 0) value *= -1;
 
+                $("#secbarpieutil p").remove();
+                $("#SecbarpieUtil").append("<p style='color:white; position: absolute; left: 450px; top: 10px; text-align: center'>"+d.parent.name+"</p>");
                 drawPie(dataset, "Sector");
             }
             else if (d.depth == 1) {
@@ -387,9 +408,12 @@ function DisplayDendo(data, type) {
                     });
                 }
                 d3.select("#SecbarpieUtil svg").remove();
+                $("#secbarpieutil p").remove();
+                $("#SecbarpieUtil").append("<p style='color:white; position: absolute; left: 450px; top: 10px; text-align: center'>"+d.name+"</p>");
                 drawBar(totalExpValue, "Sector")
             }
             else {
+                $("#secbarpieutil p").remove();
                 d3.select("#SecbarpieUtil svg").remove();
             }
 
@@ -418,5 +442,9 @@ function DisplayDendo(data, type) {
         root.children.forEach(collapse);
         collapse(root);
         update(root);
+    }
+
+    function zoomed() {
+        svg.attr("transform", "translate(" + d3.event.translate + ")");
     }
 }
