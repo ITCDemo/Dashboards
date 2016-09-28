@@ -18,7 +18,7 @@ function DrawMap(data){
                         var exp = 0;
                         for(var obj in copyForMap){
                             if(copyForMap[obj]["Region"] == reg)
-                            exp+=parseInt(copyForMap[obj]["Market Value"].replace(/,/g, ""));
+                            exp+=copyForMap[obj]["Market Value"];
                         }
                         regionMap.push({
                             name: reg,
@@ -38,7 +38,7 @@ function DrawMap(data){
                         var totalExp = 0;
                         for (var exp1 in copyForMap) {
                             if(copyForMap[exp1]["Country"] == obj1) {
-                                totalExp += parseInt(copyForMap[exp1]["Market Value"].replace(/,/g, ""));
+                                totalExp += copyForMap[exp1]["Market Value"];
                             }
                         }
 

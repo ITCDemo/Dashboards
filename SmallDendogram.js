@@ -6,7 +6,7 @@ function DisplayDendo(data, type) {
 
 
     if(type == "Rating") var rating = data[0]["Rating"];
-    if(type == "Sector") var sector = data[0]["Sector_ID"];
+    if(type == "Sector") var sector = data[0]["Sector"];
 
     var creditMap = {};
     var ratingMap = {};
@@ -21,25 +21,26 @@ function DisplayDendo(data, type) {
 
     if (type == "Rating") {
         for (cpty in data) {
+            debugger;
             if (cptyMapRating[data[cpty]["Counterparty"]] == undefined) {
                 cptyMapRating[data[cpty]["Counterparty"]] = {};
                 cptyMapRating[data[cpty]["Counterparty"]][data[cpty]["Instrument"]] = {
-                    Allocation: parseInt(data[cpty]["Allocation"].replace(/,/g, "")),
-                    Value: parseInt(data[cpty]["Market Value"].replace(/,/g, ""))
+                    Allocation: data[cpty]["Allocation"],
+                    Value: data[cpty]["Market Value"]
                 }
             }
             else{
                 if(cptyMapRating[data[cpty]["Counterparty"]][data[cpty]["Instrument"]] == undefined){
                     cptyMapRating[data[cpty]["Counterparty"]][data[cpty]["Instrument"]] = {
-                        Allocation: parseInt(data[cpty]["Allocation"].replace(/,/g, "")),
-                        Value: parseInt(data[cpty]["Market Value"].replace(/,/g, ""))
+                        Allocation: data[cpty]["Allocation"],
+                        Value: data[cpty]["Market Value"]
                     }
                 }
                 else{
                     var existingVal = cptyMapRating[data[cpty]["Counterparty"]][data[cpty]["Instrument"]]["Value"];
                     cptyMapRating[data[cpty]["Counterparty"]][data[cpty]["Instrument"]] = {
-                        Allocation: parseInt(data[cpty]["Allocation"].replace(/,/g, "")),
-                        Value: parseInt(data[cpty]["Market Value"].replace(/,/g, "")) + existingVal
+                        Allocation: data[cpty]["Allocation"],
+                        Value: data[cpty]["Market Value"] + existingVal
                     }
                 }
             }
@@ -76,22 +77,22 @@ function DisplayDendo(data, type) {
             if (cptyMapSec[data[cpty]["Counterparty"]] == undefined) {
                 cptyMapSec[data[cpty]["Counterparty"]] = {};
                 cptyMapSec[data[cpty]["Counterparty"]][data[cpty]["Instrument"]] = {
-                    Allocation: parseInt(data[cpty]["Allocation"].replace(/,/g, "")),
-                    Value: parseInt(data[cpty]["Market Value"].replace(/,/g, ""))
+                    Allocation: data[cpty]["Allocation"],
+                    Value: data[cpty]["Market Value"]
                 }
             }
             else{
                 if(cptyMapSec[data[cpty]["Counterparty"]][data[cpty]["Instrument"]] == undefined){
                     cptyMapSec[data[cpty]["Counterparty"]][data[cpty]["Instrument"]] = {
-                        Allocation: parseInt(data[cpty]["Allocation"].replace(/,/g, "")),
-                        Value: parseInt(data[cpty]["Market Value"].replace(/,/g, ""))
+                        Allocation: data[cpty]["Allocation"],
+                        Value: data[cpty]["Market Value"]
                     }
                 }
                 else{
                     var existingVal = cptyMapSec[data[cpty]["Counterparty"]][data[cpty]["Instrument"]]["Value"];
                     cptyMapSec[data[cpty]["Counterparty"]][data[cpty]["Instrument"]] = {
-                        Allocation: parseInt(data[cpty]["Allocation"].replace(/,/g, "")),
-                        Value: parseInt(data[cpty]["Market Value"].replace(/,/g, "")) + existingVal
+                        Allocation: data[cpty]["Allocation"],
+                        Value: data[cpty]["Market Value"] + existingVal
                     }
                 }
             }

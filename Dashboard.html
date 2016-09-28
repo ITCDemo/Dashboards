@@ -44,18 +44,19 @@
 <body style="background-color: #000">
 <div class="pietip"></div>
 
-<div class="fileinputs">
+<div class="fileinputs" style="left: -0px">
     <input type="file" class="file" id="uploader" onchange="Sync()" style="height: 30px; cursor: pointer;"/>
     <div class="fakefile">
         <input id="FakeID"/>
         <input type="button" value="Refresh Data" id="FakeButton" class="StyledButton"/>
     </div>
 </div>
-<form>
+<form style="left: 250px">
     <label><input type="radio" name="region" value="Region" checked> Region</label>
     <label><input type="radio" name="region" value="Country"> Country</label>
+    <select id="dateSelector" style="margin-left: 20px; height: 30px">
+    </select>
 </form>
-
 <!--<div class="stats" style="top: 10px; left: 500px; border-color: green;" id="Exposure"></div>-->
 <div class="stats" style="top: 10px; left: 600px; border-color: #599BB3;" id="Utilization"> $0</div>
 <div class="stats" style="top: 10px; left: 800px; border-color: orange;" id="UtilPercent"> 0%</div>
@@ -116,6 +117,10 @@
 
 <!-- ***********   Global variables   ************ -->
 <script>
+
+    var DealMap = {};
+    var DealsByData = {};
+    var dateMap = {};
 
     var regionMasterMap = {};
 
@@ -195,6 +200,20 @@
         "EURO": [8.43, 48.15]
     };
 
+    $( "#dateSelector" ).change(function() {
+
+        clearFilters();
+
+        d3.select('#map-canvas svg').remove();
+
+        var chosenData = $('#dateSelector').val();
+        var formattedData = formatData(dateMap[chosenData]);
+
+
+        dataCopy = formattedData;
+        DrawCharts(formattedData);
+    });
+
 
 </script>
 
@@ -221,10 +240,53 @@
 
         // Array of objects from csv file. Each object represents a line in the csv
         var data = d3.csv.parse(csv);
-        dataCopy = data;
-        DrawCharts(data);
+        DealsByData = {};
+        for(var obj in data) {
+            DealsByData[data[obj]["Deal ID"]] = data[obj];
+
+            for(var date of Object.keys(data[0]).slice(1)){
+                if(dateMap[date] == undefined) dateMap[date] = {};
+                dateMap[date][data[obj]["Deal ID"]] = data[obj][date] == ""?0:parseInt(data[obj][date].replace(/,/g, ""))
+            }
+        }
+
+
+        //add dates to dropdown
+        for(date of Object.keys(data[0]).slice(1)) {
+            $('#dateSelector')
+                    .append($("<option></option>")
+                            .attr("value",date)
+                            .text(date));
+        }
+
+        var chosenData = $('#dateSelector').val();
+        var formattedData = formatData(dateMap[chosenData]);
+
+
+        dataCopy = formattedData;
+        DrawCharts(formattedData);
     });
 
+
+
+
+    function formatData(data){
+
+        var returnData = [];
+        for(var obj in data){
+            returnData.push({
+                Allocation: parseInt(DealMap[obj]["Allocation"].replace(/,/g, "")),
+                Counterparty: DealMap[obj]["Counterparty"],
+                Country: DealMap[obj]["Country"],
+                Instrument: DealMap[obj]["Instrument"],
+                "Market Value": data[obj],
+                Rating: DealMap[obj]["Rating"],
+                Region: DealMap[obj]["Region"],
+                Sector: DealMap[obj]["Sector"]
+            })
+        }
+        return returnData;
+    }
 
     /*
      This is the most important function
@@ -252,7 +314,7 @@
 
             /* convert string to integer
              For example: converts string 1,000,000 to integer 1000000*/
-            var exp = parseInt(data[i]["Market Value"].replace(/,/g, ""));
+            var exp = data[i]["Market Value"];
 
 
             if (!(data[i]["Counterparty"] in counterpartyExp)) {
@@ -297,7 +359,7 @@
                 if (countryMap[data[i]["Country"]] == undefined) {
                     countryMap[data[i]["Country"]] = {};
                 }
-                countryMap[data[i]["Country"]][instrument] = parseInt(data[i]["Market Value"].replace(/,/g, ""))
+                countryMap[data[i]["Country"]][instrument] = data[i]["Market Value"]
             }
             else {
                 if (countryMap[data[i]["Country"]] == undefined) {
@@ -305,11 +367,11 @@
                 }
 
                 if (countryMap[data[i]["Country"]][instrument] == undefined) {
-                    countryMap[data[i]["Country"]][instrument] = parseInt(data[i]["Market Value"].replace(/,/g, ""));
+                    countryMap[data[i]["Country"]][instrument] = data[i]["Market Value"]
                 }
                 else {
                     var existingBondCountry = countryMap[data[i]["Country"]][instrument];
-                    countryMap[data[i]["Country"]][instrument] = parseInt(data[i]["Market Value"].replace(/,/g, "")) + existingBondCountry;
+                    countryMap[data[i]["Country"]][instrument] = data[i]["Market Value"] + existingBondCountry;
                 }
             }
         }
@@ -402,7 +464,7 @@
 
         if (sectorFilter != -1) {
             filteredDataset = filteredDataset.filter(function (obj) {
-                if (obj["Sector_ID"] == sectorFilter) {
+                if (obj["Sector"] == sectorFilter) {
                     return true;
                 }
             });
@@ -449,11 +511,11 @@
         for (var instr in filteredSet) {
             if (instrData[filteredSet[instr]["Instrument"]] == undefined) {
                 instrData[filteredSet[instr]["Instrument"]] = {};
-                instrData[filteredSet[instr]["Instrument"]] = parseInt(filteredSet[instr]["Market Value"].replace(/,/g, ""));
+                instrData[filteredSet[instr]["Instrument"]] = filteredSet[instr]["Market Value"];
             }
             else {
                 existingExp = instrData[filteredSet[instr]["Instrument"]] == undefined ? 0 : instrData[filteredSet[instr]["Instrument"]];
-                instrData[filteredSet[instr]["Instrument"]] = existingExp + parseInt(filteredSet[instr]["Market Value"].replace(/,/g, ""));
+                instrData[filteredSet[instr]["Instrument"]] = existingExp + filteredSet[instr]["Market Value"];
             }
         }
 
@@ -477,11 +539,11 @@
                 totalAlloc = totalAlloc + parseInt(data[i]["Allocation"]);
             }
 
-            totalExp = totalExp + parseInt(data[i]["Market Value"].replace(/,/g, ""));
+            totalExp = totalExp + data[i]["Market Value"];
         }
 
         $("#Utilization").html(FormatMoney(totalExp));
-        $("#UtilPercent").html((totalExp / totalAlloc * 100).toFixed(2) + "%")
+        $("#UtilPercent").html((totalExp / totalAlloc * 100).toFixed(2) + "%");
 
         if ((totalExp / totalAlloc * 100).toFixed(2) < 60) {
             $("#UtilPercent").css("border-color", "green");
@@ -542,7 +604,18 @@
                     long: data.long,
                     abr: data.abr
                 }
-            });
+            })
+            .defer(d3.csv, "counterparty_lookup.csv", function (data){
+                DealMap[data["Deal ID"]] = {
+                    Instrument: data["Instrument"],
+                    Country: data["Country"],
+                    Region: data["Region"],
+                    Counterparty: data["Counterparty"],
+                    Rating: data["Rating"],
+                    Sector: data["Sector_ID"],
+                    Allocation: data["Allocation"]
+                }
+            })
 
 </script>
 </body>

@@ -7,12 +7,12 @@ function BuildTreeMap(data) {
     var existingExp;
 
     for(var i in data)
-        if (sectorMap[data[i]["Sector_ID"]] == undefined) {
-            sectorMap[data[i]["Sector_ID"]] = parseInt(data[i]["Market Value"].replace(/,/g, ""));
+        if (sectorMap[data[i]["Sector"]] == undefined) {
+            sectorMap[data[i]["Sector"]] = data[i]["Market Value"]
         }
         else {
-            existingExp = sectorMap[data[i]["Sector_ID"]];
-            sectorMap[data[i]["Sector_ID"]] = existingExp + parseInt(data[i]["Market Value"].replace(/,/g, ""));
+            existingExp = sectorMap[data[i]["Sector"]];
+            sectorMap[data[i]["Sector"]] = existingExp + data[i]["Market Value"]
         }
 
     for(var key in SectoRatingMap["SectorName"]){

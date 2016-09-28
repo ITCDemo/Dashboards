@@ -8,11 +8,11 @@ function DrawPie (data)
 
     for(var i in data)
     if (ratingMap[data[i]["Rating"]] == undefined) {
-        ratingMap[data[i]["Rating"]] = parseInt(data[i]["Market Value"].replace(/,/g, ""));
+        ratingMap[data[i]["Rating"]] = data[i]["Market Value"];
     }
     else {
         existingExp = ratingMap[data[i]["Rating"]];
-        ratingMap[data[i]["Rating"]] = existingExp + parseInt(data[i]["Market Value"].replace(/,/g, ""));
+        ratingMap[data[i]["Rating"]] = existingExp + data[i]["Market Value"];
     }
 
     for(var key in SectoRatingMap["Rating"]){
