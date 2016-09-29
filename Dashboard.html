@@ -118,6 +118,7 @@
 <!-- ***********   Global variables   ************ -->
 <script>
 
+    var initialCSV = [];
     var DealMap = {};
     var DealsByData = {};
     var dateMap = {};
@@ -204,11 +205,10 @@
 
         clearFilters();
 
-        d3.select('#map-canvas svg').remove();
+        d3.select('#map-canvas svg circle').remove();
 
         var chosenData = $('#dateSelector').val();
         var formattedData = formatData(dateMap[chosenData]);
-
 
         dataCopy = formattedData;
         DrawCharts(formattedData);
@@ -241,27 +241,9 @@
         // Array of objects from csv file. Each object represents a line in the csv
         var data = d3.csv.parse(csv);
         DealsByData = {};
-        for(var obj in data) {
-            DealsByData[data[obj]["Deal ID"]] = data[obj];
-
-            for(var date of Object.keys(data[0]).slice(1)){
-                if(dateMap[date] == undefined) dateMap[date] = {};
-                dateMap[date][data[obj]["Deal ID"]] = data[obj][date] == ""?0:parseInt(data[obj][date].replace(/,/g, ""))
-            }
-        }
 
 
-        //add dates to dropdown
-        for(date of Object.keys(data[0]).slice(1)) {
-            $('#dateSelector')
-                    .append($("<option></option>")
-                            .attr("value",date)
-                            .text(date));
-        }
-
-        var chosenData = $('#dateSelector').val();
-        var formattedData = formatData(dateMap[chosenData]);
-
+        var formattedData = DateCSVSelector(data);
 
         dataCopy = formattedData;
         DrawCharts(formattedData);
@@ -269,6 +251,26 @@
 
 
 
+    function DateCSVSelector(data){
+
+        for(var obj in data) {
+            DealsByData[data[obj]["Deal ID"]] = data[obj];
+            for(var date of Object.keys(data[0]).slice(1)){
+                if(dateMap[date] == undefined) dateMap[date] = {};
+                dateMap[date][data[obj]["Deal ID"]] = data[obj][date] == ""?0:parseInt(data[obj][date].replace(/,/g, ""))
+            }
+        }
+        //add dates to dropdown
+        for(date of Object.keys(data[0]).slice(1)) {
+            $('#dateSelector')
+                    .append($("<option></option>")
+                            .attr("value",date)
+                            .text(date));
+        }
+        var chosenData = $('#dateSelector').val();
+
+        return formatData(dateMap[chosenData]);
+    }
 
     function formatData(data){
 
@@ -615,6 +617,16 @@
                     Sector: data["Sector_ID"],
                     Allocation: data["Allocation"]
                 }
+            })
+            .defer(d3.csv, "10Days_Data.csv", function (data){
+                initialCSV.push(data);
+            })
+            .await(function(){
+
+                var formattedData = DateCSVSelector(initialCSV);
+
+                dataCopy = formattedData;
+                DrawCharts(formattedData);
             })
 
 </script>
