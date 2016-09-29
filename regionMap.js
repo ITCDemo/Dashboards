@@ -42,6 +42,8 @@ function DrawMap(data){
                             }
                         }
 
+                        debugger;
+
                         countryMapMarkers.push({
                             name: obj1,
                             center: [LatLongMap[obj1].long, LatLongMap[obj1].lat],

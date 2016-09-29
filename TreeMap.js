@@ -68,7 +68,9 @@ function BuildTreeMap(data) {
         .value(function (d) {
             return d.size;
         })
-        .sort(function(a,b) { return a.size - b.size; });
+        .sort(function(a,b) {
+            return a.size - b.size;
+        });
 
     var node = div.datum(tree).selectAll(".treemap")
         .data(treemap.nodes)
@@ -87,7 +89,7 @@ function BuildTreeMap(data) {
         .attr("class", "treemap")
         .call(position)
         .style("background-color", function (d) {
-            return d.name == 'tree' ? '#000' : color(d.size);
+            return d.name == 'tree' ? '#000' : (color(d.size) == undefined?'#00829C':color(d.size));
         })
         .append('div')
         .style("font-size", function (d) {
