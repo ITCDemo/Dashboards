@@ -155,9 +155,8 @@ function DrawMap(data){
                             regionFilter = d.name;
                             var filteredSet = calculateFilters();
                             $("#bar-overlay").css({"opacity": 1, "z-index": "999", "height": "300px"});
-                            BarOverlayData(filteredSet, d.name);
-                            DisplayDendo(filteredSet, "Rating");
-                            DisplayDendo(filteredSet, "Sector");
+                            reverseFilter(filteredSet);
+
                         });
 
 
