@@ -436,6 +436,7 @@
     // up - filtering, adding filters
     function calculateFilters() {
 
+        d3.select('#tree svg').remove();
         $('#bar-overlay svg').remove();
 
         var filteredDataset = dataCopy;
