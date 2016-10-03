@@ -383,7 +383,6 @@
         d3.select('.PieRating svg').remove();
         d3.select('#horizontalBar svg').remove();
         d3.select('#SectorTree svg').remove();
-        d3.select('#tree svg').remove();
 
 
         // call functions to display various items on the dashboard
@@ -428,7 +427,6 @@
         $('#Sector-overlay').css({'opacity': 0, 'z-index': -1, 'height': '0px'});
         d3.select('#Sectree svg').remove();
         d3.select('#SecbarpieUtil svg').remove();
-        d3.select('#tree svg').remove();
 
 
         DrawCharts(dataCopy);
@@ -484,6 +482,7 @@
     // Function called when filters are being closed
     // down - filtering, removing filters
     function reverseFilter(filteredDataset) {
+
 
         //display overlays if they were open before the data was filtered
         if (regionFilter != -1) {

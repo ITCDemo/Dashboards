@@ -42,8 +42,6 @@ function DrawMap(data){
                             }
                         }
 
-                        debugger;
-
                         countryMapMarkers.push({
                             name: obj1,
                             center: [LatLongMap[obj1].long, LatLongMap[obj1].lat],
@@ -236,9 +234,10 @@ function DrawMap(data){
 
                             var filteredSet = calculateFilters();
                             $("#bar-overlay").css({"opacity": 1, "z-index": "999", "height": "300px"});
-                            BarOverlayData(filteredSet, d.name);
-                            DisplayDendo(filteredSet, "Rating");
-                            DisplayDendo(filteredSet, "Sector");
+                            reverseFilter(filteredSet);
+                            // BarOverlayData(filteredSet, d.name);
+                            // DisplayDendo(filteredSet, "Rating");
+                            // DisplayDendo(filteredSet, "Sector");
                         });
 
 
@@ -271,6 +270,7 @@ function DrawMap(data){
 
 
             $('input[type=radio][name=region]').change(function() {
+
                 if (this.value == 'Region') {
                     d3.selectAll(".countryMarkers")
                         .attr("fill-opacity", 0)

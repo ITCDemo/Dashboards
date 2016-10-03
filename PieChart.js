@@ -1,6 +1,5 @@
 function DrawPie (data)
 {
-    d3.select('#tree svg').remove();
     d3.select('.PieRating svg').remove();
 
     var dataset = [];
@@ -76,6 +75,7 @@ function DrawPie (data)
         .attr("d", arc(enterClockwise))
         .on('mouseover', function(d) {
 
+            debugger;
             $(".pietip")
                 .html("<span>"+Object.keys(d.data)+"</span> "+FormatMoney(d.value))
                 .show();
@@ -103,15 +103,17 @@ function DrawPie (data)
         .on('click', function(d){
 
 
+            debugger;
             $(".pietip").html('').hide();
 
             ratingFilter = Object.keys(d.data);
             var filteredSet = calculateFilters();
 
             $("#ratingSector-overlay").css({"opacity": 1, "z-index": "999", "height": "300px"});
-            DisplayDendo(filteredSet, "Rating");
-            BarOverlayData(filteredSet, regionFilter == -1?countryFilter: regionFilter);
-            DisplayDendo(filteredSet, "Sector");
+            reverseFilter(filteredSet);
+            // DisplayDendo(filteredSet, "Rating");
+            // BarOverlayData(filteredSet, regionFilter == -1?countryFilter: regionFilter);
+            // DisplayDendo(filteredSet, "Sector");
         })
         .each(function (d) {
             this._current = {

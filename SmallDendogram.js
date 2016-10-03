@@ -21,7 +21,6 @@ function DisplayDendo(data, type) {
 
     if (type == "Rating") {
         for (cpty in data) {
-            debugger;
             if (cptyMapRating[data[cpty]["Counterparty"]] == undefined) {
                 cptyMapRating[data[cpty]["Counterparty"]] = {};
                 cptyMapRating[data[cpty]["Counterparty"]][data[cpty]["Instrument"]] = {

@@ -81,9 +81,11 @@ function BuildTreeMap(data) {
             var filteredSet = calculateFilters();
 
             $("#Sector-overlay").css({"opacity": 1, "z-index": "999", "height": "300px"});
-            DisplayDendo(filteredSet, "Sector");
-            BarOverlayData(filteredSet, regionFilter == -1?countryFilter: regionFilter);
-            DisplayDendo(filteredSet, "Rating");
+            reverseFilter(filteredSet);
+
+            // DisplayDendo(filteredSet, "Sector");
+            // BarOverlayData(filteredSet, regionFilter == -1?countryFilter: regionFilter);
+            // DisplayDendo(filteredSet, "Rating");
 
         })
         .attr("class", "treemap")
