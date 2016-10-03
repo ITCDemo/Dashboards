@@ -1,5 +1,6 @@
 function DrawPie (data)
 {
+    d3.select('#tree svg').remove();
     d3.select('.PieRating svg').remove();
 
     var dataset = [];
