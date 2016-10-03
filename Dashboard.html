@@ -205,7 +205,7 @@
 
         clearFilters();
 
-        d3.select('#map-canvas svg circle').remove();
+        $('#map-canvas svg circle').remove();
 
         var chosenData = $('#dateSelector').val();
         var formattedData = formatData(dateMap[chosenData]);
@@ -383,6 +383,7 @@
         d3.select('.PieRating svg').remove();
         d3.select('#horizontalBar svg').remove();
         d3.select('#SectorTree svg').remove();
+        d3.select('#tree svg').remove();
 
 
         // call functions to display various items on the dashboard
@@ -427,6 +428,8 @@
         $('#Sector-overlay').css({'opacity': 0, 'z-index': -1, 'height': '0px'});
         d3.select('#Sectree svg').remove();
         d3.select('#SecbarpieUtil svg').remove();
+        d3.select('#tree svg').remove();
+
 
         DrawCharts(dataCopy);
     }
@@ -436,7 +439,6 @@
     // up - filtering, adding filters
     function calculateFilters() {
 
-        d3.select('#tree svg').remove();
         $('#bar-overlay svg').remove();
 
         var filteredDataset = dataCopy;
