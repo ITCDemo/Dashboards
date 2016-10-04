@@ -364,7 +364,7 @@ form {
 
 .stats {
     border: solid 2px;
-    height: 25px;
+    height: 35px;
     width: 150px;
     float: left;
     margin-left: 20px;
@@ -373,7 +373,7 @@ form {
     text-align: center;
     vertical-align: middle;
     padding-top: 8px;
-    font-size: 16px;
+    font-size: 24px;
     font-weight: bold;
 }
 
