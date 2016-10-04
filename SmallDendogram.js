@@ -1,5 +1,6 @@
 function DisplayDendo(data, type) {
 
+    debugger;
     $("#barpieUtil p").remove();
     $("#secbarpieutil p").remove();
 

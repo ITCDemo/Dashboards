@@ -39,8 +39,8 @@ function DrawPie (data)
     };
 
     var color = d3.scale.ordinal()
-        .domain([0,1,2,3,4,5,6,7,8])
-        .range(["#BEE2E6", "#94C6E7", "#4FBEE3", "#008ED6", "#036E9D", "#0055A5", "#025565", "#28C7DC", "#01304A", "#00829C"]);
+        .domain([0,1,2,3,4,5,6,7,8,9])
+        .range(["#BEE2E6", "#94C6E7", "#4FBEE3", "#008ED6", "#036E9D", "#0055A5", "#025565", "#28C7DC", "#01304A", "#00829C", "#000000"]);
 
     var pie = d3.layout.pie()
         .sort(null)
