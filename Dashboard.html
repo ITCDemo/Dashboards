@@ -551,6 +551,8 @@
         $("#UtilPercent").html((totalExp / totalAlloc * 100).toFixed(2) + "%");
         $("#Allocation").html(FormatMoney(totalAlloc));
 
+        debugger;
+
         if ((totalExp / totalAlloc * 100).toFixed(2) < 60) {
             $("#UtilPercent").css("border-color", "green");
             return;
@@ -574,23 +576,23 @@
             case 4:
             case 5:
             case 6:
-                formattedMoney = "$ " + (money / 1000).toFixed(1) + "K";
+                formattedMoney = "$ " + (money / 1000).toFixed(2) + "K";
                 break;
             case 7:
             case 8:
             case 9:
-                formattedMoney = "$ " + (money / 1000000).toFixed(1) + "M";
+                formattedMoney = "$ " + (money / 1000000).toFixed(2) + "M";
                 break;
 
             case 10:
             case 11:
             case 12:
-                formattedMoney = "$ " + (money / 1000000000).toFixed(1) + "B";
+                formattedMoney = "$ " + (money / 1000000000).toFixed(2) + "B";
                 break;
             case 13:
             case 14:
             case 15:
-                formattedMoney = "$ " + (money / 1000000000000).toFixed(1) + "T";
+                formattedMoney = "$ " + (money / 1000000000000).toFixed(2) + "T";
                 break;
             default:
                 formattedMoney = "$ " + money;
