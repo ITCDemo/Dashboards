@@ -293,7 +293,7 @@ td#sectree {
     padding: 0px 7px;
     text-decoration: none;
     text-shadow: 0px 1px 0px #3d768a;
-    height: 30px;
+    height: 45px;
     line-height: 1;
     text-align: center;
     vertical-align: middle;
@@ -372,8 +372,8 @@ form {
     color: #fff;
     text-align: center;
     vertical-align: middle;
-    padding-top: 8px;
-    font-size: 24px;
+    padding: 5px;
+    font-size: 30px;
     font-weight: bold;
 }
 
