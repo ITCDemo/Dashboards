@@ -381,3 +381,25 @@ form {
     left: 570px;
 }
 
+#power-gauge g.pointer {
+    fill: #e85116;
+    stroke: #b64011;
+}
+
+#power-gauge g.label text {
+    text-anchor: middle;
+    font-size: 14px;
+    font-weight: bold;
+    fill: #fff;
+}
+
+#varvalue {
+    color: #fff;
+    position: relative;
+    left: 40px;
+    top: 0px;
+}
+
+.gauge {
+    padding-left: 5px;
+}

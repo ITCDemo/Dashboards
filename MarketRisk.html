@@ -1,0 +1,677 @@
+<html>
+<head>
+
+    <!--d3 libraries
+    d3.v3 - main d3 library
+    d3.geo - d3 library to draw maps
+    topojson - d3 library to draw maps
+    jquery - jquery library
+    queue - for deferred async file reads
+    d3.tip - d3 library to display tooltips on d3 elements-->
+
+    <script src="https://d3js.org/d3.v3.min.js"></script>
+    <script src="https://d3js.org/d3.geo.projection.v0.min.js"></script>
+    <script src="https://d3js.org/topojson.v0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/queue-async/1.0.7/queue.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+    <script src="https://cdn.rawgit.com/deepthiyathiender/Dendograms/master/d3.tip.v0.6.3.js"></script>
+
+    <!--d3 to display map and markers-->
+    <script src="regionMap.js"></script>
+
+    <!--d3 to display bar chart when a map marker is clicked-->
+    <script src="MapOverlay.js"></script>
+
+    <!--d3 to display the pie chart on dashboard landing page-->
+    <script src="PieChart.js"></script>
+
+    <!--d3 to display the horizontal bar chart of top counterparties-->
+    <script src="HorizontalChart.js"></script>
+
+    <!--d3 to display the dendograms when a rating or sector is clicked-->
+    <script src="SmallDendogram.js"></script>
+
+    <!--d3 to display the utilization pie and bar charts when a node on the dendogram is clicked-->
+    <script src="PieOverlay.js"></script>
+
+    <!--d3 to display the treemap-->
+    <script src="TreeMap.js"></script>
+
+    <script src="VaRGauge.js"></script>
+
+
+    <link rel="stylesheet" type="text/css" href="styles.css"/>
+
+    <link rel="shortcut icon" href="favicon.ico">
+
+</head>
+
+<body style="background-color: #000;">
+<div class="pietip"></div>
+
+<div class="fileinputs" style="left: -0px">
+    <input type="file" class="file" id="uploader" onchange="Sync()" style="height: 30px; cursor: pointer;"/>
+    <div class="fakefile">
+        <input id="FakeID"/>
+        <input type="button" value="Refresh Data" id="FakeButton" class="StyledButton"/>
+    </div>
+</div>
+<form style="left: 250px">
+    <label><input type="radio" name="region" value="Region" checked> Region</label>
+    <label><input type="radio" name="region" value="Country"> Country</label>
+    <select id="dateSelector" style="margin-left: 20px; height: 45px; line-height: 45px">
+    </select>
+</form>
+<div class="stats" style="top: 10px; left: 600px; border-color: #599BB3;" id="Utilization"> $0</div>
+<div class="stats" style="top: 10px; left: 770px; border-color: orange;" id="UtilPercent"> 0%</div>
+<div class="stats" style="top: 10px; left: 940px; border-color: #599BB3;" id="Allocation">$0</div>
+
+
+<input type="button" value="Clear Filters" style="top: 12px; left: 1140px; position: absolute" class="StyledButton"
+       onclick="clearFilters()"/>
+
+
+<section style="height: 300px; width: 600px; position: absolute;">
+    <div id="map-canvas">
+        <div class="overlay"></div>
+    </div>
+    <div id="bar-overlay">
+        <div id="pie" class="chart-container">
+
+        </div>
+        <div id="close" class="close"
+             onclick="$('#bar-overlay').css({'opacity': 0, 'z-index': -1, 'height': '0px'}); d3.select('#pie svg').remove(); countryFilter = -1; regionFilter = -1; var filteredDataset = calculateFilters(); reverseFilter(filteredDataset);">
+            &#10006;</div>
+    </div>
+</section>
+<section style="height: 300px; width: 620px; position: absolute; left: 570px" class="PieRating">
+    <div id="ratingSector-overlay">
+        <table>
+            <tr>
+                <td id="tree" style="width: 390px">
+
+                </td>
+                <td id="barpieUtil" style="width: 230px">
+
+                </td>
+            </tr>
+        </table>
+        <div id="closePie" class="close"
+             onclick="$('#ratingSector-overlay').css({'opacity': 0, 'z-index': 99, 'height': '0px'}); d3.select('#tree svg').remove(); d3.select('#barpieUtil svg').remove(); ratingFilter = -1; var filteredDataset = calculateFilters(); reverseFilter(filteredDataset)">
+            &#10006;</div>
+    </div>
+</section>
+<section id="VaRGauge" style="height:300px; width: 300px; position: absolute; left: 1200px; top: 90px">
+    <div id="VaRValue"></div>
+    <div id="power-gauge"></div>
+</section>
+<section id="horizontalBar" style="height: 340px; width: 580px; position: absolute; top: 370px">
+</section>
+<section id="SectorTree" style="height: 300px; width: 600px; padding-top: 30px; padding-left: 30px; position: absolute; top: 370px; left: 570px">
+    <div id="Sector-overlay">
+        <table>
+            <tr>
+                <td id="Sectree" style="width: 380px">
+
+                </td>
+                <td id="SecbarpieUtil" style="width: 230px">
+
+                </td>
+            </tr>
+        </table>
+        <div class="close" id="closeTree"
+             onclick="$('#Sector-overlay').css({'opacity': 0, 'z-index': -1, 'height': '0px'}); d3.select('#Sectree svg').remove(); d3.select('#SecbarpieUtil svg').remove(); sectorFilter = -1; var filteredDataset = calculateFilters(); reverseFilter(filteredDataset)">
+            &#10006;</div>
+    </div>
+</section>
+
+<!-- ***********   Global variables   ************ -->
+<script>
+
+    var initialCSV = [];
+    var DealMap = {};
+    var DealsByData = {};
+    var dateMap = {};
+//    var VarMap = {};
+    var VarDateMap = {};
+
+
+    var regionMasterMap = {};
+
+    var regionMap = [];
+    var countryMapMarkers = [];
+
+    var counterpartyExp = {};
+
+    var countryMap = {};
+
+    var masterCounterparty = [];
+
+    var LatLongMap = {};
+    var instrumentMap = {};
+
+    var dataCopy;
+
+    var regionFilter = -1;
+    var countryFilter = -1;
+    var ratingFilter = -1;
+    var sectorFilter = -1;
+
+    var SectoRatingMap = {
+        Sector: {
+            0: "SEC_1",
+            1: "SEC_2",
+            2: "SEC_3",
+            3: "SEC_5",
+            4: "SEC_6",
+            5: "SEC_7",
+            6: "SEC_8",
+            7: "SEC_9",
+            8: "SEC_11"
+        },
+        Rating: {
+            0: "AAA",
+            1: "AA",
+            2: "A",
+            3: "BBB",
+            4: "BB",
+            5: "B",
+            6: "CCC",
+            7: "CC",
+            8: "C",
+            9: "D"
+        },
+        SectorID: {
+            "Energy": "SEC_1",
+            "Materials": "SEC_2",
+            "Industrials": "SEC_3",
+            "Consumer Staples": "SEC_5",
+            "Health Care": "SEC_6",
+            "Financials": "SEC_7",
+            "Information Tech": "SEC_8",
+            "Telecom Services": "SEC_9",
+            "Sovereign": "SEC_11"
+        },
+        SectorName: {
+            "SEC_1": "Energy",
+            "SEC_2": "Materials",
+            "SEC_3": "Industrials",
+            "SEC_5": "Consumer Staples",
+            "SEC_6": "Health Care",
+            "SEC_7": "Financials",
+            "SEC_8": "Information Tech",
+            "SEC_9": "Telecom Services",
+            "SEC_11": "Sovereign"
+        }
+
+    };
+
+    var regionLatLong = {
+        "NAMR": [-100.89, 41.17],
+        "SAMR": [-60.82, -12.65],
+        "MENA": [42.18, 34.22],
+        "APAC": [86.13, 38.74],
+        "EURO": [8.43, 48.15]
+    };
+
+    $( "#dateSelector" ).change(function() {
+
+        clearFilters();
+
+        $('#map-canvas svg circle').remove();
+
+        var chosenData = $('#dateSelector').val();
+        var formattedData = formatData(dateMap[chosenData]);
+
+        dataCopy = formattedData;
+        DrawCharts(formattedData);
+    });
+
+
+</script>
+
+<script>
+
+    // IIFE to enable reading from CSV file in local machine
+
+    (function (element, callback) {
+        var uploader = document.getElementById(element);
+        var reader = new FileReader();
+
+        reader.onload = function (e) {
+            var contents = e.target.result;
+            callback(contents);
+        };
+
+        uploader.addEventListener("change", handleFiles, false);
+
+        function handleFiles() {
+            var file = this.files[0];
+            reader.readAsText(file);
+        }
+    })("uploader", function (csv) {
+
+        // Array of objects from csv file. Each object represents a line in the csv
+        var data = d3.csv.parse(csv);
+        DealsByData = {};
+
+
+        var formattedData = DateCSVSelector(data);
+
+        dataCopy = formattedData;
+        DrawCharts(formattedData);
+    });
+
+
+
+    function DateCSVSelector(data){
+
+        for(var obj in data) {
+            DealsByData[data[obj]["Deal ID"]] = data[obj];
+            for(var date of Object.keys(data[0]).slice(1)){
+                if(dateMap[date] == undefined) dateMap[date] = {};
+                dateMap[date][data[obj]["Deal ID"]] = data[obj][date] == ""?0:parseInt(data[obj][date].replace(/,/g, ""))
+            }
+        }
+        //add dates to dropdown
+        for(date of Object.keys(data[0]).slice(1)) {
+            $('#dateSelector')
+                    .append($("<option></option>")
+                            .attr("value",date)
+                            .text(date));
+        }
+        var chosenData = $('#dateSelector').val();
+
+        return formatData(dateMap[chosenData]);
+    }
+
+    function formatData(data){
+
+        var returnData = [];
+        for(var obj in data){
+            returnData.push({
+                Allocation: parseInt(DealMap[obj]["Allocation"].replace(/,/g, "")),
+                Counterparty: DealMap[obj]["Counterparty"],
+                Country: DealMap[obj]["Country"],
+                Instrument: DealMap[obj]["Instrument"],
+                "Market Value": data[obj],
+                Rating: DealMap[obj]["Rating"],
+                Region: DealMap[obj]["Region"],
+                Sector: DealMap[obj]["Sector"],
+                VaR: parseInt(DealMap[obj]["VaR"].replace(/,/g, "")) || 0,
+                ID: obj
+            })
+        }
+        return returnData;
+    }
+
+    /*
+     This is the most important function
+     It creates all the datastructures which will be used to display the charts
+     Each time a new csv is loaded or when the data is filtered, this
+     function is called to create a fresh copy of all the data datastructures
+     The data input to this function can either be the array from the csv
+     or data after the filtering process
+     */
+    function DrawCharts(data) {
+
+        // Each time the charts are refreshed, the Region radio button is checked
+        $('input[name=region][value=' + 'Region' + ']').prop('checked', true);
+
+
+        //reset datastructures
+        counterpartyExp = {};
+        regionMasterMap = {};
+        regionMap = [];
+        countryMapMarkers = [];
+        ratingMap = {};
+        countryMap = {};
+
+        for (var i = 0; i < data.length; i++) {
+
+            /* convert string to integer
+             For example: converts string 1,000,000 to integer 1000000*/
+            var exp = data[i]["Market Value"];
+
+
+            if (!(data[i]["Counterparty"] in counterpartyExp)) {
+                counterpartyExp[data[i]["Counterparty"]] = exp
+            }
+            else {
+                var existingValue = counterpartyExp[data[i]["Counterparty"]];
+                counterpartyExp[data[i]["Counterparty"]] = exp + existingValue;
+            }
+
+            var instrument = data[i]["Instrument"];
+            var region = data[i]["Region"];
+
+
+            if (regionMasterMap[data[i]["Region"]] == undefined) {
+                regionMasterMap[region] = {
+                    [instrument]: exp
+                }
+            }
+            else {
+                if (regionMasterMap[data[i]["Region"]][instrument] == undefined) {
+                    regionMasterMap[data[i]["Region"]][instrument] = exp
+                }
+                else {
+                    existingExp = regionMasterMap[data[i]["Region"]][instrument];
+                    regionMasterMap[data[i]["Region"]][instrument] = existingExp + exp
+                }
+            }
+
+            if (instrumentMap[data[i]["Instrument"]] == undefined) {
+                instrumentMap[data[i]["Instrument"]] = {};
+                instrumentMap[data[i]["Instrument"]][[data[i]["Counterparty"]]] = exp
+            }
+            else {
+                existingExp = instrumentMap[data[i]["Instrument"]][data[i]["Counterparty"]] == undefined ? 0 : instrumentMap[data[i]["Instrument"]][data[i]["Counterparty"]];
+                instrumentMap[data[i]["Instrument"]][data[i]["Counterparty"]] = existingExp + exp;
+            }
+
+
+            if (!(data[i]["Country"] in countryMap)) {
+
+                if (countryMap[data[i]["Country"]] == undefined) {
+                    countryMap[data[i]["Country"]] = {};
+                }
+                countryMap[data[i]["Country"]][instrument] = data[i]["Market Value"]
+            }
+            else {
+                if (countryMap[data[i]["Country"]] == undefined) {
+                    countryMap[data[i]["Country"]] = {};
+                }
+
+                if (countryMap[data[i]["Country"]][instrument] == undefined) {
+                    countryMap[data[i]["Country"]][instrument] = data[i]["Market Value"]
+                }
+                else {
+                    var existingBondCountry = countryMap[data[i]["Country"]][instrument];
+                    countryMap[data[i]["Country"]][instrument] = data[i]["Market Value"] + existingBondCountry;
+                }
+            }
+        }
+
+        //remove all charts, charts have to be redrawn
+        d3.select('#map-canvas svg').remove();
+        d3.select('.PieRating svg').remove();
+        d3.select('#horizontalBar svg').remove();
+        d3.select('#SectorTree svg').remove();
+        //d3.select('#power-gauge').remove();
+
+
+        // call functions to display various items on the dashboard
+        DrawMap(data);
+        DrawPie(data);
+        HorizontalChart(counterpartyExp);
+        BuildTreeMap(data);
+        displayStats(data);
+
+
+        onGaugeReady(calculateGauge(data));
+    }
+
+    /*
+     <input type="file"> input types will display a default button with text "Choose file"
+     This default button text is determined by the browser and cant be changed ...
+     To change the text of the button and style it differently, we place a fake button
+     on top of the choose file button.
+
+     The Sync function copies the path of the file chosen from the text box provided by
+     <input type="file"> to a another text box
+     */
+    function Sync() {
+        var n1 = document.getElementById('uploader');
+        var n2 = document.getElementById('FakeID');
+        n2.value = n1.value.replace(/^.*[\\\/]/, '');
+    }
+
+
+    //Function invoked when clear filters button is clicked
+    function clearFilters() {
+
+        regionFilter = -1;
+        countryFilter = -1;
+        sectorFilter = -1;
+        ratingFilter = -1;
+
+
+        //remove all overlays
+        $('#bar-overlay').css({'opacity': 0, 'z-index': -1, 'height': '0px'});
+        d3.select('#pie svg').remove();
+        $('#ratingSector-overlay').css({'opacity': 0, 'z-index': 99, 'height': '0px'});
+        d3.select('#tree svg').remove();
+        d3.select('#barpieUtil svg').remove();
+        $('#Sector-overlay').css({'opacity': 0, 'z-index': -1, 'height': '0px'});
+        d3.select('#Sectree svg').remove();
+        d3.select('#SecbarpieUtil svg').remove();
+
+
+        DrawCharts(dataCopy);
+    }
+
+
+    // function to calculate data based on which filters are active
+    // up - filtering, adding filters
+    function calculateFilters() {
+
+        $('#bar-overlay svg').remove();
+
+        var filteredDataset = dataCopy;
+
+        if (regionFilter != -1) {
+            filteredDataset = filteredDataset.filter(function (obj) {
+                if (obj["Region"] == regionFilter) {
+                    return true;
+                }
+            });
+        }
+
+        if (countryFilter != -1) {
+            filteredDataset = filteredDataset.filter(function (obj) {
+                if (obj["Country"] == countryFilter) {
+                    return true;
+                }
+            });
+        }
+
+        if (ratingFilter != -1) {
+            filteredDataset = filteredDataset.filter(function (obj) {
+                if (obj["Rating"] == ratingFilter) {
+                    return true;
+                }
+            });
+        }
+
+        if (sectorFilter != -1) {
+            filteredDataset = filteredDataset.filter(function (obj) {
+                if (obj["Sector"] == sectorFilter) {
+                    return true;
+                }
+            });
+        }
+
+        DrawCharts(filteredDataset);
+
+        return filteredDataset;
+    }
+
+
+    // Function called when filters are being closed
+    // down - filtering, removing filters
+    function reverseFilter(filteredDataset) {
+
+
+        //display overlays if they were open before the data was filtered
+        if (regionFilter != -1) {
+            BarOverlayData(filteredDataset, regionFilter);
+        }
+        else if (countryFilter != -1) {
+            BarOverlayData(filteredDataset, countryFilter);
+        }
+
+        if (ratingFilter != -1) {
+            DisplayDendo(filteredDataset, "Rating");
+        }
+
+        if (sectorFilter != -1) {
+            DisplayDendo(filteredDataset, "Sector");
+        }
+    }
+
+    /*
+     d3 bar charts need the data to be in a certain format
+     This function takes the data set, and converts into
+     the format needed by d3 bar charts
+     and finally calls the function to draw the bar chart on the region overlay
+     */
+    function BarOverlayData(filteredSet, name) {
+        var instrData = {};
+        var exp;
+        var Barset = [];
+
+        for (var instr in filteredSet) {
+            if (instrData[filteredSet[instr]["Instrument"]] == undefined) {
+                instrData[filteredSet[instr]["Instrument"]] = {};
+                instrData[filteredSet[instr]["Instrument"]] = filteredSet[instr]["Market Value"];
+            }
+            else {
+                existingExp = instrData[filteredSet[instr]["Instrument"]] == undefined ? 0 : instrData[filteredSet[instr]["Instrument"]];
+                instrData[filteredSet[instr]["Instrument"]] = existingExp + filteredSet[instr]["Market Value"];
+            }
+        }
+
+        for (var item in instrData) {
+            exp = {name: item, value: instrData[item]};
+            Barset.push(exp);
+        }
+
+        drawBarRegion(Barset, name);
+    }
+
+
+    //This function displays the Utilization / Exposure and Utilization percentages
+    function displayStats(data) {
+        var CPMap = {};
+        var totalExp = 0;
+        var totalAlloc = 0;
+        for (var i = 0; i < data.length; i++) {
+            if (!(data[i]["Counterparty"] in CPMap)) {
+                CPMap[data[i]["Counterparty"]] = "";
+                totalAlloc = totalAlloc + parseInt(data[i]["Allocation"]);
+            }
+
+            totalExp = totalExp + data[i]["Market Value"];
+        }
+
+        $("#Utilization").html(FormatMoney(totalExp));
+        $("#UtilPercent").html((totalExp / totalAlloc * 100).toFixed(2) + "%");
+        $("#Allocation").html(FormatMoney(totalAlloc));
+
+        if ((totalExp / totalAlloc * 100).toFixed(2) < 60) {
+            $("#UtilPercent").css("border-color", "green");
+            return;
+        }
+        else if ((totalExp / totalAlloc * 100).toFixed(2) < 80) {
+            $("#UtilPercent").css("border-color", "orange");
+            return;
+        }
+        else {
+            $("#UtilPercent").css("border-color", "red");
+            return;
+        }
+    }
+
+
+    function calculateGauge(data){
+        var chosenData = $('#dateSelector').val();
+        var totalVaR = 0;
+        var VaRLimit = 0;
+        for(obj in data){
+            VaRLimit = VaRLimit + data[obj]["VaR"];
+            totalVaR = totalVaR + VarDateMap[chosenData][data[obj]["ID"]];
+        }
+
+        var VaR = totalVaR / VaRLimit * 100 > 10? 10:totalVaR / VaRLimit * 100;
+        $("#VaRValue").html("<p>Value at Risk % "+VaR.toFixed(2)+"</p>");
+        return (VaR)
+    }
+
+    /*This function takes a big number and returns a string
+     It is used to make large numbers more readable like 10K , 10M, 10B, 10T*/
+    function FormatMoney(money) {
+        formattedMoney = "";
+        switch (money.toString().length) {
+            case 4:
+            case 5:
+            case 6:
+                formattedMoney = "$ " + (money / 1000).toFixed(2) + "K";
+                break;
+            case 7:
+            case 8:
+            case 9:
+                formattedMoney = "$ " + (money / 1000000).toFixed(2) + "M";
+                break;
+
+            case 10:
+            case 11:
+            case 12:
+                formattedMoney = "$ " + (money / 1000000000).toFixed(2) + "B";
+                break;
+            case 13:
+            case 14:
+            case 15:
+                formattedMoney = "$ " + (money / 1000000000000).toFixed(2) + "T";
+                break;
+            default:
+                formattedMoney = "$ " + money;
+        }
+        return formattedMoney;
+    }
+
+</script>
+<script>
+
+    //read the lat longs of all cities in the world
+    //and build a hashmap, hashed by country name
+    queue()
+            .defer(d3.csv, "countriesLatLong.csv", function (data) {
+                LatLongMap[data.country] = {
+                    lat: data.lat,
+                    long: data.long,
+                    abr: data.abr
+                }
+            })
+            .defer(d3.csv, "counterparty_lookup.csv", function (data){
+                DealMap[data["Deal ID"]] = {
+                    Instrument: data["Instrument"],
+                    Country: data["Country"],
+                    Region: data["Region"],
+                    Counterparty: data["Counterparty"],
+                    Rating: data["Rating"],
+                    Sector: data["Sector_ID"],
+                    Allocation: data["Allocation"],
+                    VaR: data["VaR"]
+                }
+            })
+            .defer(d3.csv, "VaRData.csv", function (data) {
+                for(var date of Object.keys(data).slice(1)){
+                    if(VarDateMap[date] == undefined) VarDateMap[date] = {};
+                    VarDateMap[date][data["Deal ID"]] = data[date] == ""?0:parseInt(data[date].replace(/,/g, ""))
+                }
+            })
+            .defer(d3.csv, "10Days_Data.csv", function (data){
+                initialCSV.push(data);
+            })
+            .await(function(){
+
+                var formattedData = DateCSVSelector(initialCSV);
+
+                dataCopy = formattedData;
+                DrawCharts(formattedData);
+            })
+
+</script>
+</body>
+</html>
