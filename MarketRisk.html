@@ -56,7 +56,7 @@
         <input type="button" value="Refresh Data" id="FakeButton" class="StyledButton"/>
     </div>
 </div>
-<form style="left: 250px">
+<form style="left: 250px; position: fixed;">
     <label><input type="radio" name="region" value="Region" checked> Region</label>
     <label><input type="radio" name="region" value="Country"> Country</label>
     <select id="dateSelector" style="margin-left: 20px; height: 45px; line-height: 45px">
@@ -593,9 +593,9 @@
             totalVaR = totalVaR + VarDateMap[chosenData][data[obj]["ID"]];
         }
 
-        var VaR = totalVaR / VaRLimit * 100 > 10? 10:totalVaR / VaRLimit * 100;
+        var VaR = totalVaR / VaRLimit * 100;
         $("#VaRValue").html("<p>Value at Risk % "+VaR.toFixed(2)+"</p>");
-        return (VaR)
+        return (VaR>10?10:VaR)
     }
 
     /*This function takes a big number and returns a string
