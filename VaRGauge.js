@@ -1,8 +1,8 @@
 var gauge = function(container, configuration) {
     var that = {};
     var config = {
-        size						: 200,
-        clipWidth					: 220,
+        size						: 300,
+        clipWidth					: 300,
         clipHeight					: 110,
         ringInset					: 10,
         ringWidth					: 10,
@@ -166,9 +166,9 @@ function onGaugeReady(value) {
 
 
     var powerGauge = gauge('#power-gauge', {
-        size: 210,
-        clipWidth: 220,
-        clipHeight: 210,
+        size: 300,
+        clipWidth: 300,
+        clipHeight: 300,
         ringWidth: 60,
         maxValue: 10,
         transitionMs: 4000

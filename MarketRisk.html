@@ -101,7 +101,7 @@
             &#10006;</div>
     </div>
 </section>
-<section id="VaRGauge" style="height:300px; width: 300px; position: absolute; left: 1200px; top: 90px">
+<section id="VaRGauge" style="height:300px; width: 300px; position: absolute; left: 1280px; top: 90px">
     <div id="VaRValue"></div>
     <div id="power-gauge"></div>
 </section>
@@ -586,10 +586,17 @@
 
     function calculateGauge(data){
         var chosenData = $('#dateSelector').val();
-        var totalVaR = 0;
+        var totalVaR = 1;
         var VaRLimit = 0;
+        var corelation = 0.7;
         for(obj in data){
             VaRLimit = VaRLimit + data[obj]["VaR"];
+            //VaRLimit = Math.sqrt(VaRLimit^2 + data[obj]["VaR"] ^2 + 2*corelation*VaRLimit*data[obj]["VaR"]);
+            var value = VarDateMap[chosenData][data[obj]["ID"]];
+//            if(value !=0){
+//                debugger;
+//                totalVaR = Math.sqrt(totalVaR^2 + value^2 + 2*corelation*totalVaR*value);
+//            }
             totalVaR = totalVaR + VarDateMap[chosenData][data[obj]["ID"]];
         }
 
