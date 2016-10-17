@@ -6,29 +6,18 @@
 </head>
 <body>
 <script>
-function createCORSRequest(method, url){
-    var xhr = new XMLHttpRequest();
-    if ("withCredentials" in xhr){
-        // XHR has 'withCredentials' property only if it supports CORS
-        xhr.open(method, url, true);
-    } else if (typeof XDomainRequest != "undefined"){ // if IE use XDR
-        xhr = new XDomainRequest();
-        xhr.open(method, url);
-    } else {
-        xhr = null;
-    }
-    return xhr;
-}
+var httpRequest = new XMLHttpRequest();
+httpRequest.open('GET', "https://52.207.112.73:7079/TCM/*", true);
+httpRequest.setRequestHeader( 'Access-Control-Allow-Origin', '*');
 
-var request = createCORSRequest( "get", "https://52.207.112.73:7079/TCM/*" );
-if ( request ){
-    // Define a callback function
-    request.onload = function(){
-        debugger;
-    };
-    // Send request
-    request.send();
-}
+httpRequest.setRequestHeader( 'Content-Type', 'application/json' );
+httpRequest.onerror = function(XMLHttpRequest, textStatus, errorThrown) {
+    console.log( 'The data failed to load :(' );
+};
+httpRequest.onload = function() {
+    console.log('SUCCESS!');
+};
+httpRequest.send();
 </script>
 </body>
 </html>
